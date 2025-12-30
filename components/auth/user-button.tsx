@@ -60,10 +60,10 @@ export function UserButton({ isAdmin = false }: UserButtonProps) {
         {isAdmin && (
           <>
             <DropdownMenuItem asChild className="cursor-pointer">
-              <Link href="/docs">
+              <a href="/docs" target="_blank" rel="noopener noreferrer">
                 <Book className="mr-2 h-4 w-4" />
                 API Docs
-              </Link>
+              </a>
             </DropdownMenuItem>
             <DropdownMenuItem asChild className="cursor-pointer">
               <Link href="/admin">
