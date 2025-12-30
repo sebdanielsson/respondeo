@@ -49,8 +49,8 @@ export default async function HomePage({ searchParams }: PageProps) {
         {isAdmin && (
           <Button asChild>
             <Link href="/quiz/new">
-              <Plus className="mr-2 h-4 w-4" />
-              Create Quiz
+              <Plus className="h-4 w-4" />
+              <span className="ml-2 hidden sm:inline">Create Quiz</span>
             </Link>
           </Button>
         )}

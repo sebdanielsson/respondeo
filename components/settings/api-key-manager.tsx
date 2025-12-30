@@ -224,8 +224,8 @@ export function ApiKeyManager() {
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-col gap-2">
             <CardTitle className="flex items-center gap-2">
               <Key className="h-5 w-5" />
               API Keys
@@ -237,8 +237,8 @@ export function ApiKeyManager() {
           <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
             <DialogTrigger asChild>
               <Button>
-                <Plus className="mr-2 h-4 w-4" />
-                Create Key
+                <Plus className="h-4 w-4" />
+                <span className="ml-2 hidden sm:inline">Create Key</span>
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-md">
