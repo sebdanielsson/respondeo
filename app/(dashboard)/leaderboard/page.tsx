@@ -1,4 +1,5 @@
 import { headers } from "next/headers";
+import type { Metadata } from "next";
 import { Trophy } from "lucide-react";
 import { auth } from "@/lib/auth/server";
 import { getGlobalLeaderboard } from "@/lib/db/queries/quiz";
@@ -8,6 +9,33 @@ import { PaginationControls } from "@/components/layout/pagination-controls";
 
 interface PageProps {
   searchParams: Promise<{ page?: string }>;
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
+  return {
+    title: "Global Leaderboard",
+    description: "Top players across all quizzes",
+    openGraph: {
+      title: "Global Leaderboard - Quiz App",
+      description: "Top players across all quizzes",
+      images: [
+        {
+          url: `${baseUrl}/api/og/leaderboard`,
+          width: 1200,
+          height: 630,
+          alt: "Global Leaderboard",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Global Leaderboard - Quiz App",
+      description: "Top players across all quizzes",
+      images: [`${baseUrl}/api/og/leaderboard`],
+    },
+  };
 }
 
 export default async function LeaderboardPage({ searchParams }: PageProps) {

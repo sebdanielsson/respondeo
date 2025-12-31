@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { headers } from "next/headers";
+import type { Metadata } from "next";
 import { Calendar, Clock, HelpCircle, Play, Pencil, Users, SettingsIcon } from "lucide-react";
 import { auth } from "@/lib/auth/server";
 import { canEditQuiz, canManageQuizzes } from "@/lib/auth/permissions";
@@ -26,6 +27,42 @@ import { cn } from "@/lib/utils";
 interface PageProps {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ page?: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { id } = await params;
+  const quiz = await getQuizById(id);
+
+  if (!quiz) {
+    return {
+      title: "Quiz Not Found",
+    };
+  }
+
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
+  return {
+    title: quiz.title,
+    description: quiz.description || `Take the ${quiz.title} quiz`,
+    openGraph: {
+      title: quiz.title,
+      description: quiz.description || `Take the ${quiz.title} quiz`,
+      images: [
+        {
+          url: `${baseUrl}/api/og/quiz?id=${id}`,
+          width: 1200,
+          height: 630,
+          alt: quiz.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: quiz.title,
+      description: quiz.description || `Take the ${quiz.title} quiz`,
+      images: [`${baseUrl}/api/og/quiz?id=${id}`],
+    },
+  };
 }
 
 export default async function QuizDetailPage({ params, searchParams }: PageProps) {
