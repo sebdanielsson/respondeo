@@ -4,6 +4,7 @@ import { getQuizById } from "@/lib/db/queries/quiz";
 
 // Route segment config
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 // Revalidate every hour
 export const revalidate = 3600;

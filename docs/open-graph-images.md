@@ -55,6 +55,7 @@ app/
   - Quiz stats (question count, time limit)
   - Purple gradient background
 - **Runtime:** Node.js (requires database access)
+- **Rendering:** Dynamic (force-dynamic to prevent static rendering)
 - **Caching:** Revalidates every 3600 seconds (1 hour)
 - **Authentication:** Bypasses authentication (accessible to crawlers)
 
@@ -75,6 +76,7 @@ The quiz detail page (`app/(dashboard)/quiz/[id]/page.tsx`) exports a `generateM
   - Player names, correct answers, and quizzes played
   - Purple gradient background
 - **Runtime:** Node.js (requires database access)
+- **Rendering:** Dynamic (force-dynamic to prevent static rendering)
 - **Caching:** Revalidates every 3600 seconds (1 hour)
 - **Authentication:** Bypasses authentication (accessible to crawlers)
 
