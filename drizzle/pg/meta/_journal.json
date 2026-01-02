@@ -8,6 +8,13 @@
       "when": 1767107329488,
       "tag": "0000_crazy_ezekiel",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1767350591940,
+      "tag": "0001_nappy_captain_midlands",
+      "breakpoints": true
     }
   ]
 }

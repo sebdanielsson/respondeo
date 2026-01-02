@@ -25,6 +25,9 @@ export const PERMISSIONS = {
   QUIZ_DELETE_ANY: "quiz:delete-any", // Delete any quiz
   QUIZ_PUBLISH: "quiz:publish", // Publish/unpublish quizzes
 
+  // AI permissions
+  AI_QUIZ_GENERATE: "ai:quiz-generate", // Generate quizzes with AI
+
   // Leaderboard permissions
   LEADERBOARD_VIEW: "leaderboard:view", // View leaderboards
   LEADERBOARD_SUBMIT: "leaderboard:submit", // Submit scores to leaderboard
@@ -101,6 +104,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     PERMISSIONS.QUIZ_CREATE,
     PERMISSIONS.QUIZ_EDIT_OWN,
     PERMISSIONS.QUIZ_DELETE_OWN,
+    PERMISSIONS.AI_QUIZ_GENERATE,
     PERMISSIONS.LEADERBOARD_VIEW,
     PERMISSIONS.LEADERBOARD_SUBMIT,
   ],
@@ -116,6 +120,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     PERMISSIONS.QUIZ_DELETE_OWN,
     PERMISSIONS.QUIZ_DELETE_ANY,
     PERMISSIONS.QUIZ_PUBLISH,
+    PERMISSIONS.AI_QUIZ_GENERATE,
     PERMISSIONS.LEADERBOARD_VIEW,
     PERMISSIONS.LEADERBOARD_SUBMIT,
   ],
@@ -148,6 +153,10 @@ export const PERMISSION_GROUPS = {
       PERMISSIONS.QUIZ_PUBLISH,
     ],
   },
+  ai: {
+    label: "AI Features",
+    permissions: [PERMISSIONS.AI_QUIZ_GENERATE],
+  },
   leaderboard: {
     label: "Leaderboard",
     permissions: [PERMISSIONS.LEADERBOARD_VIEW, PERMISSIONS.LEADERBOARD_SUBMIT],
@@ -171,6 +180,7 @@ export const PERMISSION_LABELS: Record<Permission, string> = {
   [PERMISSIONS.QUIZ_DELETE_OWN]: "Delete Own Quizzes",
   [PERMISSIONS.QUIZ_DELETE_ANY]: "Delete Any Quiz",
   [PERMISSIONS.QUIZ_PUBLISH]: "Publish Quizzes",
+  [PERMISSIONS.AI_QUIZ_GENERATE]: "Generate Quizzes with AI",
   [PERMISSIONS.LEADERBOARD_VIEW]: "View Leaderboard",
   [PERMISSIONS.LEADERBOARD_SUBMIT]: "Submit to Leaderboard",
   [PERMISSIONS.API_KEY_MANAGE]: "Manage API Keys",

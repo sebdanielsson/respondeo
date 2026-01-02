@@ -1,7 +1,7 @@
 /**
  * In-Memory Rate Limiting
  *
- * Simple rate limiter for guest quiz plays.
+ * Simple rate limiter for guest quiz plays and AI generation.
  * Note: This is per-instance only - won't work across multiple server instances.
  * For production scaling, consider using Redis (e.g., @upstash/ratelimit).
  */
@@ -13,6 +13,8 @@ interface RateLimitEntry {
 
 // In-memory store for rate limit tracking
 const guestPlayCounts = new Map<string, RateLimitEntry>();
+const aiUserCounts = new Map<string, RateLimitEntry>();
+const aiGlobalCount: RateLimitEntry = { count: 0, resetTime: 0 };
 
 // Cleanup interval to prevent memory leaks (runs every 5 minutes)
 let cleanupInterval: ReturnType<typeof setInterval> | null = null;
@@ -26,6 +28,11 @@ function startCleanup() {
       for (const [ip, entry] of guestPlayCounts.entries()) {
         if (now > entry.resetTime) {
           guestPlayCounts.delete(ip);
+        }
+      }
+      for (const [userId, entry] of aiUserCounts.entries()) {
+        if (now > entry.resetTime) {
+          aiUserCounts.delete(userId);
         }
       }
     },
@@ -146,5 +153,130 @@ export function getRateLimitStatus(ip: string): {
     count: entry.count,
     remaining: Math.max(0, maxPlays - entry.count),
     resetInMs: entry.resetTime - now,
+  };
+}
+
+// ============================================================================
+// AI Generation Rate Limiting
+// ============================================================================
+
+/**
+ * Get AI rate limit configuration from environment variables.
+ */
+function getAIRateLimitConfig() {
+  return {
+    // Per-user limits (default: 4 per day)
+    maxUserGenerations: parsePositiveIntEnv(process.env.RATE_LIMIT_AI_USER, 4),
+    userWindowMs: parsePositiveIntEnv(process.env.RATE_LIMIT_AI_USER_WINDOW_MS, 86400000), // 24 hours
+    // Global limits (default: 10 per hour)
+    maxGlobalGenerations: parsePositiveIntEnv(process.env.RATE_LIMIT_AI_GLOBAL, 10),
+    globalWindowMs: parsePositiveIntEnv(process.env.RATE_LIMIT_AI_GLOBAL_WINDOW_MS, 3600000), // 1 hour
+  };
+}
+
+export interface AIRateLimitResult {
+  allowed: boolean;
+  remaining: number;
+  resetInMs: number;
+  limitType?: "user" | "global";
+}
+
+/**
+ * Check if a user is within AI generation rate limits.
+ * Checks both per-user and global limits.
+ *
+ * @param userId - The user ID to check
+ * @returns Object with `allowed` boolean and limit details
+ */
+export function checkAIGenerationRateLimit(userId: string): AIRateLimitResult {
+  const config = getAIRateLimitConfig();
+  const now = Date.now();
+
+  // Check global limit first
+  if (now > aiGlobalCount.resetTime) {
+    aiGlobalCount.count = 0;
+    aiGlobalCount.resetTime = now + config.globalWindowMs;
+  }
+
+  if (aiGlobalCount.count >= config.maxGlobalGenerations) {
+    return {
+      allowed: false,
+      remaining: 0,
+      resetInMs: aiGlobalCount.resetTime - now,
+      limitType: "global",
+    };
+  }
+
+  // Check per-user limit
+  const userEntry = aiUserCounts.get(userId);
+
+  if (!userEntry || now > userEntry.resetTime) {
+    // Delete expired entry if it exists
+    if (userEntry) {
+      aiUserCounts.delete(userId);
+    }
+    // Create new entry and increment global
+    aiUserCounts.set(userId, { count: 1, resetTime: now + config.userWindowMs });
+    aiGlobalCount.count++;
+    return {
+      allowed: true,
+      remaining: config.maxUserGenerations - 1,
+      resetInMs: config.userWindowMs,
+    };
+  }
+
+  if (userEntry.count >= config.maxUserGenerations) {
+    return {
+      allowed: false,
+      remaining: 0,
+      resetInMs: userEntry.resetTime - now,
+      limitType: "user",
+    };
+  }
+
+  // Increment both counters
+  userEntry.count++;
+  aiGlobalCount.count++;
+
+  return {
+    allowed: true,
+    remaining: config.maxUserGenerations - userEntry.count,
+    resetInMs: userEntry.resetTime - now,
+  };
+}
+
+/**
+ * Get current AI rate limit status for a user without incrementing.
+ *
+ * @param userId - The user ID to check
+ * @returns Current status without modifying count
+ */
+export function getAIRateLimitStatus(userId: string): {
+  userCount: number;
+  userRemaining: number;
+  userResetInMs: number;
+  globalCount: number;
+  globalRemaining: number;
+  globalResetInMs: number;
+} {
+  const config = getAIRateLimitConfig();
+  const now = Date.now();
+
+  const userEntry = aiUserCounts.get(userId);
+  const userCount = userEntry && now <= userEntry.resetTime ? userEntry.count : 0;
+  const userResetInMs =
+    userEntry && now <= userEntry.resetTime ? userEntry.resetTime - now : config.userWindowMs;
+
+  const globalCount = now <= aiGlobalCount.resetTime ? aiGlobalCount.count : 0;
+  const globalResetInMs =
+    now <= aiGlobalCount.resetTime ? aiGlobalCount.resetTime - now : config.globalWindowMs;
+
+  return {
+    userCount,
+    userRemaining: Math.max(0, config.maxUserGenerations - userCount),
+    userResetInMs,
+    globalCount,
+    globalRemaining: Math.max(0, config.maxGlobalGenerations - globalCount),
+    globalResetInMs,
   };
 }

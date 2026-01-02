@@ -62,6 +62,7 @@ export {
   canPlayQuiz,
   canManageApiKeys,
   canAccessSettings,
+  canGenerateAIQuiz,
   isAdmin,
   isPublicAccessEnabled,
   canAccess,

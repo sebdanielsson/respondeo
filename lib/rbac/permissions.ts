@@ -176,6 +176,13 @@ export function isAdmin(user: RbacUser | null | undefined): boolean {
   return hasPermission(user, PERMISSIONS.ADMIN_ALL);
 }
 
+/**
+ * Check if a user can generate quizzes with AI.
+ */
+export function canGenerateAIQuiz(user: RbacUser | null | undefined): boolean {
+  return hasPermission(user, PERMISSIONS.AI_QUIZ_GENERATE);
+}
+
 // ============================================================================
 // Permission Requirement Helpers (for API routes and actions)
 // ============================================================================

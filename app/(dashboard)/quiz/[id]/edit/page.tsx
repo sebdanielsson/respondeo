@@ -1,7 +1,7 @@
 import { redirect, notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth/server";
-import { canEditQuiz } from "@/lib/rbac";
+import { canEditQuiz, canGenerateAIQuiz } from "@/lib/rbac";
 import { getQuizById } from "@/lib/db/queries/quiz";
 import { QuizForm } from "@/components/quiz/quiz-form";
 import { updateQuiz } from "@/app/actions/quiz";
@@ -36,6 +36,8 @@ export default async function EditQuizPage({ params }: PageProps) {
     title: quiz.title,
     description: quiz.description ?? "",
     heroImageUrl: quiz.heroImageUrl ?? "",
+    language: quiz.language ?? "en",
+    difficulty: (quiz.difficulty ?? "medium") as "easy" | "medium" | "hard",
     maxAttempts: quiz.maxAttempts,
     timeLimitSeconds: quiz.timeLimitSeconds,
     randomizeQuestions: quiz.randomizeQuestions,
@@ -58,6 +60,8 @@ export default async function EditQuizPage({ params }: PageProps) {
     return updateQuiz(id, data);
   };
 
+  const showAIGenerator = canGenerateAIQuiz(session.user);
+
   return (
     <div className="mx-auto max-w-3xl">
       <div className="mb-8">
@@ -65,7 +69,12 @@ export default async function EditQuizPage({ params }: PageProps) {
         <p className="text-muted-foreground">Update your quiz details and questions</p>
       </div>
 
-      <QuizForm initialData={initialData} onSubmit={handleSubmit} submitLabel="Save Changes" />
+      <QuizForm
+        initialData={initialData}
+        onSubmit={handleSubmit}
+        submitLabel="Save Changes"
+        canGenerateWithAI={showAIGenerator}
+      />
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth/server";
-import { canCreateQuiz } from "@/lib/rbac";
+import { canCreateQuiz, canGenerateAIQuiz } from "@/lib/rbac";
 import { QuizForm } from "@/components/quiz/quiz-form";
 import { createQuiz } from "@/app/actions/quiz";
 
@@ -18,6 +18,8 @@ export default async function NewQuizPage() {
     redirect("/");
   }
 
+  const showAIGenerator = canGenerateAIQuiz(session.user);
+
   return (
     <div className="mx-auto max-w-3xl">
       <div className="mb-8">
@@ -25,7 +27,11 @@ export default async function NewQuizPage() {
         <p className="text-muted-foreground">Create a new quiz with questions and answers</p>
       </div>
 
-      <QuizForm onSubmit={createQuiz} submitLabel="Create Quiz" />
+      <QuizForm
+        onSubmit={createQuiz}
+        submitLabel="Create Quiz"
+        canGenerateWithAI={showAIGenerator}
+      />
     </div>
   );
 }

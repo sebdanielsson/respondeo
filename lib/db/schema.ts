@@ -130,6 +130,8 @@ export const quiz = pgTable("quiz", {
   authorId: text("author_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
+  language: text("language").notNull().default("en"), // ISO 639-1 code
+  difficulty: text("difficulty").notNull().default("medium"), // easy, medium, hard
   maxAttempts: integer("max_attempts").notNull().default(1),
   timeLimitSeconds: integer("time_limit_seconds").notNull().default(0), // 0 = unlimited
   randomizeQuestions: boolean("randomize_questions").notNull().default(true),

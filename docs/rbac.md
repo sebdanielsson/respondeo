@@ -95,6 +95,35 @@ RATE_LIMIT_WINDOW_MS=300000
 
 When a guest exceeds the rate limit, they are redirected to the quiz page with an error message indicating when they can try again.
 
+### Rate Limiting (AI Generation)
+
+AI quiz generation is rate limited at two levels to control costs and prevent abuse:
+
+| Variable                         | Type   | Default    | Description                           |
+| -------------------------------- | ------ | ---------- | ------------------------------------- |
+| `RATE_LIMIT_AI_USER`             | number | `4`        | AI generations per user per window    |
+| `RATE_LIMIT_AI_USER_WINDOW_MS`   | number | `86400000` | Per-user window in milliseconds (24h) |
+| `RATE_LIMIT_AI_GLOBAL`           | number | `10`       | Total AI generations across all users |
+| `RATE_LIMIT_AI_GLOBAL_WINDOW_MS` | number | `3600000`  | Global window in milliseconds (1h)    |
+
+Example configurations:
+
+```env
+# Conservative: 2 per user per day, 5 globally per hour
+RATE_LIMIT_AI_USER=2
+RATE_LIMIT_AI_USER_WINDOW_MS=86400000
+RATE_LIMIT_AI_GLOBAL=5
+RATE_LIMIT_AI_GLOBAL_WINDOW_MS=3600000
+
+# Liberal: 10 per user per day, 50 globally per hour
+RATE_LIMIT_AI_USER=10
+RATE_LIMIT_AI_USER_WINDOW_MS=86400000
+RATE_LIMIT_AI_GLOBAL=50
+RATE_LIMIT_AI_GLOBAL_WINDOW_MS=3600000
+```
+
+For more details on AI configuration, see [AI Generation](./ai-generation.md).
+
 ### Role Assignment
 
 | Variable                     | Type   | Default   | Description                                                |
@@ -162,6 +191,7 @@ RBAC_ROLE_CREATOR_GROUPS=teachers       → Match! User gets "creator" role
 | `quiz:delete-own`    | Delete quizzes you created        |
 | `quiz:delete-any`    | Delete any quiz                   |
 | `quiz:publish`       | Publish/unpublish quizzes         |
+| `ai:quiz-generate`   | Generate quizzes using AI         |
 | `leaderboard:view`   | View leaderboards                 |
 | `leaderboard:submit` | Submit scores to leaderboard      |
 | `api-key:manage`     | Create and delete API keys        |
@@ -170,13 +200,13 @@ RBAC_ROLE_CREATOR_GROUPS=teachers       → Match! User gets "creator" role
 
 ### Default Role Permissions
 
-| Role        | Default Permissions                                                               |
-| ----------- | --------------------------------------------------------------------------------- |
-| `guest`     | `quiz:browse`, `quiz:view`, `leaderboard:view`                                    |
-| `user`      | `quiz:browse`, `quiz:view`, `quiz:play`, `leaderboard:view`, `leaderboard:submit` |
-| `creator`   | All of `user` + `quiz:create`, `quiz:edit-own`, `quiz:delete-own`                 |
-| `moderator` | All of `creator` + `quiz:edit-any`, `quiz:delete-any`, `quiz:publish`             |
-| `admin`     | `*` (all permissions)                                                             |
+| Role        | Default Permissions                                                                   |
+| ----------- | ------------------------------------------------------------------------------------- |
+| `guest`     | `quiz:browse`, `quiz:view`, `leaderboard:view`                                        |
+| `user`      | `quiz:browse`, `quiz:view`, `quiz:play`, `leaderboard:view`, `leaderboard:submit`     |
+| `creator`   | All of `user` + `quiz:create`, `quiz:edit-own`, `quiz:delete-own`, `ai:quiz-generate` |
+| `moderator` | All of `creator` + `quiz:edit-any`, `quiz:delete-any`, `quiz:publish`                 |
+| `admin`     | `*` (all permissions)                                                                 |
 
 > **Note**: Permissions are explicit per role. The table above shows logical groupings, but each role has its full list defined independently.
 
