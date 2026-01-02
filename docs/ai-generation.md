@@ -45,7 +45,7 @@ By default, `admin`, `moderator`, and `creator` roles have the `ai:quiz-generate
 | Variable                       | Type   | Default           | Description                                                |
 | ------------------------------ | ------ | ----------------- | ---------------------------------------------------------- |
 | `AI_PROVIDER`                  | string | `openai`          | AI provider: `openai`, `openrouter`, `anthropic`, `google` |
-| `AI_MODEL`                     | string | Provider-specific | Model to use (e.g., `gpt-5-mini`, `openai/gpt-4o-mini`)    |
+| `AI_MODEL`                     | string | Provider-specific | Model to use (e.g., `gpt-5-mini`, `openai/gpt-5-mini`)    |
 | `OPENAI_API_KEY`               | string | -                 | OpenAI API key (required for OpenAI)                       |
 | `OPENROUTER_API_KEY`           | string | -                 | OpenRouter API key (required for OpenRouter)               |
 | `ANTHROPIC_API_KEY`            | string | -                 | Anthropic API key (for Anthropic)                          |
@@ -78,12 +78,11 @@ Default model: `gpt-5-mini`
 
 ```env
 AI_PROVIDER="openrouter"
-AI_MODEL="openai/gpt-4o-mini"  # or anthropic/claude-3.5-sonnet, meta-llama/llama-3.1-405b-instruct, etc.
+AI_MODEL="openai/gpt-5-mini"  # or anthropic/claude-3.5-sonnet, meta-llama/llama-3.1-405b-instruct, etc.
 OPENROUTER_API_KEY="sk-or-..."
 ```
 
-Default model: `openai/gpt-4o-mini`
-
+Default model: `openai/gpt-5-mini`
 Get your API key from the [OpenRouter Dashboard](https://openrouter.ai/keys). See available models at [OpenRouter Models](https://openrouter.ai/docs#models).
 
 ### Adding Anthropic Support
