@@ -22,6 +22,7 @@ import {
 import { cn } from "@/lib/utils";
 import { QuestionField } from "./question-field";
 import { AIQuizGenerator } from "./ai-quiz-generator";
+import { ImageUrlInput } from "./image-url-input";
 import {
   SUPPORTED_LANGUAGES,
   DIFFICULTY_LEVELS,
@@ -177,11 +178,10 @@ export function QuizForm({
 
           <div className="space-y-2">
             <Label htmlFor="heroImageUrl">Hero Image URL</Label>
-            <Input
+            <ImageUrlInput
               id="heroImageUrl"
-              type="url"
               value={formData.heroImageUrl ?? ""}
-              onChange={(e) => updateField("heroImageUrl", e.target.value)}
+              onChange={(value) => updateField("heroImageUrl", value)}
               placeholder="https://example.com/image.jpg"
             />
           </div>

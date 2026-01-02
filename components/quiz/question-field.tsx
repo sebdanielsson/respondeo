@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ImageUrlInput } from "./image-url-input";
 import type { QuestionFormData, AnswerFormData } from "@/lib/validations/quiz";
 
 interface QuestionFieldProps {
@@ -98,11 +99,10 @@ export function QuestionField({
               Image URL (optional)
             </span>
           </Label>
-          <Input
+          <ImageUrlInput
             id={`question-${index}-image`}
-            type="url"
             value={question.imageUrl ?? ""}
-            onChange={(e) => onChange({ ...question, imageUrl: e.target.value })}
+            onChange={(value) => onChange({ ...question, imageUrl: value })}
             placeholder="https://example.com/image.jpg"
           />
         </div>
