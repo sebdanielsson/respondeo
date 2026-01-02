@@ -59,7 +59,11 @@ export function QuizPlayer({
   const [elapsedMs, setElapsedMs] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [guestResult, setGuestResult] = useState<{ score: number; total: number } | null>(null);
+  const [guestResult, setGuestResult] = useState<{
+    score: number;
+    total: number;
+    timeMs: number;
+  } | null>(null);
 
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
@@ -88,7 +92,7 @@ export function QuizPlayer({
           const correctAnswer = q.answers.find((a) => a.isCorrect);
           return acc + (selectedAnswerId === correctAnswer?.id ? 1 : 0);
         }, 0);
-        setGuestResult({ score, total: questions.length });
+        setGuestResult({ score, total: questions.length, timeMs: elapsedMs });
         setIsSubmitting(false);
         return;
       }
@@ -189,13 +193,10 @@ export function QuizPlayer({
               <p className="text-muted-foreground mt-2">
                 You got {guestResult.score} out of {guestResult.total} questions correct
               </p>
-              <p className="text-muted-foreground mt-1">Time: {formatTime(elapsedMs)}</p>
+              <p className="text-muted-foreground mt-1">Time: {formatTime(guestResult.timeMs)}</p>
             </div>
-            <div className="flex justify-center gap-4">
-              <Button variant="outline" onClick={() => router.push(`/quiz/${quizId}`)}>
-                Back to Quiz
-              </Button>
-              <Button onClick={() => router.push("/sign-in")}>Sign in to save results</Button>
+            <div className="flex justify-center">
+              <Button onClick={() => router.push(`/quiz/${quizId}`)}>Close</Button>
             </div>
           </CardContent>
         </Card>

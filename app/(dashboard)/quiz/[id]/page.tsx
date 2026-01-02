@@ -5,13 +5,7 @@ import { headers } from "next/headers";
 import { AlertCircle, Calendar, Clock, HelpCircle, Play, Users } from "lucide-react";
 import type { Metadata } from "next";
 import { auth } from "@/lib/auth/server";
-import {
-  canAccess,
-  canEditQuiz,
-  canDeleteQuiz,
-  canPlayQuiz,
-  isAdmin as checkIsAdmin,
-} from "@/lib/rbac";
+import { canAccess, canEditQuiz, canDeleteQuiz, isAdmin as checkIsAdmin } from "@/lib/rbac";
 import { getCachedQuizById, getQuizLeaderboard, getUserAttemptCount } from "@/lib/db/queries/quiz";
 import { siteConfig } from "@/lib/config";
 import { ButtonGroup } from "@/components/ui/button-group";
@@ -75,7 +69,7 @@ export default async function QuizDetailPage({ params, searchParams }: PageProps
 
   const canEdit = canEditQuiz(session?.user, quiz.authorId);
   const canDelete = canDeleteQuiz(session?.user, quiz.authorId);
-  const canPlay = canPlayQuiz(session?.user);
+  const canPlay = canAccess(session?.user, "playQuiz");
   const userAttemptCount = session?.user ? await getUserAttemptCount(id, session.user.id) : 0;
   const attemptsRemaining = quiz.maxAttempts - userAttemptCount;
   const hasAttemptsRemaining = attemptsRemaining > 0;
@@ -161,7 +155,7 @@ export default async function QuizDetailPage({ params, searchParams }: PageProps
 
           <ButtonGroup>
             <ButtonGroup>
-              {canPlay && hasAttemptsRemaining ? (
+              {canPlay && (hasAttemptsRemaining || !session?.user) ? (
                 <Link href={`/quiz/${id}/play`}>
                   <Button size="lg">
                     <Play className="h-4 w-4" /> Start Quiz
