@@ -3,7 +3,7 @@
 /**
  * Image Search Server Action
  *
- * Provides image search functionality with authentication and rate limiting.
+ * Provides image search functionality with authentication.
  */
 
 import { auth } from "@/lib/auth/server";
@@ -94,6 +94,16 @@ export async function searchImagesAction(
       return {
         success: false,
         error: "Please enter a search query",
+        errorCode: "API_ERROR",
+      };
+    }
+
+    // 4. Validate query length to prevent abuse
+    const MAX_QUERY_LENGTH = 200;
+    if (trimmedQuery.length > MAX_QUERY_LENGTH) {
+      return {
+        success: false,
+        error: `Search query must be ${MAX_QUERY_LENGTH} characters or less`,
         errorCode: "API_ERROR",
       };
     }

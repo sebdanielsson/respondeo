@@ -162,11 +162,16 @@ export function ImagePickerDialog({ open, onOpenChange, onSelect }: ImagePickerD
     }
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (selectedImage) {
       // Trigger download tracking (required by Unsplash API guidelines)
       if (selectedImage.downloadTrackingUrl) {
-        triggerImageDownload(selectedImage.downloadTrackingUrl);
+        try {
+          await triggerImageDownload(selectedImage.downloadTrackingUrl);
+        } catch (error) {
+          // Log but don't block selection - tracking is best-effort
+          console.error("Failed to trigger image download tracking:", error);
+        }
       }
       onSelect(selectedImage.url);
       onOpenChange(false);
