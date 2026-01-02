@@ -57,7 +57,7 @@ export default async function Image({ params }: { params: Promise<{ id: string }
     );
   }
 
-  const top3 = leaderboard.items.slice(0, 3);
+  const top3 = leaderboard?.items.slice(0, 3) ?? [];
 
   return new ImageResponse(
     <div

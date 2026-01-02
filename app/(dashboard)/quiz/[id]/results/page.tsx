@@ -54,6 +54,10 @@ export default async function QuizResultsPage({ params, searchParams }: PageProp
 
   const leaderboard = await getCachedQuizLeaderboard(quizId, page);
 
+  if (!leaderboard) {
+    throw new Error("Failed to load leaderboard data");
+  }
+
   return (
     <div className="mx-auto max-w-5xl space-y-6">
       {/* Header */}

@@ -34,6 +34,10 @@ export default async function LeaderboardPage({ searchParams }: PageProps) {
 
   const leaderboard = await getCachedGlobalLeaderboard(page);
 
+  if (!leaderboard) {
+    throw new Error("Failed to load leaderboard data");
+  }
+
   return (
     <div className="mx-auto w-full max-w-5xl space-y-6">
       <div className="flex items-center gap-3">

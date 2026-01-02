@@ -342,14 +342,24 @@ export async function getAttemptById(attemptId: string): Promise<AttemptWithRela
 
 // ============================================================================
 // Memoized Query Wrappers (for OG image generation + generateMetadata)
-// These use React's cache() to deduplicate requests within the same render pass
+// These use React's cache() to deduplicate requests within the same render pass.
+// They also catch errors during build phase (when database is unavailable).
 // ============================================================================
+
+// Check if we're in build phase (no database available)
+const isBuildPhase =
+  process.env.NEXT_PHASE === "phase-production-build" || !process.env.DATABASE_URL;
 
 /**
  * Memoized version of getQuizById - shares data between generateMetadata and OG image
  */
 export const getCachedQuizById = cache(async (quizId: string) => {
-  return getQuizById(quizId);
+  try {
+    return await getQuizById(quizId);
+  } catch (error) {
+    if (isBuildPhase) return undefined;
+    throw error;
+  }
 });
 
 /**
@@ -357,7 +367,12 @@ export const getCachedQuizById = cache(async (quizId: string) => {
  */
 export const getCachedQuizLeaderboard = cache(
   async (quizId: string, page: number = 1, limit: number = ITEMS_PER_PAGE) => {
-    return getQuizLeaderboard(quizId, page, limit);
+    try {
+      return await getQuizLeaderboard(quizId, page, limit);
+    } catch (error) {
+      if (isBuildPhase) return undefined;
+      throw error;
+    }
   },
 );
 
@@ -366,7 +381,12 @@ export const getCachedQuizLeaderboard = cache(
  */
 export const getCachedGlobalLeaderboard = cache(
   async (page: number = 1, limit: number = ITEMS_PER_PAGE) => {
-    return getGlobalLeaderboard(page, limit);
+    try {
+      return await getGlobalLeaderboard(page, limit);
+    } catch (error) {
+      if (isBuildPhase) return undefined;
+      throw error;
+    }
   },
 );
 
@@ -374,5 +394,10 @@ export const getCachedGlobalLeaderboard = cache(
  * Memoized version of getAttemptById - shares data between page and OG image
  */
 export const getCachedAttemptById = cache(async (attemptId: string) => {
-  return getAttemptById(attemptId);
+  try {
+    return await getAttemptById(attemptId);
+  } catch (error) {
+    if (isBuildPhase) return undefined;
+    throw error;
+  }
 });

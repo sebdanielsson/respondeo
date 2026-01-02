@@ -16,7 +16,7 @@ export const revalidate = 900;
 // Image generation
 export default async function Image() {
   const leaderboard = await getCachedGlobalLeaderboard(1, 3);
-  const top3 = leaderboard.items.slice(0, 3);
+  const top3 = leaderboard?.items.slice(0, 3) ?? [];
 
   // Podium order: 2nd, 1st, 3rd (visually)
   const podiumOrder = [top3[1], top3[0], top3[2]].filter(Boolean);
