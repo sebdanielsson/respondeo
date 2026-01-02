@@ -12,14 +12,29 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { QuestionField } from "./question-field";
-import type { QuizFormData, QuestionFormData } from "@/lib/validations/quiz";
+import { AIQuizGenerator } from "./ai-quiz-generator";
+import {
+  SUPPORTED_LANGUAGES,
+  DIFFICULTY_LEVELS,
+  type QuizFormData,
+  type QuestionFormData,
+} from "@/lib/validations/quiz";
 
 interface QuizFormProps {
   initialData?: QuizFormData & { id?: string };
   onSubmit: (data: QuizFormData) => Promise<{ error?: string }>;
   submitLabel?: string;
+  /** Whether to show the "Generate with AI" button */
+  canGenerateWithAI?: boolean;
 }
 
 const defaultQuestion: QuestionFormData = {
@@ -31,7 +46,12 @@ const defaultQuestion: QuestionFormData = {
   ],
 };
 
-export function QuizForm({ initialData, onSubmit, submitLabel = "Create Quiz" }: QuizFormProps) {
+export function QuizForm({
+  initialData,
+  onSubmit,
+  submitLabel = "Create Quiz",
+  canGenerateWithAI = false,
+}: QuizFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -40,6 +60,8 @@ export function QuizForm({ initialData, onSubmit, submitLabel = "Create Quiz" }:
     title: initialData?.title ?? "",
     description: initialData?.description ?? "",
     heroImageUrl: initialData?.heroImageUrl ?? "",
+    language: initialData?.language ?? "en",
+    difficulty: initialData?.difficulty ?? "medium",
     maxAttempts: initialData?.maxAttempts ?? 1,
     timeLimitSeconds: initialData?.timeLimitSeconds ?? 0,
     randomizeQuestions: initialData?.randomizeQuestions ?? true,
@@ -50,6 +72,13 @@ export function QuizForm({ initialData, onSubmit, submitLabel = "Create Quiz" }:
 
   const updateField = <K extends keyof QuizFormData>(field: K, value: QuizFormData[K]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleAIGenerated = (data: Partial<QuizFormData>) => {
+    setFormData((prev) => ({
+      ...prev,
+      ...data,
+    }));
   };
 
   const addQuestion = () => {
@@ -115,8 +144,13 @@ export function QuizForm({ initialData, onSubmit, submitLabel = "Create Quiz" }:
       {/* Quiz Details */}
       <Card>
         <CardHeader>
-          <CardTitle>Quiz Details</CardTitle>
-          <CardDescription>Basic information about your quiz</CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Quiz Details</CardTitle>
+              <CardDescription>Basic information about your quiz</CardDescription>
+            </div>
+            {canGenerateWithAI && <AIQuizGenerator onGenerated={handleAIGenerated} />}
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -150,6 +184,53 @@ export function QuizForm({ initialData, onSubmit, submitLabel = "Create Quiz" }:
               onChange={(e) => updateField("heroImageUrl", e.target.value)}
               placeholder="https://example.com/image.jpg"
             />
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="language">Language</Label>
+              <Select
+                value={formData.language}
+                onValueChange={(value) => value && updateField("language", value)}
+              >
+                <SelectTrigger id="language">
+                  <SelectValue>
+                    {SUPPORTED_LANGUAGES.find((l) => l.code === formData.language)?.name ||
+                      formData.language}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {SUPPORTED_LANGUAGES.map((lang) => (
+                    <SelectItem key={lang.code} value={lang.code}>
+                      {lang.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="difficulty">Difficulty</Label>
+              <Select
+                value={formData.difficulty}
+                onValueChange={(value) =>
+                  value && updateField("difficulty", value as typeof formData.difficulty)
+                }
+              >
+                <SelectTrigger id="difficulty">
+                  <SelectValue>
+                    {formData.difficulty.charAt(0).toUpperCase() + formData.difficulty.slice(1)}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {DIFFICULTY_LEVELS.map((level) => (
+                    <SelectItem key={level} value={level}>
+                      {level.charAt(0).toUpperCase() + level.slice(1)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

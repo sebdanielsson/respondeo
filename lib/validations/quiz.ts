@@ -19,10 +19,34 @@ export const questionSchema = z.object({
     }),
 });
 
+// Supported languages (ISO 639-1 codes)
+export const SUPPORTED_LANGUAGES = [
+  { code: "en", name: "English" },
+  { code: "es", name: "Spanish" },
+  { code: "fr", name: "French" },
+  { code: "de", name: "German" },
+  { code: "sv", name: "Swedish" },
+  { code: "pt", name: "Portuguese" },
+  { code: "it", name: "Italian" },
+  { code: "nl", name: "Dutch" },
+  { code: "pl", name: "Polish" },
+  { code: "ja", name: "Japanese" },
+  { code: "zh", name: "Chinese" },
+  { code: "ko", name: "Korean" },
+] as const;
+
+export type LanguageCode = (typeof SUPPORTED_LANGUAGES)[number]["code"];
+
+// Difficulty levels
+export const DIFFICULTY_LEVELS = ["easy", "medium", "hard"] as const;
+export type DifficultyLevel = (typeof DIFFICULTY_LEVELS)[number];
+
 export const quizSchema = z.object({
   title: z.string().min(1, "Title is required").max(200, "Title is too long"),
   description: z.string().max(1000, "Description is too long").optional(),
   heroImageUrl: z.url().optional().or(z.literal("")).nullable(),
+  language: z.string().min(2).max(10).default("en"),
+  difficulty: z.enum(DIFFICULTY_LEVELS).default("medium"),
   maxAttempts: z.coerce.number().int().min(1, "At least 1 attempt required").default(1),
   timeLimitSeconds: z.coerce.number().int().min(0, "Time limit cannot be negative").default(0),
   randomizeQuestions: z.boolean().default(true),
