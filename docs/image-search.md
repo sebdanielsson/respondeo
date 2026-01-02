@@ -257,14 +257,14 @@ With links including UTM parameters:
 
 **Cause**: Next.js image optimization may block external domains.
 
-**Solution**: Ensure remote patterns are configured in `next.config.ts`. The default configuration allows all external images:
+**Solution**: Ensure remote patterns are configured in `next.config.ts` to explicitly allow only the trusted image domains you use (for example Unsplash):
 
 ```typescript
 images: {
   remotePatterns: [
     {
       protocol: "https",
-      hostname: "*.*.*",
+      hostname: "images.unsplash.com",
     },
   ],
 },
