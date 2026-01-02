@@ -105,6 +105,7 @@ Get your API key from the [OpenRouter Dashboard](https://openrouter.ai/keys). Se
    ```
 
 3. Set environment variables:
+
    ```env
    AI_PROVIDER="anthropic"
    AI_MODEL="claude-sonnet-4-20250514"
@@ -130,6 +131,7 @@ Get your API key from the [OpenRouter Dashboard](https://openrouter.ai/keys). Se
    ```
 
 3. Set environment variables:
+
    ```env
    AI_PROVIDER="google"
    AI_MODEL="gemini-2.0-flash"
