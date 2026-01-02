@@ -1,26 +1,37 @@
 "use client";
 
 import { useState } from "react";
-import { Trash2, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Trash2, Loader2, Pencil, SettingsIcon } from "lucide-react";
+import Link from "next/link";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { deleteQuiz } from "@/app/actions/quiz";
 
-interface DeleteQuizButtonProps {
+interface QuizActionsMenuProps {
   quizId: string;
+  canEdit: boolean;
+  canDelete: boolean;
 }
 
-export function DeleteQuizButton({ quizId }: DeleteQuizButtonProps) {
-  const [open, setOpen] = useState(false);
+export function QuizActionsMenu({ quizId, canEdit, canDelete }: QuizActionsMenuProps) {
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
@@ -39,31 +50,52 @@ export function DeleteQuizButton({ quizId }: DeleteQuizButtonProps) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>
-        <DropdownMenuItem variant="destructive" onSelect={(e) => e.preventDefault()}>
-          <Trash2 className="h-4 w-4" />
-          Delete
-        </DropdownMenuItem>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Delete Quiz</DialogTitle>
-          <DialogDescription>
-            Are you sure you want to delete this quiz? This action cannot be undone. All questions,
-            answers, and attempt history will be permanently deleted.
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)} disabled={isDeleting}>
-            Cancel
-          </Button>
-          <Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>
-            {isDeleting && <Loader2 className="h-4 w-4 animate-spin" />}
-            Delete Quiz
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          className={cn(buttonVariants({ variant: "outline", size: "icon-lg" }), "outline-none")}
+          aria-label="More Options"
+        >
+          <SettingsIcon />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-52">
+          <DropdownMenuGroup>
+            {canEdit && (
+              <Link href={`/quiz/${quizId}/edit`}>
+                <DropdownMenuItem>
+                  <Pencil className="h-4 w-4" />
+                  Edit
+                </DropdownMenuItem>
+              </Link>
+            )}
+            {canDelete && (
+              <DropdownMenuItem variant="destructive" onClick={() => setDialogOpen(true)}>
+                <Trash2 className="h-4 w-4" />
+                Delete
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Quiz</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this quiz? This action cannot be undone. All
+              questions, answers, and attempt history will be permanently deleted.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction variant="destructive" onClick={handleDelete} disabled={isDeleting}>
+              {isDeleting && <Loader2 className="h-4 w-4 animate-spin" />}
+              Delete Quiz
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }

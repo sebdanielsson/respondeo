@@ -90,7 +90,7 @@ export function QuizPlayer({
           setError(result.error);
           setIsSubmitting(false);
         } else if (result.attemptId) {
-          router.push(`/quiz/${quizId}/results?attemptId=${result.attemptId}`);
+          router.push(`/quiz/${quizId}/results/${result.attemptId}`);
         }
       } catch (err) {
         console.error("Failed to submit quiz attempt:", err);

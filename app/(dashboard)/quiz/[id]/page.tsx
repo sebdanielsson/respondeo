@@ -2,7 +2,8 @@ import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { headers } from "next/headers";
-import { Calendar, Clock, HelpCircle, Play, Pencil, Users, SettingsIcon } from "lucide-react";
+import { Calendar, Clock, HelpCircle, Play, Users } from "lucide-react";
+import type { Metadata } from "next";
 import { auth } from "@/lib/auth/server";
 import {
   canAccess,
@@ -11,27 +12,37 @@ import {
   canPlayQuiz,
   isAdmin as checkIsAdmin,
 } from "@/lib/rbac";
-import { getQuizById, getQuizLeaderboard, getUserAttemptCount } from "@/lib/db/queries/quiz";
+import { getCachedQuizById, getQuizLeaderboard, getUserAttemptCount } from "@/lib/db/queries/quiz";
+import { siteConfig } from "@/lib/config";
 import { ButtonGroup } from "@/components/ui/button-group";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { QuizLeaderboard } from "@/components/quiz/quiz-leaderboard";
 import { PaginationControls } from "@/components/layout/pagination-controls";
-import { DeleteQuizButton } from "./delete-quiz-button";
-import { cn } from "@/lib/utils";
+import { QuizActionsMenu } from "./delete-quiz-button";
 
 interface PageProps {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ page?: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { id } = await params;
+  const quiz = await getCachedQuizById(id);
+
+  if (!quiz) {
+    return {
+      title: "Quiz Not Found",
+    };
+  }
+
+  return {
+    title: `${quiz.title} | ${siteConfig.name}`,
+    description:
+      quiz.description || `Take the "${quiz.title}" quiz with ${quiz.questions.length} questions`,
+  };
 }
 
 export default async function QuizDetailPage({ params, searchParams }: PageProps) {
@@ -48,7 +59,7 @@ export default async function QuizDetailPage({ params, searchParams }: PageProps
     redirect("/sign-in");
   }
 
-  const quiz = await getQuizById(id);
+  const quiz = await getCachedQuizById(id);
 
   if (!quiz) {
     notFound();
@@ -143,30 +154,7 @@ export default async function QuizDetailPage({ params, searchParams }: PageProps
 
             {(canEdit || canDelete) && (
               <ButtonGroup>
-                <DropdownMenu>
-                  <DropdownMenuTrigger
-                    className={cn(
-                      buttonVariants({ variant: "outline", size: "icon-lg" }),
-                      "outline-none",
-                    )}
-                    aria-label="More Options"
-                  >
-                    <SettingsIcon />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-52">
-                    <DropdownMenuGroup>
-                      {canEdit && (
-                        <DropdownMenuItem>
-                          <Link href={`/quiz/${id}/edit`} className="flex items-center gap-2">
-                            <Pencil className="h-4 w-4" />
-                            Edit
-                          </Link>
-                        </DropdownMenuItem>
-                      )}
-                      {canDelete && <DeleteQuizButton quizId={id} />}
-                    </DropdownMenuGroup>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <QuizActionsMenu quizId={id} canEdit={canEdit} canDelete={canDelete} />
               </ButtonGroup>
             )}
           </ButtonGroup>

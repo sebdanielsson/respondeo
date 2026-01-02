@@ -1,64 +1,65 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { headers } from "next/headers";
-import { CheckCircle, XCircle, Clock, ArrowLeft, Trophy } from "lucide-react";
+import { ArrowLeft, Trophy } from "lucide-react";
 import { auth } from "@/lib/auth/server";
-import { getAttemptById } from "@/lib/db/queries/quiz";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import { canAccess } from "@/lib/rbac";
+import { getCachedQuizById, getCachedQuizLeaderboard } from "@/lib/db/queries/quiz";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { QuizLeaderboard } from "@/components/quiz/quiz-leaderboard";
+import { PaginationControls } from "@/components/layout/pagination-controls";
+import type { Metadata } from "next";
+import { siteConfig } from "@/lib/config";
 
 interface PageProps {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ attemptId?: string }>;
+  searchParams: Promise<{ page?: string }>;
 }
 
-export default async function ResultsPage({ params, searchParams }: PageProps) {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { id } = await params;
+  const quiz = await getCachedQuizById(id);
+
+  if (!quiz) {
+    return {
+      title: "Quiz Not Found",
+    };
+  }
+
+  return {
+    title: `${quiz.title} - Leaderboard | ${siteConfig.name}`,
+    description: `View the leaderboard and top scores for "${quiz.title}"`,
+  };
+}
+
+export default async function QuizResultsPage({ params, searchParams }: PageProps) {
   const { id: quizId } = await params;
-  const { attemptId } = await searchParams;
+  const { page: pageParam } = await searchParams;
+  const page = parseInt(pageParam ?? "1", 10);
 
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
-  if (!session?.user) {
+  // Check if user can access this page
+  if (!canAccess(session?.user, "viewQuiz")) {
     redirect("/sign-in");
   }
 
-  if (!attemptId) {
-    redirect(`/quiz/${quizId}`);
-  }
+  const quiz = await getCachedQuizById(quizId);
 
-  const attempt = await getAttemptById(attemptId);
-
-  if (!attempt) {
+  if (!quiz) {
     notFound();
   }
 
-  // Verify the attempt belongs to the current user
-  if (attempt.userId !== session.user.id) {
-    redirect(`/quiz/${quizId}`);
+  const leaderboard = await getCachedQuizLeaderboard(quizId, page);
+
+  if (!leaderboard) {
+    throw new Error("Failed to load leaderboard data");
   }
 
-  const formatTime = (ms: number) => {
-    const totalSeconds = Math.floor(ms / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-  };
-
-  const percentage = Math.round((attempt.correctCount / attempt.totalQuestions) * 100);
-
-  const getScoreMessage = (pct: number) => {
-    if (pct === 100) return "Perfect score! 🎉";
-    if (pct >= 80) return "Excellent work! 🌟";
-    if (pct >= 60) return "Good job! 👍";
-    if (pct >= 40) return "Keep practicing! 📚";
-    return "Better luck next time! 💪";
-  };
-
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
+    <div className="mx-auto max-w-5xl space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
         <Link
@@ -67,98 +68,59 @@ export default async function ResultsPage({ params, searchParams }: PageProps) {
         >
           <ArrowLeft className="h-5 w-5" />
         </Link>
-        <div>
-          <h1 className="text-2xl font-bold">Quiz Results</h1>
-          <p className="text-muted-foreground">{attempt.quiz.title}</p>
+        <div className="flex items-center gap-3">
+          <Trophy className="h-8 w-8 text-yellow-500" />
+          <div>
+            <h1 className="text-2xl font-bold">Quiz Leaderboard</h1>
+            <p className="text-muted-foreground">{quiz.title}</p>
+          </div>
         </div>
       </div>
 
-      {/* Score Card */}
+      {/* Leaderboard Card */}
       <Card>
-        <CardContent className="py-6">
-          <div className="space-y-4 text-center">
-            <div className="bg-primary/10 inline-flex h-24 w-24 items-center justify-center rounded-full">
-              <Trophy className="text-primary h-12 w-12" />
-            </div>
-            <div>
-              <p className="text-4xl font-bold">
-                {attempt.correctCount} / {attempt.totalQuestions}
+        <CardHeader>
+          <CardTitle>Rankings</CardTitle>
+          <CardDescription>
+            Ranked by correct answers, with tie-breaker by completion time
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {leaderboard.items.length === 0 ? (
+            <div className="py-12 text-center">
+              <Trophy className="text-muted-foreground mx-auto mb-4 h-12 w-12 opacity-50" />
+              <p className="text-muted-foreground">
+                No attempts yet. Be the first to take this quiz!
               </p>
-              <p className="text-muted-foreground text-lg">{percentage}% correct</p>
+              <Link
+                href={`/quiz/${quizId}/play`}
+                className="text-primary mt-4 inline-flex items-center gap-2 hover:underline"
+              >
+                Start Quiz →
+              </Link>
             </div>
-            <p className="text-xl">{getScoreMessage(percentage)}</p>
-            <div className="text-muted-foreground flex items-center justify-center gap-4 text-sm">
-              <span className="flex items-center gap-1">
-                <Clock className="h-4 w-4" />
-                {formatTime(attempt.totalTimeMs)}
-              </span>
-              {attempt.timedOut && <Badge variant="destructive">Timed out</Badge>}
-            </div>
-          </div>
+          ) : (
+            <>
+              <QuizLeaderboard entries={leaderboard.items} currentUserId={session?.user?.id} />
+              <div className="mt-4">
+                <PaginationControls
+                  currentPage={leaderboard.currentPage}
+                  totalPages={leaderboard.totalPages}
+                  baseUrl={`/quiz/${quizId}/results`}
+                />
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
 
-      <Separator />
-
-      {/* Question Review */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Question Review</h2>
-        {attempt.answers.map((attemptAnswer, index) => {
-          const question = attemptAnswer.question;
-          const userAnswer = attemptAnswer.answer;
-          const correctAnswer = question.answers.find((a) => a.isCorrect);
-
-          return (
-            <Card key={attemptAnswer.id}>
-              <CardHeader className="pb-2">
-                <div className="flex items-start justify-between gap-4">
-                  <CardTitle className="text-base font-medium">
-                    <span className="text-muted-foreground mr-2">Q{index + 1}.</span>
-                    {question.text}
-                  </CardTitle>
-                  {attemptAnswer.isCorrect ? (
-                    <CheckCircle className="h-5 w-5 shrink-0 text-green-600" />
-                  ) : (
-                    <XCircle className="h-5 w-5 shrink-0 text-red-600" />
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="space-y-1">
-                  <p className="text-muted-foreground text-sm">Your answer:</p>
-                  <p
-                    className={`text-sm ${
-                      attemptAnswer.isCorrect ? "text-green-600" : "text-red-600"
-                    }`}
-                  >
-                    {userAnswer?.text ?? "No answer (timed out)"}
-                  </p>
-                </div>
-                {!attemptAnswer.isCorrect && correctAnswer && (
-                  <div className="space-y-1">
-                    <p className="text-muted-foreground text-sm">Correct answer:</p>
-                    <p className="text-sm text-green-600">{correctAnswer.text}</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-
-      {/* Actions */}
+      {/* Back to quiz action */}
       <div className="flex gap-4">
         <Link
           href={`/quiz/${quizId}`}
-          className="bg-primary text-primary-foreground hover:bg-primary/80 inline-flex h-9 flex-1 items-center justify-center rounded-md px-2.5 text-sm font-medium"
+          className="bg-primary text-primary-foreground hover:bg-primary/80 inline-flex h-9 items-center justify-center rounded-md px-4 text-sm font-medium"
         >
           Back to Quiz
-        </Link>
-        <Link
-          href="/"
-          className="border-border bg-background hover:bg-muted hover:text-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 inline-flex h-9 flex-1 items-center justify-center rounded-md border px-2.5 text-sm font-medium shadow-xs"
-        >
-          Browse More Quizzes
         </Link>
       </div>
     </div>

@@ -1,9 +1,11 @@
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { Trophy } from "lucide-react";
+import type { Metadata } from "next";
 import { auth } from "@/lib/auth/server";
 import { canAccess } from "@/lib/rbac";
-import { getGlobalLeaderboard } from "@/lib/db/queries/quiz";
+import { getCachedGlobalLeaderboard } from "@/lib/db/queries/quiz";
+import { siteConfig } from "@/lib/config";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { GlobalLeaderboard } from "@/components/quiz/global-leaderboard";
 import { PaginationControls } from "@/components/layout/pagination-controls";
@@ -11,6 +13,11 @@ import { PaginationControls } from "@/components/layout/pagination-controls";
 interface PageProps {
   searchParams: Promise<{ page?: string }>;
 }
+
+export const metadata: Metadata = {
+  title: `Global Leaderboard | ${siteConfig.name}`,
+  description: "View the top players across all quizzes",
+};
 
 export default async function LeaderboardPage({ searchParams }: PageProps) {
   const params = await searchParams;
@@ -25,7 +32,11 @@ export default async function LeaderboardPage({ searchParams }: PageProps) {
     redirect("/sign-in");
   }
 
-  const leaderboard = await getGlobalLeaderboard(page);
+  const leaderboard = await getCachedGlobalLeaderboard(page);
+
+  if (!leaderboard) {
+    throw new Error("Failed to load leaderboard data");
+  }
 
   return (
     <div className="mx-auto w-full max-w-5xl space-y-6">
