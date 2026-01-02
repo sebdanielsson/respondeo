@@ -2,5 +2,5 @@
 export { default, alt, size, contentType } from "./opengraph-image";
 
 // Revalidation must be defined directly (can't be re-exported)
-// This should match ogImageRevalidateSeconds in lib/config.ts
+// Cache for 15 minutes (see docs/development/og-images.md)
 export const revalidate = 900;

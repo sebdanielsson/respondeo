@@ -9,7 +9,7 @@ export const size = {
 };
 export const contentType = "image/png";
 
-// Revalidation - should match ogImageRevalidateSeconds in lib/config.ts
+// Cache for 15 minutes (see docs/development/og-images.md)
 export const revalidate = 900;
 
 // Generate alt text dynamically
