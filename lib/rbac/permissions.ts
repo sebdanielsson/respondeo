@@ -116,19 +116,9 @@ export function canAccess(
   user: RbacUser | null | undefined,
   resource: "browseQuizzes" | "viewQuiz" | "playQuiz" | "leaderboard",
 ): boolean {
-  // If public access is enabled, allow
+  // If public access is enabled for this resource, allow everyone
   if (isPublicAccessEnabled(resource)) {
-    // Still need to check if user has the corresponding permission
-    // (public access only bypasses authentication, not authorization)
-    const permissionMap: Record<string, Permission> = {
-      browseQuizzes: PERMISSIONS.QUIZ_BROWSE,
-      viewQuiz: PERMISSIONS.QUIZ_VIEW,
-      playQuiz: PERMISSIONS.QUIZ_PLAY,
-      leaderboard: PERMISSIONS.LEADERBOARD_VIEW,
-    };
-    const permission = permissionMap[resource];
-    // Guest role should have these permissions if public access is enabled
-    return hasPermission(user, permission);
+    return true;
   }
 
   // If not public, must be authenticated
@@ -136,7 +126,7 @@ export function canAccess(
     return false;
   }
 
-  // Check permission
+  // Check permission for authenticated users
   const permissionMap: Record<string, Permission> = {
     browseQuizzes: PERMISSIONS.QUIZ_BROWSE,
     viewQuiz: PERMISSIONS.QUIZ_VIEW,

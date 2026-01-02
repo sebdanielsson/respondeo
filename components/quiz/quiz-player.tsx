@@ -37,6 +37,7 @@ interface QuizPlayerProps {
     totalTimeMs: number;
     timedOut: boolean;
   }) => Promise<{ attemptId?: string; error?: string }>;
+  isGuest?: boolean;
 }
 
 export function QuizPlayer({
@@ -45,6 +46,7 @@ export function QuizPlayer({
   questions,
   timeLimitSeconds,
   onSubmit,
+  isGuest = false,
 }: QuizPlayerProps) {
   const router = useRouter();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -57,6 +59,7 @@ export function QuizPlayer({
   const [elapsedMs, setElapsedMs] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [guestResult, setGuestResult] = useState<{ score: number; total: number } | null>(null);
 
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
@@ -78,6 +81,18 @@ export function QuizPlayer({
         displayOrder: q.displayOrder,
       }));
 
+      // For guests, calculate score client-side and show results without saving
+      if (isGuest) {
+        const score = questions.reduce((acc, q) => {
+          const selectedAnswerId = selectedAnswers[q.id]?.answerId;
+          const correctAnswer = q.answers.find((a) => a.isCorrect);
+          return acc + (selectedAnswerId === correctAnswer?.id ? 1 : 0);
+        }, 0);
+        setGuestResult({ score, total: questions.length });
+        setIsSubmitting(false);
+        return;
+      }
+
       try {
         const result = await onSubmit({
           quizId,
@@ -98,7 +113,7 @@ export function QuizPlayer({
         setIsSubmitting(false);
       }
     },
-    [questions, selectedAnswers, onSubmit, quizId, elapsedMs, router],
+    [questions, selectedAnswers, onSubmit, quizId, elapsedMs, router, isGuest],
   );
 
   // Timer effect - pauses when showing feedback (between confirming answer and clicking next)
@@ -158,6 +173,35 @@ export function QuizPlayer({
   };
 
   const correctAnswer = currentQuestion.answers.find((a) => a.isCorrect);
+
+  // Show guest result screen
+  if (guestResult) {
+    const percentage = Math.round((guestResult.score / guestResult.total) * 100);
+    return (
+      <div className="mx-auto max-w-2xl space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-center text-2xl">Quiz Complete!</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="text-center">
+              <p className="text-6xl font-bold">{percentage}%</p>
+              <p className="text-muted-foreground mt-2">
+                You got {guestResult.score} out of {guestResult.total} questions correct
+              </p>
+              <p className="text-muted-foreground mt-1">Time: {formatTime(elapsedMs)}</p>
+            </div>
+            <div className="flex justify-center gap-4">
+              <Button variant="outline" onClick={() => router.push(`/quiz/${quizId}`)}>
+                Back to Quiz
+              </Button>
+              <Button onClick={() => router.push("/sign-in")}>Sign in to save results</Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">

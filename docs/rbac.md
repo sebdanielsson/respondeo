@@ -66,6 +66,35 @@ RBAC_ROLE_ADMIN_GROUPS=staff
 | `RBAC_PUBLIC_PLAY_QUIZ`      | boolean | `false` | Allow unauthenticated users to play quizzes (not recorded) |
 | `RBAC_PUBLIC_LEADERBOARD`    | boolean | `false` | Allow unauthenticated users to view the global leaderboard |
 
+### Rate Limiting (Guest Plays)
+
+When `RBAC_PUBLIC_PLAY_QUIZ=true`, guests can play quizzes without signing in. To prevent abuse, rate limiting is applied per IP address:
+
+| Variable                 | Type   | Default | Description                             |
+| ------------------------ | ------ | ------- | --------------------------------------- |
+| `RATE_LIMIT_GUEST_PLAYS` | number | `5`     | Maximum quiz plays per IP in the window |
+| `RATE_LIMIT_WINDOW_MS`   | number | `60000` | Rate limit window in milliseconds (1m)  |
+
+Example configurations:
+
+```env
+# Strict: 3 plays per minute
+RATE_LIMIT_GUEST_PLAYS=3
+RATE_LIMIT_WINDOW_MS=60000
+
+# Relaxed: 10 plays per 5 minutes
+RATE_LIMIT_GUEST_PLAYS=10
+RATE_LIMIT_WINDOW_MS=300000
+```
+
+> **Note**: Rate limiting uses in-memory storage, which means:
+>
+> - Limits reset when the server restarts
+> - In multi-instance deployments, each instance tracks limits independently
+> - For production scaling, consider implementing Redis-based rate limiting (e.g., `@upstash/ratelimit`)
+
+When a guest exceeds the rate limit, they are redirected to the quiz page with an error message indicating when they can try again.
+
 ### Role Assignment
 
 | Variable                     | Type   | Default   | Description                                                |
