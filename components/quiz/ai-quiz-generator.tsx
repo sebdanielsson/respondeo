@@ -74,7 +74,7 @@ export function AIQuizGenerator({ onGenerated }: AIQuizGeneratorProps) {
       });
 
       if (!result.success) {
-        toast.error(result.error ?? "Failed to generate quiz");
+        toast.error(result.error);
         return;
       }
 
