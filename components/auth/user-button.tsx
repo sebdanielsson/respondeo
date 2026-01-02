@@ -34,7 +34,7 @@ export function UserButton({ isAdmin = false, isLoggedIn = false }: UserButtonPr
     return (
       <Link href="/sign-in">
         <Button variant="outline" size="sm">
-          <LogIn className="mr-2 h-4 w-4" />
+          <LogIn className="h-4 w-4" />
           Sign in
         </Button>
       </Link>
@@ -78,13 +78,13 @@ export function UserButton({ isAdmin = false, isLoggedIn = false }: UserButtonPr
           <DropdownMenuGroup>
             <a href="/docs" target="_blank" rel="noopener noreferrer">
               <DropdownMenuItem className="cursor-pointer">
-                <Book className="mr-2 h-4 w-4" />
+                <Book className="h-4 w-4" />
                 API Docs
               </DropdownMenuItem>
             </a>
             <Link href="/settings">
               <DropdownMenuItem className="cursor-pointer">
-                <Settings className="mr-2 h-4 w-4" />
+                <Settings className="h-4 w-4" />
                 Settings
               </DropdownMenuItem>
             </Link>
@@ -102,7 +102,7 @@ export function UserButton({ isAdmin = false, isLoggedIn = false }: UserButtonPr
           }
           className="cursor-pointer"
         >
-          <LogOut className="mr-2 h-4 w-4" />
+          <LogOut className="h-4 w-4" />
           Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>

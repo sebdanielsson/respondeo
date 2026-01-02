@@ -38,12 +38,12 @@ export function ShareResultButton() {
     <Button variant="outline" size="sm" onClick={handleShare}>
       {copied ? (
         <>
-          <Check className="mr-2 h-4 w-4 text-green-600" />
+          <Check className="h-4 w-4 text-green-600" />
           Copied!
         </>
       ) : (
         <>
-          <Share2 className="mr-2 h-4 w-4" />
+          <Share2 className="h-4 w-4" />
           Share
         </>
       )}
