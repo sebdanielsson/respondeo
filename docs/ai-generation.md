@@ -45,7 +45,7 @@ By default, `admin`, `moderator`, and `creator` roles have the `ai:quiz-generate
 | Variable                       | Type   | Default           | Description                                                |
 | ------------------------------ | ------ | ----------------- | ---------------------------------------------------------- |
 | `AI_PROVIDER`                  | string | `openai`          | AI provider: `openai`, `openrouter`, `anthropic`, `google` |
-| `AI_MODEL`                     | string | Provider-specific | Model to use (e.g., `gpt-5-mini`, `openai/gpt-5-mini`)    |
+| `AI_MODEL`                     | string | Provider-specific | Model to use (e.g., `gpt-5-mini`, `openai/gpt-5-mini`)     |
 | `OPENAI_API_KEY`               | string | -                 | OpenAI API key (required for OpenAI)                       |
 | `OPENROUTER_API_KEY`           | string | -                 | OpenRouter API key (required for OpenRouter)               |
 | `ANTHROPIC_API_KEY`            | string | -                 | Anthropic API key (for Anthropic)                          |
