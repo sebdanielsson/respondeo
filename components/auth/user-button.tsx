@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Book, LogIn, LogOut, Settings } from "lucide-react";
+import { GitHub } from "@/components/icons";
 import { useSession, signOut } from "@/lib/auth/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -79,7 +80,17 @@ export function UserButton({ isAdmin = false, isLoggedIn = false }: UserButtonPr
             <a href="/docs" target="_blank" rel="noopener noreferrer">
               <DropdownMenuItem className="cursor-pointer">
                 <Book className="h-4 w-4" />
-                API Docs
+                Docs
+              </DropdownMenuItem>
+            </a>
+            <a
+              href="https://github.com/sebdanielsson/quiz-app"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <DropdownMenuItem className="cursor-pointer">
+                <GitHub className="h-4 w-4" />
+                View source
               </DropdownMenuItem>
             </a>
             <Link href="/settings">
