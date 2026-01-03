@@ -34,6 +34,8 @@ interface ImageUrlInputProps {
   placeholder?: string;
   /** Whether the input is disabled */
   disabled?: boolean;
+  /** Whether the input is required */
+  required?: boolean;
   /** Whether to show the image preview */
   showPreview?: boolean;
 }
@@ -90,6 +92,7 @@ export function ImageUrlInput({
   onChange,
   placeholder = "https://example.com/image.jpg",
   disabled = false,
+  required = false,
   showPreview = true,
 }: ImageUrlInputProps) {
   const [isPickerOpen, setIsPickerOpen] = useState(false);
@@ -147,6 +150,7 @@ export function ImageUrlInput({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           disabled={disabled}
+          required={required}
           className="flex-1"
         />
 

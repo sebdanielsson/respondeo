@@ -166,23 +166,25 @@ export function QuizForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">Description *</Label>
             <Textarea
               id="description"
               value={formData.description}
               onChange={(e) => updateField("description", e.target.value)}
               placeholder="Describe what this quiz is about"
               rows={3}
+              required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="heroImageUrl">Hero Image URL</Label>
+            <Label htmlFor="heroImageUrl">Hero Image URL *</Label>
             <ImageUrlInput
               id="heroImageUrl"
               value={formData.heroImageUrl ?? ""}
               onChange={(value) => updateField("heroImageUrl", value)}
               placeholder="https://example.com/image.jpg"
+              required
             />
           </div>
 
