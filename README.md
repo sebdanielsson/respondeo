@@ -5,6 +5,8 @@ A modern, full-stack quiz application built with Next.js 16, featuring OIDC auth
 ## Features
 
 - 🎯 **Quiz Management** — Create, edit, and delete quizzes with multiple-choice questions
+- ✨ **AI Generated Content** — Use AI to help generate questions and answers
+- 🔎 **Image Browser** — Browse and select images via Unsplash API integration
 - 🔐 **OIDC Authentication** — Secure sign-in via OpenID Connect (configurable provider)
 - 👑 **Role-Based Access** — Admin permissions based on OIDC groups claim
 - 🏆 **Leaderboards** — Per-quiz and global leaderboards with rankings
@@ -20,8 +22,10 @@ A modern, full-stack quiz application built with Next.js 16, featuring OIDC auth
 - **Runtime**: Bun
 - **Database**: PostgreSQL with Drizzle ORM (via bun:sql)
 - **Auth**: BetterAuth with OIDC + API Key plugins
-- **UI**: shadcn/ui (Base UI - Vega), Lucide Icons
+- **UI**: shadcn/ui (Base UI - Nova), Lucide Icons
 - **Validation**: Zod
+- **AI**: AI SDK
+- **Image browser**: Unsplash API integration
 
 ## Getting Started
 
