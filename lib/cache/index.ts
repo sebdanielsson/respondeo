@@ -1,6 +1,6 @@
 /**
  * Cache module exports.
- * @see /docs/caching.md for full documentation
+ * @see docs/caching.md for full documentation
  */
 
 export { cachedFetch, invalidateCache, deleteCache, getRedis, closeRedis } from "./client";
