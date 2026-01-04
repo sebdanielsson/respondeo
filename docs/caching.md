@@ -57,8 +57,8 @@ Cache TTL values are configured in [lib/cache/config.ts](../lib/cache/config.ts)
 | ------------------ | ---------- | --------------------------------------------- |
 | Quiz list          | 5 minutes  | New quizzes may be created frequently         |
 | Quiz details       | 10 minutes | Quiz content rarely changes after creation    |
-| Quiz leaderboard   | 1 minute   | Keep rankings relatively fresh                |
-| Global leaderboard | 2 minutes  | Most expensive query, aggregates all attempts |
+| Quiz leaderboard   | 5 minutes  | Keep rankings relatively fresh                |
+| Global leaderboard | 5 minutes  | Most expensive query, aggregates all attempts |
 
 Adjust these values based on your freshness requirements vs. performance needs.
 
