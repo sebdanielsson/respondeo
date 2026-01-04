@@ -40,7 +40,7 @@ export async function getRedis(): Promise<RedisClient | null> {
     // Test connection with a ping
     await redisClient.send("PING", []);
 
-    console.log("[cache] Connected to Redis/Valkey");
+    // Only log once on first connection
     return redisClient;
   } catch (error) {
     if (!connectionWarningLogged) {
@@ -78,23 +78,22 @@ export async function cachedFetch<T>(
     if (cached) {
       return JSON.parse(cached) as T;
     }
-  } catch (error) {
-    // Log but continue to fetcher on cache read error
-    console.warn("[cache] Read error for key", key, error);
+  } catch {
+    // Silently continue to fetcher on cache read error
   }
 
   // Cache miss: fetch fresh data
   const data = await fetcher();
 
-  // Store in cache (don't await, fire-and-forget)
+  // Store in cache (fire-and-forget)
   try {
     const redis = await getRedis();
     if (redis) {
       await redis.set(key, JSON.stringify(data));
       await redis.expire(key, ttlSeconds);
     }
-  } catch (error) {
-    console.warn("[cache] Write error for key", key, error);
+  } catch {
+    // Silently fail - caching is best-effort
   }
 
   return data;
@@ -115,10 +114,9 @@ export async function invalidateCache(pattern: string): Promise<void> {
     const keys = (await redis.send("KEYS", [pattern])) as string[];
     if (keys && keys.length > 0) {
       await redis.send("DEL", keys);
-      console.log(`[cache] Invalidated ${keys.length} keys matching "${pattern}"`);
     }
-  } catch (error) {
-    console.warn("[cache] Invalidation error for pattern", pattern, error);
+  } catch {
+    // Silently fail - cache invalidation is best-effort
   }
 }
 

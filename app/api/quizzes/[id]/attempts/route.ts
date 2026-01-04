@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { quiz, quizAttempt, attemptAnswer, question, answer } from "@/lib/db/schema";
+import { quizAttempt, attemptAnswer } from "@/lib/db/schema";
 import type { Question, Answer } from "@/lib/db/schema";
 import { getApiContext, requirePermission, errorResponse, API_SCOPES } from "@/lib/auth/api";
-import { eq, and, count, desc, sql, asc } from "drizzle-orm";
+import { eq, and, count, desc } from "drizzle-orm";
 import { z } from "zod";
-import { invalidateCache, CACHE_KEYS } from "@/lib/cache";
+import { getQuizById } from "@/lib/db/queries/quiz";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -102,56 +102,13 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
   const data = parsed.data;
 
-  // Get quiz to check max attempts
-  // Note: Uses multiple queries to work around drizzle-orm PostgreSQL syntax bug
-  const quizData = await db.query.quiz.findFirst({
-    where: eq(quiz.id, quizId),
-  });
+  // Get quiz with questions and answers from cache
+  // This avoids 3 separate DB queries on every attempt submission
+  const quizWithQuestions = await getQuizById(quizId);
 
-  if (!quizData) {
+  if (!quizWithQuestions) {
     return errorResponse("Quiz not found", 404);
   }
-
-  // Fetch questions separately
-  const questions = await db
-    .select()
-    .from(question)
-    .where(eq(question.quizId, quizId))
-    .orderBy(asc(question.order));
-
-  // Fetch all answers for these questions in one query
-  const questionIds = questions.map((q: Question) => q.id);
-  const allAnswers =
-    questionIds.length > 0
-      ? await db
-          .select()
-          .from(answer)
-          .where(sql`${answer.questionId} IN ${questionIds}`)
-      : [];
-
-  // Group answers by question ID
-  const answersByQuestionId = allAnswers.reduce(
-    (acc: Record<string, Answer[]>, a: Answer) => {
-      if (!acc[a.questionId]) {
-        acc[a.questionId] = [];
-      }
-      acc[a.questionId].push(a);
-      return acc;
-    },
-    {} as Record<string, Answer[]>,
-  );
-
-  // Build questions with answers
-  const questionsWithAnswers = questions.map((q: Question) => ({
-    ...q,
-    answers: answersByQuestionId[q.id] || [],
-  }));
-
-  // Create a quiz-like object with questions
-  const quizWithQuestions = {
-    ...quizData,
-    questions: questionsWithAnswers,
-  };
 
   // Check attempt count
   const [{ attemptCount }] = await db
@@ -221,13 +178,8 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    // Invalidate leaderboard caches (fire-and-forget, don't block response)
-    Promise.all([
-      invalidateCache(`${CACHE_KEYS.LEADERBOARD}:${quizId}:*`),
-      invalidateCache(`${CACHE_KEYS.GLOBAL_LEADERBOARD}:*`),
-    ]).catch((error) => {
-      console.warn("[cache] Failed to invalidate leaderboard caches:", error);
-    });
+    // Note: Leaderboard caches use TTL-based expiry (5 min) rather than eager
+    // invalidation. Under high load, eager invalidation defeats caching purpose.
 
     return NextResponse.json(newAttempt, { status: 201 });
   } catch (error) {

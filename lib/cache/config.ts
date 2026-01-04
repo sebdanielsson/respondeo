@@ -10,6 +10,9 @@
 /**
  * Cache TTL values in seconds.
  * Adjust these based on your data freshness requirements vs performance needs.
+ *
+ * Note: Leaderboards use TTL-based expiry rather than eager invalidation
+ * because high-frequency writes would defeat the caching purpose.
  */
 export const CACHE_TTL = {
   /**
@@ -25,16 +28,17 @@ export const CACHE_TTL = {
   QUIZ_DETAIL: 10 * 60,
 
   /**
-   * Leaderboard cache TTL (1 minute).
-   * Lower value to keep leaderboards relatively fresh after attempts.
+   * Leaderboard cache TTL (5 minutes).
+   * Higher value since we rely on TTL expiry, not eager invalidation.
+   * Real-time leaderboards aren't critical - eventual consistency is fine.
    */
-  LEADERBOARD: 1 * 60,
+  LEADERBOARD: 5 * 60,
 
   /**
-   * Global leaderboard cache TTL (2 minutes).
-   * Aggregated across all quizzes, more expensive to compute.
+   * Global leaderboard cache TTL (5 minutes).
+   * Most expensive query - aggregates all attempts. Same TTL as quiz leaderboard.
    */
-  GLOBAL_LEADERBOARD: 2 * 60,
+  GLOBAL_LEADERBOARD: 5 * 60,
 } as const;
 
 /**

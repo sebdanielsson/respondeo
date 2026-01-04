@@ -2,7 +2,20 @@
 services:
   db:
     image: postgres:18-alpine
-    command: -c 'max_connections=500'
+    command: >
+      -c max_connections=200
+      -c shared_buffers=256MB
+      -c effective_cache_size=768MB
+      -c maintenance_work_mem=64MB
+      -c checkpoint_completion_target=0.9
+      -c wal_buffers=7864kB
+      -c default_statistics_target=100
+      -c random_page_cost=1.1
+      -c effective_io_concurrency=200
+      -c work_mem=1260kB
+      -c huge_pages=off
+      -c min_wal_size=1GB
+      -c max_wal_size=4GB
     volumes:
       - db:/var/lib/postgresql/data
     env_file:
@@ -13,6 +26,11 @@ services:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       start_period: 1m
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: 1
 
   cache:
     image: valkey/valkey:9.0-trixie

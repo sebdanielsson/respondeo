@@ -45,9 +45,9 @@ export const options = {
       executor: "ramping-vus",
       startVUs: 0,
       stages: [
-        { duration: "30s", target: 400 }, // Warm-up
-        { duration: "1m", target: 800 }, // Ramp to normal load
-        { duration: "4m", target: 1200 }, // Sustained peak (13x original)
+        { duration: "30s", target: 1000 }, // Warm-up
+        { duration: "1m", target: 2000 }, // Ramp to normal load
+        { duration: "4m", target: 3000 }, // Sustained peak
         { duration: "30s", target: 0 }, // Cool down
       ],
       exec: "browserScenario",
@@ -58,9 +58,9 @@ export const options = {
       executor: "ramping-vus",
       startVUs: 0,
       stages: [
-        { duration: "30s", target: 200 }, // Warm-up
-        { duration: "1m", target: 400 }, // Ramp to normal load
-        { duration: "4m", target: 600 }, // Sustained peak (13x original)
+        { duration: "30s", target: 500 }, // Warm-up
+        { duration: "1m", target: 1000 }, // Ramp to normal load
+        { duration: "4m", target: 1500 }, // Sustained peak
         { duration: "30s", target: 0 }, // Cool down
       ],
       exec: "playerScenario",
@@ -71,9 +71,9 @@ export const options = {
       executor: "ramping-vus",
       startVUs: 0,
       stages: [
-        { duration: "30s", target: 67 }, // Warm-up
-        { duration: "1m", target: 133 }, // Ramp to normal load
-        { duration: "4m", target: 200 }, // Sustained peak (13x original)
+        { duration: "30s", target: 167 }, // Warm-up
+        { duration: "1m", target: 333 }, // Ramp to normal load
+        { duration: "4m", target: 500 }, // Sustained peak
         { duration: "30s", target: 0 }, // Cool down
       ],
       exec: "spectatorScenario",
