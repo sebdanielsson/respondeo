@@ -184,4 +184,6 @@ export function closeRedis(): void {
     redisClient.close();
     redisClient = null;
   }
+  // Reset warning flag so future connection failures are logged
+  connectionWarningLogged = false;
 }
