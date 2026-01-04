@@ -86,13 +86,11 @@ Adjust these values based on your freshness requirements vs. performance needs.
 
 ### Cache Invalidation
 
-When a quiz attempt is submitted:
+Leaderboards use short TTL-based expiry rather than explicit invalidation. When a quiz attempt is submitted, the
+updated scores will be reflected once the relevant leaderboard cache entries expire and are recomputed on the next
+request.
 
-- Quiz-specific leaderboard cache is invalidated
-- Global leaderboard cache is invalidated
-
-This is done asynchronously (fire-and-forget) to avoid blocking the response.
-
+Other cached data follows the standard cache-aside pattern and is refreshed on cache miss when the TTL has expired.
 ### Two-Layer Caching
 
 The app uses two caching layers:
