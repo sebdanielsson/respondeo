@@ -49,6 +49,13 @@ export const CACHE_TTL = {
 } as const;
 
 /**
+ * Number of keys to scan per iteration during cache invalidation.
+ * Higher values reduce round trips but may increase latency per call.
+ * Default of 1000 balances efficiency with responsiveness.
+ */
+export const SCAN_COUNT = 1000;
+
+/**
  * Cache key prefixes for different data types.
  * Using prefixes allows selective invalidation.
  */

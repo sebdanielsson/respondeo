@@ -10,7 +10,7 @@
  */
 
 import { RedisClient } from "bun";
-import { isCachingEnabled, getRedisUrl, CACHE_TTL } from "./config";
+import { isCachingEnabled, getRedisUrl, CACHE_TTL, SCAN_COUNT } from "./config";
 
 /** ISO 8601 date string pattern for JSON reviver */
 const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$/;
@@ -107,8 +107,11 @@ export async function cachedFetch<T>(
     if (cached) {
       return JSON.parse(cached, dateReviver) as T;
     }
-  } catch {
-    // Silently continue to fetcher on cache read error
+  } catch (error) {
+    // Log at debug level for troubleshooting, continue to fetcher
+    if (process.env.NODE_ENV === "development") {
+      console.debug("[cache] Read error for key", key, error);
+    }
   }
 
   // Cache miss: fetch fresh data
@@ -122,8 +125,11 @@ export async function cachedFetch<T>(
     } else {
       await redis.send("SETEX", [key, ttlSeconds.toString(), JSON.stringify(data)]);
     }
-  } catch {
-    // Silently fail - caching is best-effort
+  } catch (error) {
+    // Log at debug level for troubleshooting
+    if (process.env.NODE_ENV === "development") {
+      console.debug("[cache] Write error for key", key, error);
+    }
   }
 
   return data;
@@ -143,10 +149,13 @@ export async function invalidateCache(pattern: string): Promise<void> {
     let cursor = "0";
     do {
       // SCAN returns [cursor, keys[]]
-      const result = (await redis.send("SCAN", [cursor, "MATCH", pattern, "COUNT", "100"])) as [
-        string,
-        string[],
-      ];
+      const result = (await redis.send("SCAN", [
+        cursor,
+        "MATCH",
+        pattern,
+        "COUNT",
+        SCAN_COUNT.toString(),
+      ])) as [string, string[]];
       cursor = result[0];
       const keys = result[1];
 
