@@ -42,8 +42,8 @@ export const DIFFICULTY_LEVELS = ["easy", "medium", "hard"] as const;
 export type DifficultyLevel = (typeof DIFFICULTY_LEVELS)[number];
 
 export const quizSchema = z.object({
-  title: z.string().min(1, "Title is required").max(200, "Title is too long"),
-  description: z.string().min(1, "Description is required").max(1000, "Description is too long"),
+  title: z.string().min(1, "Title is required").max(70, "Title is too long"),
+  description: z.string().min(1, "Description is required").max(160, "Description is too long"),
   heroImageUrl: z.url("Hero image URL is required"),
   language: z.string().min(2).max(10).default("en"),
   difficulty: z.enum(DIFFICULTY_LEVELS).default("medium"),

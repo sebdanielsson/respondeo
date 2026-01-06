@@ -54,11 +54,11 @@ export const aiQuestionSchema = z.object({
  * This is what the AI returns via generateObject.
  */
 export const aiQuizOutputSchema = z.object({
-  title: z.string().max(200).describe("A catchy, descriptive title for the quiz (max 200 chars)"),
+  title: z.string().max(70).describe("A catchy, descriptive title for the quiz (max 70 chars)"),
   description: z
     .string()
-    .max(1000)
-    .describe("A brief description of what the quiz covers (max 1000 chars)"),
+    .max(160)
+    .describe("A brief description of what the quiz covers (max 160 chars)"),
   questions: z.array(aiQuestionSchema).describe("The quiz questions"),
 });
 
@@ -130,8 +130,9 @@ Requirements:
 - Exactly ONE answer per question must be marked as correct (isCorrect: true)
 - All content must be in ${languageName}
 - You may use any characters required for ${languageName}, but avoid emojis, EM dashes, novelty symbols, and smart quotes; use plain text punctuation
-- Title should be catchy and descriptive (max 200 characters)
-- Description should summarize what the quiz covers (max 1000 characters)
+- Title should be catchy and descriptive (max 70 characters)
+- Description should summarize what the quiz covers (max 160 characters)
+- Do not include properties like "language" or "difficulty" in title or description
 
 Difficulty Guidelines (${input.difficulty}):${difficultyGuidance}
 
