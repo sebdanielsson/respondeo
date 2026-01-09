@@ -39,7 +39,9 @@ export function QuizCard({ quiz }: QuizCardProps) {
         />
       )}
       <CardHeader className="flex-1">
-        <CardTitle className="line-clamp-2">{quiz.title}</CardTitle>
+        <Link href={`/quiz/${quiz.id}`} className="no-underline hover:underline">
+          <CardTitle className="line-clamp-2">{quiz.title}</CardTitle>
+        </Link>
         {quiz.description && <CardDescription>{quiz.description}</CardDescription>}
       </CardHeader>
       <CardContent className="space-y-2">
