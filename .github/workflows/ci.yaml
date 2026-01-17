@@ -18,27 +18,26 @@ jobs:
     runs-on: ubuntu-24.04-arm
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v6
 
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version-file: ".bun-version"
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
         run: bun install
 
-      - name: Code formatting check
+      - name: Run format check
         run: bun --bun run format:check
 
-      - name: TypeScript type check
+      - name: Run type check
         run: bun --bun run tsc
 
-      - name: Linting check
+      - name: Run lint
         run: bun --bun run lint
 
-      # - name: stylelint check
+      # - name: Run stylelint check
       #   run: bun --bun run stylelint
 
-      - name: Build
+      - name: Build project
         run: bun --bun run build:only

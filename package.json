@@ -68,5 +68,8 @@
   "trustedDependencies": [
     "sharp",
     "unrs-resolver"
-  ]
+  ],
+  "engines": {
+    "bun": ">=1.3.6"
+  }
 }
