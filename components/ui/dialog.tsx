@@ -136,3 +136,21 @@ export {
   DialogTitle,
   DialogTrigger,
 };
+
+// ErrorDialog component for displaying fetch/network errors
+export function ErrorDialog({ error, onClose }: { error: string; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div className="w-full max-w-sm rounded-lg bg-white p-6 shadow-lg dark:bg-zinc-900">
+        <h2 className="mb-2 text-lg font-semibold">Something went wrong</h2>
+        <p className="mb-4 text-sm text-zinc-700 dark:text-zinc-200">{error}</p>
+        <button
+          className="rounded bg-zinc-900 px-4 py-2 text-white hover:bg-zinc-800"
+          onClick={onClose}
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  );
+}

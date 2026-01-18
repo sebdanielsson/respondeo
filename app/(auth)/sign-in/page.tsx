@@ -1,21 +1,35 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { authClient } from "@/lib/auth/client";
+import { ErrorDialog } from "@/components/ui/dialog";
 
 function SignInContent() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
+  const [error, setError] = useState<string | null>(null);
 
   const handleSignIn = async () => {
-    await authClient.signIn.oauth2({
-      providerId: "hogwarts",
-      callbackURL: callbackUrl,
-    });
+    try {
+      await authClient.signIn.oauth2({
+        providerId: "hogwarts",
+        callbackURL: callbackUrl,
+      });
+    } catch (e: unknown) {
+      if (
+        e instanceof TypeError &&
+        typeof e.message === "string" &&
+        e.message.includes("Failed to fetch")
+      ) {
+        setError("Network error or CORS issue. Please try again later.");
+      } else {
+        setError("An unexpected error occurred.");
+      }
+    }
   };
 
   return (
@@ -36,6 +50,7 @@ function SignInContent() {
           </Button>
         </CardContent>
       </Card>
+      {error && <ErrorDialog error={error} onClose={() => setError(null)} />}
     </div>
   );
 }
