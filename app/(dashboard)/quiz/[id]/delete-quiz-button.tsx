@@ -56,6 +56,10 @@ export function QuizActionsMenu({ quizId, canEdit, canDelete }: QuizActionsMenuP
           type="button"
           className={cn(buttonVariants({ variant: "outline", size: "icon-lg" }), "outline-none")}
           aria-label="More Options"
+          onMouseDown={(e) => {
+            // Prevent focus-induced scroll
+            e.preventDefault();
+          }}
         >
           <SettingsIcon />
         </DropdownMenuTrigger>
