@@ -42,7 +42,7 @@ export default async function HomePage({ searchParams }: PageProps) {
     <div className="mx-auto max-w-5xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Quizzes</h1>
+          <h1 className="text-2xl font-bold sm:text-3xl">Quizzes</h1>
           <p className="text-muted-foreground">
             Test your knowledge with our collection of quizzes
           </p>

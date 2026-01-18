@@ -66,7 +66,7 @@ export default async function EditQuizPage({ params }: PageProps) {
   return (
     <div className="mx-auto max-w-3xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Edit Quiz</h1>
+        <h1 className="text-2xl font-bold sm:text-3xl">Edit Quiz</h1>
         <p className="text-muted-foreground">Update your quiz details and questions</p>
       </div>
 

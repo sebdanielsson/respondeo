@@ -71,7 +71,7 @@ export default async function QuizResultsPage({ params, searchParams }: PageProp
         <div className="flex items-center gap-3">
           <Trophy className="h-8 w-8 text-yellow-500" />
           <div>
-            <h1 className="text-2xl font-bold">Quiz Leaderboard</h1>
+            <h1 className="text-2xl font-bold sm:text-3xl">Quiz Leaderboard</h1>
             <p className="text-muted-foreground">{quiz.title}</p>
           </div>
         </div>

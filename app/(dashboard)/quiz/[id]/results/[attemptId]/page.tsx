@@ -84,7 +84,7 @@ export default async function AttemptResultPage({ params }: PageProps) {
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold">
+          <h1 className="text-2xl font-bold sm:text-3xl">
             {isOwnAttempt ? "Your Result" : `${userName}'s Result`}
           </h1>
           <p className="text-muted-foreground">{attempt.quiz.title}</p>

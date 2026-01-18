@@ -43,7 +43,7 @@ export default async function LeaderboardPage({ searchParams }: PageProps) {
       <div className="flex items-center gap-3">
         <Trophy className="h-8 w-8 text-yellow-500" />
         <div>
-          <h1 className="text-3xl font-bold">Global Leaderboard</h1>
+          <h1 className="text-2xl font-bold sm:text-3xl">Global Leaderboard</h1>
           <p className="text-muted-foreground">Top players across all quizzes</p>
         </div>
       </div>

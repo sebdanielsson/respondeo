@@ -127,7 +127,7 @@ export default async function QuizDetailPage({ params, searchParams }: PageProps
 
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div className="space-y-4">
-            <h1 className="text-3xl font-bold">{quiz.title}</h1>
+            <h1 className="text-2xl font-bold sm:text-3xl">{quiz.title}</h1>
             {quiz.description && (
               <p className="text-muted-foreground max-w-2xl">{quiz.description}</p>
             )}

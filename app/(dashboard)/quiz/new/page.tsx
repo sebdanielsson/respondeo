@@ -24,7 +24,7 @@ export default async function NewQuizPage() {
   return (
     <div className="mx-auto max-w-3xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Create New Quiz</h1>
+        <h1 className="text-2xl font-bold sm:text-3xl">Create New Quiz</h1>
         <p className="text-muted-foreground">Create a new quiz with questions and answers</p>
       </div>
 

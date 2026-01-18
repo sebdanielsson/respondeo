@@ -26,7 +26,7 @@ export default async function SettingsPage() {
   return (
     <div className="mx-auto w-full max-w-5xl space-y-6">
       <div className="mb-8">
-        <h1 className="flex items-center gap-2 text-3xl font-bold">
+        <h1 className="flex items-center gap-2 text-2xl font-bold sm:text-3xl">
           <Settings className="h-8 w-8" />
           Settings
         </h1>
