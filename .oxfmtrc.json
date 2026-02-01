@@ -8,5 +8,5 @@
   "trailingComma": "all",
   "semi": true,
   "printWidth": 100,
-  "ignorePatterns": [".agents/**", ".claude/**", ".github/skills/**"]
+  "ignorePatterns": [".agents/**", ".claude/**"]
 }
