@@ -2,6 +2,15 @@
 
 A modern, full-stack quiz application built with Next.js 16, featuring OIDC authentication, real-time leaderboards, and a comprehensive REST API with API key authentication.
 
+## Monorepo Structure
+
+This is a **Bun workspaces + Turborepo monorepo** with:
+
+- **apps/web** — Main Next.js quiz application
+- **apps/docs** — Documentation app (to be created)
+
+All commands should be run from the repository root using Turborepo.
+
 ## Features
 
 - 🎯 **Quiz Management** — Create, edit, and delete quizzes with multiple-choice questions
@@ -18,6 +27,7 @@ A modern, full-stack quiz application built with Next.js 16, featuring OIDC auth
 
 ## Tech Stack
 
+- **Monorepo**: Bun workspaces + Turborepo
 - **Framework**: Next.js 16 (App Router, Turbopack)
 - **Runtime**: Bun
 - **Database**: PostgreSQL with Drizzle ORM (via bun:sql)
@@ -32,7 +42,8 @@ A modern, full-stack quiz application built with Next.js 16, featuring OIDC auth
 
 ### Prerequisites
 
-- [Bun](https://bun.sh/)
+- [Bun](https://bun.sh/) >= 1.3.8
+- PostgreSQL database
 - An OIDC provider (e.g., Keycloak, Auth0, Okta, Pocket ID)
 
 ### Installation
@@ -46,7 +57,7 @@ cd quiz-app
 bun install
 
 # Set up environment variables
-cp .env.example .env.local
+cp apps/web/.env.example apps/web/.env.local
 ```
 
 ### Environment Variables

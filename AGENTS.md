@@ -2,42 +2,61 @@
 
 This file provides guidance to AI agents when working with code in this repository.
 
+## Monorepo Structure
+
+This is a **Bun workspaces + Turborepo monorepo** with the following structure:
+
+```
+quiz-app/
+├── apps/
+│   ├── web/              # Main Next.js quiz application
+│   └── docs/             # Documentation app (to be created)
+├── package.json          # Root workspace config
+└── turbo.json            # Turborepo task orchestration
+```
+
+All commands should be run from the **repository root** using Turborepo.
+
 ## Commands
 
 ### Development
 
 ```bash
-bun --bun run dev          # Start development server with Turbopack
-bun --bun run build        # Build for production (runs migrations + Next.js build)
-bun --bun run build:only   # Build Next.js without running migrations
-bun --bun run start        # Start production server
+bun run dev                # Start development server for all apps (Turbopack)
+bun run dev --filter=web   # Start only web app
+bun run build              # Build all apps (runs migrations + Next.js build)
+bun run build --filter=web # Build only web app
+bun run start              # Start production server for all apps
 ```
 
 ### Type Checking and Linting
 
 ```bash
-bun --bun run tsc          # TypeScript type checking
-bun --bun run lint         # Run ESLint
-bun --bun run format       # Format code with oxfmt
-bun --bun run format:check # Check code formatting
-bun --bun run stylelint    # Run Stylelint for CSS files
-bun test                   # Run tests
+bun run tsc                # TypeScript type checking (all apps)
+bun run lint               # Run ESLint (all apps)
+bun run format             # Format code with oxfmt (all apps)
+bun run format:check       # Check code formatting (all apps)
+bun run stylelint          # Run Stylelint for CSS files (all apps)
+bun test                   # Run tests (all apps)
 ```
 
 ### Database Operations
 
 ```bash
-bun run db:migrate         # Run migrations (required for production builds)
+bun run db:migrate         # Run migrations (web app only)
 bun run db:push            # Push schema changes to database (development)
 bun run db:generate        # Generate migration files from schema changes
 bun run db:studio          # Open Drizzle Studio for database inspection
 ```
 
+**Note:** Database commands are scoped to the web app via `--filter=web` in root package.json.
+
 ## Architecture Overview
 
 ### Tech Stack
 
-- **Runtime**: Bun (required >= 1.3.6)
+- **Monorepo**: Bun workspaces + Turborepo 2.4+
+- **Runtime**: Bun (required >= 1.3.8)
 - **Framework**: Next.js 16 with App Router and Turbopack
 - **Database**: PostgreSQL via Bun's native SQL driver (`bun:sql`) with Drizzle ORM
 - **Cache**: Optional Redis/Valkey using Bun's native client
@@ -47,7 +66,7 @@ bun run db:studio          # Open Drizzle Studio for database inspection
 
 ### Database Architecture
 
-The app uses Bun's native `bun:sql` driver for PostgreSQL, configured in `lib/db/index.ts`:
+The app uses Bun's native `bun:sql` driver for PostgreSQL, configured in `apps/web/lib/db/index.ts`:
 
 ```typescript
 import { SQL } from "bun";
@@ -55,24 +74,29 @@ const client = new SQL(process.env.DATABASE_URL!);
 export const db = drizzle({ client, schema });
 ```
 
-**Schema** (`lib/db/schema.ts`):
+**Schema** (`apps/web/lib/db/schema.ts`):
 
 - **Users & Auth**: `user`, `session`, `account`, `verification`, `apikey` (BetterAuth tables)
 - **Quizzes**: `quiz` → `question` → `answer` (cascade deletes)
 - **Attempts**: `quizAttempt` → `attemptAnswer` (stores each answer for review)
 - **Relations**: All foreign keys use cascade deletes for clean data management
 
-**Migrations**: Use `bun run db:migrate` (runs `lib/db/migrate.ts`). Production builds automatically run migrations via the `build` script.
+**Migrations**: Use `bun run db:migrate` (runs `apps/web/lib/db/migrate.ts`). Production builds automatically run migrations via the `build` script.
 
 ### Authentication & Authorization
 
-**BetterAuth** (`lib/auth/server.ts`):
+**BetterAuth** (`apps/web/lib/auth/server.ts`):
 
 - **OIDC Plugin**: Generic OAuth provider with custom profile mapping for groups
 - **API Key Plugin**: Rate-limited (100 req/min default), enables session mocking for permission checks
 - **Session**: 7-day expiry, 1-day update age, 5-minute cookie cache
 
-**RBAC System** (`lib/rbac/`):
+**RBAC System** (`apps/web/lib/rbac/`):
+
+- **Stateless**: Roles resolved from OIDC groups at request time (no stored role data)
+- **Flat Permissions**: Each role has explicit permissions (no inheritance)
+- **Public Access**: Configurable via `RBAC_PUBLIC_*` env vars for guest access
+- **Roles** (priority order): admin → moderator → creator → user → guest
 
 - **Stateless**: Roles resolved from OIDC groups at request time (no stored role data)
 - **Flat Permissions**: Each role has explicit permissions (no inheritance)
@@ -109,16 +133,16 @@ export const db = drizzle({ client, schema });
 - **Web Search**: Optional tool integration via `AI_WEB_SEARCH_ENABLED`
 - **Rate Limiting**: Per-user (4/day default) and global (10/hour default) limits
 - **Usage**: `getModel()` for default, `getModelForProvider()` for specific provider
-- See `docs/ai-generation.md` for provider setup
+- See `apps/web/docs/ai-generation.md` for provider setup
 
 ### API Structure
 
-**REST API** (`app/api/`):
+**REST API** (`apps/web/app/api/`):
 
 - **Authentication**: API key required via `x-api-key` header
 - **Rate Limiting**: 100 requests/minute per key (configurable)
 - **Scopes**: `quizzes:read`, `quizzes:write`, `attempts:read`, `attempts:write`
-- **Documentation**: OpenAPI 3.1 spec in `lib/openapi.ts`, Scalar UI at `/docs`
+- **Documentation**: OpenAPI 3.1 spec in `apps/web/lib/openapi.ts`, Scalar UI at `/docs`
 - **Endpoints**:
   - `/api/quizzes` - List, create quizzes
   - `/api/quizzes/[id]` - Get, update, delete quiz
@@ -128,7 +152,7 @@ export const db = drizzle({ client, schema });
 
 ### Server Actions
 
-**Actions** (`app/actions/`):
+**Actions** (`apps/web/app/actions/`):
 
 - `quiz.ts` - Create, update, delete quizzes (checks RBAC permissions)
 - `attempt.ts` - Submit quiz attempts (validates max attempts, time limits)
@@ -140,16 +164,16 @@ export const db = drizzle({ client, schema });
 
 ### Image Search
 
-**Unsplash Integration** (`lib/images/`):
+**Unsplash Integration** (`apps/web/lib/images/`):
 
 - **Provider Pattern**: Abstracted via `ImageProvider` interface
 - **Configuration**: `UNSPLASH_ACCESS_KEY` env var
 - **Usage**: Server action `search-images.ts` with permission check
-- See `docs/image-search.md` for setup
+- See `apps/web/docs/image-search.md` for setup
 
 ### Validation
 
-**Zod Schemas** (`lib/validations/`):
+**Zod Schemas** (`apps/web/lib/validations/`):
 
 - `quiz.ts` - Quiz creation/update, question/answer validation
 - `ai-quiz.ts` - AI-generated quiz structure validation
@@ -169,7 +193,7 @@ export const db = drizzle({ client, schema });
 
 1. **Permission Checks**: Always use `hasPermission(user, PERMISSIONS.X)` or helper functions (`canEditQuiz`, etc.) before allowing actions
 2. **Resource Ownership**: Use `canEditQuiz(user, quiz.authorId)` for resource-level checks (users can edit own, admins can edit any)
-3. **Rate Limiting**: Guest plays use in-memory rate limiter (`lib/rate-limit.ts`), AI generation has per-user and global limits
+3. **Rate Limiting**: Guest plays use in-memory rate limiter (`apps/web/lib/rate-limit.ts`), AI generation has per-user and global limits
 4. **Error Handling**: API routes return consistent `{ error: string }` JSON responses
 5. **Randomization**: Questions and answers can be randomized per attempt (controlled by quiz settings)
 6. **Time Limits**: Optional per-quiz time limits with timeout tracking in attempts
@@ -188,3 +212,4 @@ export const db = drizzle({ client, schema });
 ## Extra Notes
 
 - As a last step before completing a task, always run formatting, linting and type checking commands to ensure code quality.
+

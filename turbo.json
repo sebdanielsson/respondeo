@@ -1,0 +1,26 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalEnv": ["DATABASE_URL", "REDIS_URL", "VALKEY_URL"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "dependsOn": ["^build"]
+    },
+    "tsc": {},
+    "format": {},
+    "format:check": {},
+    "stylelint": {},
+    "test": {},
+    "db:migrate": {},
+    "db:push": {},
+    "db:generate": {},
+    "db:studio": {}
+  }
+}
