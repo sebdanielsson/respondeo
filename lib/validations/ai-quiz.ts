@@ -129,7 +129,7 @@ export function generateQuizPrompt(input: AIQuizInput, useWebSearch: boolean = f
   const hasImages = input.images && input.images.length > 0;
   const imageCount = input.images?.length ?? 0;
   const imageContext = hasImages
-    ? `\n\nImage Analysis:\n- ${imageCount} image(s) have been provided for reference\n- Analyze the image(s) carefully and incorporate relevant details into the quiz\n- Questions can reference visual elements, text, or concepts shown in the images`
+    ? `\n\nImage Context:\n- ${imageCount} image(s) have been provided for reference and context only\n- Use the images to understand the theme, subject matter, and context better to generate more relevant questions\n- IMPORTANT: Distinguish between metadata/context (headers, titles, labels, dates, metadata) and actual content\n- Do NOT create questions about metadata, headers, or contextual information visible in the images (e.g., assignment labels, week numbers, administrative details)\n- Do NOT reference visual elements, specific visual layouts, or text that only appears in the images\n- Questions must be answerable using only the substantive text content - users will not have access to the images when taking the quiz`
     : "";
 
   return `Generate a ${input.difficulty} difficulty quiz about: "${input.theme}"${webSearchContext}${imageContext}
