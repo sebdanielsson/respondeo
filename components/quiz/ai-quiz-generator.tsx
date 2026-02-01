@@ -4,14 +4,18 @@
  * AI Quiz Generator Dialog
  *
  * A dialog component that allows users to generate a quiz using AI.
- * Provides inputs for theme, question count, answer count, difficulty, and language.
+ * Provides a rich text area for detailed theme descriptions (up to 2000 characters)
+ * with a character counter, optional image uploads for vision analysis (up to 4 images),
+ * and configurable options for question count, answer count, difficulty, and language.
+ * Supports vision-capable AI models for analyzing reference images.
  */
 
-import { useState, useTransition } from "react";
-import { Sparkles, Loader2 } from "lucide-react";
+import { useState, useTransition, useRef, useCallback } from "react";
+import { Sparkles, Loader2, ImagePlus, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -36,6 +40,16 @@ import type { AIQuizInput } from "@/lib/validations/ai-quiz";
 import type { QuizFormData } from "@/lib/validations/quiz";
 
 // ============================================================================
+// Constants
+// ============================================================================
+
+const MAX_PROMPT_LENGTH = 2000;
+const MAX_IMAGES = 4;
+const MAX_IMAGE_SIZE_MB = 5;
+const ALLOWED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp"];
+const ALLOWED_IMAGE_EXTENSIONS = ".png,.jpg,.jpeg,.webp";
+
+// ============================================================================
 // Types
 // ============================================================================
 
@@ -46,6 +60,13 @@ interface AIQuizGeneratorProps {
   webSearchEnabled?: boolean;
 }
 
+interface ImageData {
+  id: string;
+  base64: string;
+  file: File;
+  mimeType: string;
+}
+
 // ============================================================================
 // Component
 // ============================================================================
@@ -53,6 +74,7 @@ interface AIQuizGeneratorProps {
 export function AIQuizGenerator({ onGenerated, webSearchEnabled = false }: AIQuizGeneratorProps) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Form state
   const [theme, setTheme] = useState("");
@@ -61,10 +83,143 @@ export function AIQuizGenerator({ onGenerated, webSearchEnabled = false }: AIQui
   const [difficulty, setDifficulty] = useState<AIQuizInput["difficulty"]>("medium");
   const [language, setLanguage] = useState("en");
   const [useWebSearch, setUseWebSearch] = useState(true);
+  const [images, setImages] = useState<ImageData[]>([]);
+
+  // Character counter styling
+  const getCharacterCountColor = () => {
+    const percentage = (theme.length / MAX_PROMPT_LENGTH) * 100;
+    if (percentage >= 100) return "text-destructive";
+    if (percentage >= 90) return "text-warning";
+    return "text-muted-foreground";
+  };
+
+  // Helper to convert file to base64
+  const fileToBase64 = useCallback((file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result;
+        if (typeof result !== "string") {
+          reject(new Error("Failed to read file as data URL"));
+          return;
+        }
+        // Extract base64 data without the data URL prefix
+        const parts = result.split(",");
+        const base64 = parts.length > 1 ? parts[1] : "";
+        if (!base64) {
+          reject(new Error("Invalid file data: missing base64 payload"));
+          return;
+        }
+        resolve(base64);
+      };
+      reader.onerror = (error) => {
+        console.error("Failed to process image in AI Quiz Generator", {
+          fileName: file.name,
+          error,
+        });
+        reject(error);
+      };
+      reader.readAsDataURL(file);
+    });
+  }, []);
+
+  // Image handling
+  const handleFileSelect = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      const files = event.target.files;
+      if (!files || files.length === 0) return;
+
+      const newImages: ImageData[] = [];
+      const errors: string[] = [];
+
+      for (const file of Array.from(files)) {
+        // Check file type (with fallback to extension check)
+        const isValidMimeType = ALLOWED_IMAGE_TYPES.includes(file.type);
+        const fileExtension = file.name.toLowerCase().split(".").pop();
+        const isValidExtension = ["png", "jpg", "jpeg", "webp"].includes(fileExtension || "");
+
+        if (!isValidMimeType && !isValidExtension) {
+          errors.push(`${file.name}: Only PNG, JPEG, and WEBP images are allowed`);
+          continue;
+        }
+
+        // Infer MIME type from extension if missing or invalid
+        let mimeType = file.type;
+        if (!isValidMimeType && isValidExtension) {
+          const extToMime: Record<string, string> = {
+            png: "image/png",
+            jpg: "image/jpeg",
+            jpeg: "image/jpeg",
+            webp: "image/webp",
+          };
+          mimeType = extToMime[fileExtension!] || "";
+          console.warn(`File ${file.name} has no MIME type, inferred ${mimeType} from extension`);
+        }
+
+        // Check file size
+        if (file.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
+          errors.push(`${file.name}: Image must be smaller than ${MAX_IMAGE_SIZE_MB}MB`);
+          continue;
+        }
+
+        try {
+          const base64 = await fileToBase64(file);
+          newImages.push({
+            id: crypto.randomUUID(),
+            base64,
+            file,
+            mimeType,
+          });
+        } catch (error) {
+          console.error("Failed to process image in AI Quiz Generator", {
+            fileName: file.name,
+            error,
+          });
+          errors.push(`${file.name}: Failed to process image`);
+        }
+      }
+
+      if (errors.length > 0) {
+        if (errors.length === 1) {
+          toast.error(errors[0], { duration: 5000 });
+        } else {
+          toast.error("Some images couldn't be added", {
+            description: errors.join("\n"),
+            duration: 10000,
+          });
+        }
+      }
+
+      if (newImages.length > 0) {
+        setImages((prev) => {
+          // Final check against current state to prevent race conditions
+          const finalImages = newImages.filter((_, index) => prev.length + index < MAX_IMAGES);
+          return [...prev, ...finalImages];
+        });
+      }
+
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    },
+    [fileToBase64],
+  );
+
+  const removeImage = useCallback((id: string) => {
+    setImages((prev) => prev.filter((img) => img.id !== id));
+  }, []);
 
   const handleGenerate = () => {
     if (!theme.trim()) {
       toast.error("Please enter a theme for the quiz", {
+        duration: Infinity,
+      });
+      return;
+    }
+
+    if (theme.length > MAX_PROMPT_LENGTH) {
+      toast.error(`Theme is too long (max ${MAX_PROMPT_LENGTH} characters)`, {
         duration: Infinity,
       });
       return;
@@ -78,6 +233,11 @@ export function AIQuizGenerator({ onGenerated, webSearchEnabled = false }: AIQui
         difficulty,
         language,
         useWebSearch: webSearchEnabled && useWebSearch,
+        images: images.length > 0 ? images.map((img) => img.base64) : undefined,
+        imageMimeTypes:
+          images.length > 0
+            ? (images.map((img) => img.mimeType) as ("image/png" | "image/jpeg" | "image/webp")[])
+            : undefined,
       });
 
       if (!result.success) {
@@ -118,6 +278,7 @@ export function AIQuizGenerator({ onGenerated, webSearchEnabled = false }: AIQui
 
         // Reset form and close dialog
         setTheme("");
+        setImages([]);
         setOpen(false);
       }
     });
@@ -126,6 +287,7 @@ export function AIQuizGenerator({ onGenerated, webSearchEnabled = false }: AIQui
   const handleCancel = () => {
     if (!isPending) {
       setTheme("");
+      setImages([]);
       setOpen(false);
     }
   };
@@ -147,22 +309,91 @@ export function AIQuizGenerator({ onGenerated, webSearchEnabled = false }: AIQui
             Generate Quiz with AI
           </DialogTitle>
           <DialogDescription>
-            Describe the theme or topic for your quiz and AI will generate questions for you.
+            Describe the theme or topic for your quiz. You can also upload images for reference.
           </DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
-          {/* Theme Input */}
+          {/* Theme Input - Textarea with character counter */}
           <div className="grid gap-2">
             <Label htmlFor="ai-theme">Quiz Theme *</Label>
-            <Input
+            <Textarea
               id="ai-theme"
-              placeholder="e.g., World Geography, 90s Pop Music, Space Exploration..."
+              placeholder="e.g., World Geography, 90s Pop Music, Space Exploration... Describe what you want the quiz to be about. You can include details like specific topics, target audience, or key concepts to cover."
               value={theme}
               onChange={(e) => setTheme(e.target.value)}
               disabled={isPending}
               autoFocus
+              rows={4}
+              className="resize-none"
             />
+            <div className="flex justify-end" aria-live="polite">
+              <span className={`text-xs ${getCharacterCountColor()} flex items-center gap-1`}>
+                <span>
+                  {theme.length} / {MAX_PROMPT_LENGTH}
+                </span>
+                {theme.length > MAX_PROMPT_LENGTH ? (
+                  <span className="font-medium">– Over limit</span>
+                ) : theme.length >= MAX_PROMPT_LENGTH * 0.9 ? (
+                  <span>– Near limit</span>
+                ) : null}
+              </span>
+            </div>
+          </div>
+
+          {/* Image Upload */}
+          <div className="grid gap-2">
+            <Label htmlFor="ai-image-upload">Reference Images (Optional)</Label>
+            <div className="flex flex-wrap gap-2">
+              {images.map((image, index) => (
+                <div
+                  key={image.id}
+                  className="group relative h-16 w-16 overflow-hidden rounded-md border"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`data:${image.mimeType};base64,${image.base64}`}
+                    alt={`Preview of uploaded reference image ${index + 1}`}
+                    className="h-full w-full object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeImage(image.id)}
+                    disabled={isPending}
+                    className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100 disabled:opacity-0"
+                    aria-label="Remove image"
+                  >
+                    <X className="h-4 w-4 text-white" />
+                  </button>
+                </div>
+              ))}
+              {images.length < MAX_IMAGES && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  className="h-16 w-16"
+                  disabled={isPending}
+                  onClick={() => fileInputRef.current?.click()}
+                  aria-label="Upload images"
+                >
+                  <ImagePlus className="h-5 w-5" />
+                </Button>
+              )}
+            </div>
+            <input
+              ref={fileInputRef}
+              id="ai-image-upload"
+              type="file"
+              accept={ALLOWED_IMAGE_EXTENSIONS}
+              multiple
+              className="hidden"
+              onChange={handleFileSelect}
+            />
+            <p className="text-muted-foreground text-xs">
+              Upload up to {MAX_IMAGES} images (PNG, JPEG, WEBP, max {MAX_IMAGE_SIZE_MB}MB each).
+              Images will be analyzed by the AI.
+            </p>
           </div>
 
           {/* Question and Answer Counts */}
@@ -272,7 +503,11 @@ export function AIQuizGenerator({ onGenerated, webSearchEnabled = false }: AIQui
           <Button type="button" variant="outline" onClick={handleCancel} disabled={isPending}>
             Cancel
           </Button>
-          <Button type="button" onClick={handleGenerate} disabled={isPending || !theme.trim()}>
+          <Button
+            type="button"
+            onClick={handleGenerate}
+            disabled={isPending || !theme.trim() || theme.length > MAX_PROMPT_LENGTH}
+          >
             {isPending ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />

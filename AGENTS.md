@@ -184,3 +184,7 @@ export const db = drizzle({ client, schema });
 - **Environment Variables**: See `.env.example` for complete configuration. Most RBAC settings have sensible defaults.
 - **Cascade Deletes**: Deleting a quiz deletes all questions, answers, attempts, and attempt answers.
 - **API Key Permissions**: API keys dynamically inherit permissions from user's current role. No need to regenerate keys when permissions change.
+
+## Extra Notes
+
+- As a last step before completing a task, always run formatting, linting and type checking commands to ensure code quality.

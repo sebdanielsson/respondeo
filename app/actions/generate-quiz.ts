@@ -4,6 +4,7 @@
  * AI Quiz Generation Server Action
  *
  * Generates a quiz using AI based on a theme and configuration.
+ * Supports multi-modal inputs with images for vision-capable models.
  * Protected by RBAC and rate limiting.
  */
 
@@ -43,16 +44,51 @@ export interface GenerateQuizResult {
 }
 
 // ============================================================================
+// Helpers
+// ============================================================================
+
+/**
+ * Build messages for the AI, supporting multi-modal inputs with images.
+ */
+function buildMessages(input: AIQuizInput, prompt: string, imageMimeTypes?: string[]) {
+  const hasImages = input.images && input.images.length > 0;
+
+  if (!hasImages) {
+    // Simple text-only prompt
+    return [{ role: "user" as const, content: prompt }];
+  }
+
+  // Multi-modal prompt with images
+  const content = [
+    { type: "text" as const, text: prompt },
+    ...(input.images?.map((base64, index) => {
+      // Use provided MIME type or default to PNG
+      const mimeType = imageMimeTypes?.[index] ?? "image/png";
+
+      return {
+        type: "image" as const,
+        image: `data:${mimeType};base64,${base64}`,
+      };
+    }) ?? []),
+  ];
+
+  return [{ role: "user" as const, content }];
+}
+
+// ============================================================================
 // Server Action
 // ============================================================================
 
 /**
  * Generate a quiz using AI.
  *
- * @param input - The quiz generation input (theme, options)
+ * @param input - The quiz generation input (theme, options, images)
  * @returns The generated quiz data or an error
  */
 export async function generateQuizWithAI(input: AIQuizInput): Promise<GenerateQuizResult> {
+  // Declare hasImages at function scope so it's accessible in catch block
+  let hasImages = false;
+
   try {
     // 1. Check authentication
     const session = await auth.api.getSession({
@@ -114,6 +150,8 @@ export async function generateQuizWithAI(input: AIQuizInput): Promise<GenerateQu
 
     // 6. Generate quiz with AI
     const useWebSearch = validatedInput.data.useWebSearch && isWebSearchAvailable();
+    const imageCount = validatedInput.data.images?.length ?? 0;
+    hasImages = imageCount > 0;
     const prompt = generateQuizPrompt(validatedInput.data, useWebSearch);
     const model = getModelWithTracking(aiConfig.provider, aiConfig.model, session.user.id);
 
@@ -129,10 +167,15 @@ export async function generateQuizWithAI(input: AIQuizInput): Promise<GenerateQu
         difficulty: validatedInput.data.difficulty,
         questionCount: String(validatedInput.data.questionCount),
         webSearchEnabled: String(useWebSearch),
+        hasImages: String(hasImages),
+        imageCount: String(imageCount),
       },
     };
 
     let quizOutput: AIQuizOutput;
+
+    // Build messages (supports multi-modal with images)
+    const messages = buildMessages(validatedInput.data, prompt, validatedInput.data.imageMimeTypes);
 
     if (useWebSearch) {
       // Use generateText with Output.object() for web search support
@@ -141,7 +184,7 @@ export async function generateQuizWithAI(input: AIQuizInput): Promise<GenerateQu
         model,
         tools,
         output: Output.object({ schema: aiQuizOutputSchema }),
-        prompt,
+        messages,
         providerOptions,
         experimental_telemetry: telemetry,
         stopWhen: stepCountIs(5), // Allow up to 5 steps for tool calls + output
@@ -152,7 +195,7 @@ export async function generateQuizWithAI(input: AIQuizInput): Promise<GenerateQu
       const result = await generateObject({
         model,
         schema: aiQuizOutputSchema,
-        prompt,
+        messages,
         providerOptions,
         experimental_telemetry: telemetry,
       });
@@ -219,6 +262,20 @@ export async function generateQuizWithAI(input: AIQuizInput): Promise<GenerateQu
           error:
             "AI service is temporarily unavailable due to rate limiting. Please try again later.",
           errorCode: "RATE_LIMITED",
+        };
+      }
+      // Handle vision/image errors with more specific detection
+      if (
+        hasImages &&
+        (error.message.toLowerCase().includes("does not support image") ||
+          error.message.toLowerCase().includes("vision") ||
+          error.message.toLowerCase().includes("multimodal") ||
+          error.message.includes("image_url"))
+      ) {
+        return {
+          success: false,
+          error: "The AI model doesn't support image analysis. Please try without images.",
+          errorCode: "AI_ERROR",
         };
       }
     }

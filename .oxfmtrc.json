@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
   "experimentalTailwindcss": {},
+  "experimentalSortPackageJson": true,
   "useTabs": false,
   "tabWidth": 2,
   "singleQuote": false,

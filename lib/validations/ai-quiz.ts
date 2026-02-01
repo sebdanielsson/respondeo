@@ -12,20 +12,54 @@ import { SUPPORTED_LANGUAGES, DIFFICULTY_LEVELS } from "./quiz";
 // Input Schema (what the user provides)
 // ============================================================================
 
-export const aiQuizInputSchema = z.object({
-  /** The theme/topic for the quiz */
-  theme: z.string().min(1, "Theme is required").max(500, "Theme is too long"),
-  /** Number of questions to generate (1-20) */
-  questionCount: z.coerce.number().int().min(1).max(20).default(10),
-  /** Number of answers per question (2-6) */
-  answerCount: z.coerce.number().int().min(2).max(6).default(4),
-  /** Difficulty level */
-  difficulty: z.enum(DIFFICULTY_LEVELS).default("medium"),
-  /** Language code (ISO 639-1) */
-  language: z.string().min(2).max(10).default("en"),
-  /** Whether to use web search for up-to-date information */
-  useWebSearch: z.boolean().default(true),
-});
+export const aiQuizInputSchema = z
+  .object({
+    /** The theme/topic for the quiz */
+    theme: z
+      .string()
+      .min(1, "Theme is required")
+      .max(2000, "Theme is too long (max 2000 characters)"),
+    /** Number of questions to generate (1-20) */
+    questionCount: z.coerce.number().int().min(1).max(20).default(10),
+    /** Number of answers per question (2-6) */
+    answerCount: z.coerce.number().int().min(2).max(6).default(4),
+    /** Difficulty level */
+    difficulty: z.enum(DIFFICULTY_LEVELS).default("medium"),
+    /** Language code (ISO 639-1) */
+    language: z.string().min(2).max(10).default("en"),
+    /** Whether to use web search for up-to-date information */
+    useWebSearch: z.boolean().default(true),
+    /** Optional base64-encoded images to include with the prompt (PNG, JPEG, WEBP) */
+    images: z
+      .array(
+        z
+          .string()
+          .regex(/^[A-Za-z0-9+/]+=*$/, "Invalid base64 format")
+          .max(
+            Math.ceil(5 * 1024 * 1024 * (4 / 3)),
+            "Image is too large (max ~6.67MB base64 ≈ 5MB raw)",
+          ),
+      )
+      .max(4)
+      .optional(),
+    /** MIME types corresponding to images array */
+    imageMimeTypes: z
+      .array(z.enum(["image/png", "image/jpeg", "image/webp"]))
+      .max(4)
+      .optional(),
+  })
+  .refine(
+    (data) => {
+      // Both arrays must be provided together and have matching lengths
+      const imagesLength = data.images?.length ?? 0;
+      const mimeTypesLength = data.imageMimeTypes?.length ?? 0;
+      return imagesLength === mimeTypesLength;
+    },
+    {
+      message: "Number of images and MIME types must match",
+      path: ["imageMimeTypes"],
+    },
+  );
 
 export type AIQuizInput = z.infer<typeof aiQuizInputSchema>;
 
@@ -77,6 +111,50 @@ function getLanguageName(code: string): string {
 }
 
 /**
+ * Generate the AI prompt for quiz generation.
+ */
+export function generateQuizPrompt(input: AIQuizInput, useWebSearch: boolean = false): string {
+  const languageName = getLanguageName(input.language);
+  const difficultyGuidance = getDifficultyGuidance(input.difficulty);
+  const currentDate = new Date().toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  const webSearchContext = useWebSearch
+    ? `\n\nWeb Search Available:\n- Today's date is ${currentDate}\n- Use web search to find current and accurate information about the topic\n- For recent events, new releases, or topics after your knowledge cutoff, search for up-to-date information\n- Include recent developments or news when relevant to the theme`
+    : `\n\nNote: Today's date is ${currentDate}. Base your questions on your training knowledge.`;
+
+  const hasImages = input.images && input.images.length > 0;
+  const imageCount = input.images?.length ?? 0;
+  const imageContext = hasImages
+    ? `\n\nImage Analysis:\n- ${imageCount} image(s) have been provided for reference\n- Analyze the image(s) carefully and incorporate relevant details into the quiz\n- Questions can reference visual elements, text, or concepts shown in the images`
+    : "";
+
+  return `Generate a ${input.difficulty} difficulty quiz about: "${input.theme}"${webSearchContext}${imageContext}
+
+Requirements:
+- Generate exactly ${input.questionCount} questions
+- Each question must have exactly ${input.answerCount} answer options
+- Exactly ONE answer per question must be marked as correct (isCorrect: true)
+- All content must be in ${languageName}
+- You may use any characters required for ${languageName}, but avoid emojis, EM dashes, novelty symbols, and smart quotes; use plain text punctuation
+- Title should be catchy and descriptive (max 70 characters)
+- Description should summarize what the quiz covers (max 120 characters)
+- Do not include properties like "language" or "difficulty" in title or description, do not spoil answers there
+
+Difficulty Guidelines (${input.difficulty}):${difficultyGuidance}
+
+Important:
+- Ensure factual accuracy
+- Questions should be clear and unambiguous
+- Answers should be distinct from each other
+- Avoid overly long questions or answers
+- Do not include the sources in the output`;
+}
+
+/**
  * Get difficulty-specific prompt guidance.
  */
 function getDifficultyGuidance(difficulty: AIQuizInput["difficulty"]): string {
@@ -100,46 +178,4 @@ function getDifficultyGuidance(difficulty: AIQuizInput["difficulty"]): string {
 - Include nuanced distinctions and edge cases
 - Test expert-level understanding and critical thinking`;
   }
-}
-
-/**
- * Generate the AI prompt for quiz generation.
- */
-export function generateQuizPrompt(input: AIQuizInput, useWebSearch: boolean = false): string {
-  const languageName = getLanguageName(input.language);
-  const difficultyGuidance = getDifficultyGuidance(input.difficulty);
-  const currentDate = new Date().toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-
-  const webSearchContext = useWebSearch
-    ? `\n\nWeb Search Available:
-- Today's date is ${currentDate}
-- Use web search to find current and accurate information about the topic
-- For recent events, new releases, or topics after your knowledge cutoff, search for up-to-date information
-- Include recent developments or news when relevant to the theme`
-    : `\n\nNote: Today's date is ${currentDate}. Base your questions on your training knowledge.`;
-
-  return `Generate a ${input.difficulty} difficulty quiz about: "${input.theme}"${webSearchContext}
-
-Requirements:
-- Generate exactly ${input.questionCount} questions
-- Each question must have exactly ${input.answerCount} answer options
-- Exactly ONE answer per question must be marked as correct (isCorrect: true)
-- All content must be in ${languageName}
-- You may use any characters required for ${languageName}, but avoid emojis, EM dashes, novelty symbols, and smart quotes; use plain text punctuation
-- Title should be catchy and descriptive (max 70 characters)
-- Description should summarize what the quiz covers (max 120 characters)
-- Do not include properties like "language" or "difficulty" in title or description, do not spoil answers there
-
-Difficulty Guidelines (${input.difficulty}):${difficultyGuidance}
-
-Important:
-- Ensure factual accuracy
-- Questions should be clear and unambiguous
-- Answers should be distinct from each other
-- Avoid overly long questions or answers
-- Do not include the sources in the output`;
 }
