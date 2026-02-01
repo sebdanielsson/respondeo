@@ -12,38 +12,52 @@ import { SUPPORTED_LANGUAGES, DIFFICULTY_LEVELS } from "./quiz";
 // Input Schema (what the user provides)
 // ============================================================================
 
-export const aiQuizInputSchema = z.object({
-  /** The theme/topic for the quiz */
-  theme: z
-    .string()
-    .min(1, "Theme is required")
-    .max(2000, "Theme is too long (max 2000 characters)"),
-  /** Number of questions to generate (1-20) */
-  questionCount: z.coerce.number().int().min(1).max(20).default(10),
-  /** Number of answers per question (2-6) */
-  answerCount: z.coerce.number().int().min(2).max(6).default(4),
-  /** Difficulty level */
-  difficulty: z.enum(DIFFICULTY_LEVELS).default("medium"),
-  /** Language code (ISO 639-1) */
-  language: z.string().min(2).max(10).default("en"),
-  /** Whether to use web search for up-to-date information */
-  useWebSearch: z.boolean().default(true),
-  /** Optional base64-encoded images to include with the prompt (PNG, JPEG, WEBP) */
-  images: z
-    .array(
-      z
-        .string()
-        .regex(/^[A-Za-z0-9+/]+=*$/, "Invalid base64 format")
-        .max(7 * 1024 * 1024, "Image is too large (max ~5MB base64)"),
-    )
-    .max(4)
-    .optional(),
-  /** MIME types corresponding to images array */
-  imageMimeTypes: z
-    .array(z.enum(["image/png", "image/jpeg", "image/webp"]))
-    .max(4)
-    .optional(),
-});
+export const aiQuizInputSchema = z
+  .object({
+    /** The theme/topic for the quiz */
+    theme: z
+      .string()
+      .min(1, "Theme is required")
+      .max(2000, "Theme is too long (max 2000 characters)"),
+    /** Number of questions to generate (1-20) */
+    questionCount: z.coerce.number().int().min(1).max(20).default(10),
+    /** Number of answers per question (2-6) */
+    answerCount: z.coerce.number().int().min(2).max(6).default(4),
+    /** Difficulty level */
+    difficulty: z.enum(DIFFICULTY_LEVELS).default("medium"),
+    /** Language code (ISO 639-1) */
+    language: z.string().min(2).max(10).default("en"),
+    /** Whether to use web search for up-to-date information */
+    useWebSearch: z.boolean().default(true),
+    /** Optional base64-encoded images to include with the prompt (PNG, JPEG, WEBP) */
+    images: z
+      .array(
+        z
+          .string()
+          .regex(/^[A-Za-z0-9+/]+=*$/, "Invalid base64 format")
+          .max(7 * 1024 * 1024, "Image is too large (max ~5MB base64)"),
+      )
+      .max(4)
+      .optional(),
+    /** MIME types corresponding to images array */
+    imageMimeTypes: z
+      .array(z.enum(["image/png", "image/jpeg", "image/webp"]))
+      .max(4)
+      .optional(),
+  })
+  .refine(
+    (data) => {
+      // If images are provided, imageMimeTypes must be provided and match length
+      if (data.images && data.images.length > 0) {
+        return data.imageMimeTypes && data.imageMimeTypes.length === data.images.length;
+      }
+      return true;
+    },
+    {
+      message: "Number of images and MIME types must match",
+      path: ["imageMimeTypes"],
+    },
+  );
 
 export type AIQuizInput = z.infer<typeof aiQuizInputSchema>;
 

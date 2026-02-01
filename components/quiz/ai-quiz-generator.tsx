@@ -133,10 +133,19 @@ export function AIQuizGenerator({ onGenerated, webSearchEnabled = false }: AIQui
       const errors: string[] = [];
 
       for (const file of Array.from(files)) {
-        // Check file type
-        if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+        // Check file type (with fallback to extension check)
+        const isValidMimeType = ALLOWED_IMAGE_TYPES.includes(file.type);
+        const fileExtension = file.name.toLowerCase().split(".").pop();
+        const isValidExtension = ["png", "jpg", "jpeg", "webp"].includes(fileExtension || "");
+
+        if (!isValidMimeType && !isValidExtension) {
           errors.push(`${file.name}: Only PNG, JPEG, and WEBP images are allowed`);
           continue;
+        }
+
+        // Warn if MIME type is missing but extension is valid
+        if (!isValidMimeType && isValidExtension) {
+          console.warn(`File ${file.name} has no MIME type, validated by extension`);
         }
 
         // Check file size
@@ -313,11 +322,9 @@ export function AIQuizGenerator({ onGenerated, webSearchEnabled = false }: AIQui
                   {theme.length} / {MAX_PROMPT_LENGTH}
                 </span>
                 {theme.length > MAX_PROMPT_LENGTH ? (
-                  <span className="font-medium" aria-label="Character limit exceeded">
-                    – Over limit
-                  </span>
+                  <span className="font-medium">– Over limit</span>
                 ) : theme.length >= MAX_PROMPT_LENGTH * 0.9 ? (
-                  <span aria-label="Approaching character limit">– Near limit</span>
+                  <span>– Near limit</span>
                 ) : null}
               </span>
             </div>
