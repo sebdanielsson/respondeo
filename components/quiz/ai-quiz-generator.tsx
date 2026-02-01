@@ -302,7 +302,7 @@ export function AIQuizGenerator({ onGenerated, webSearchEnabled = false }: AIQui
           </Button>
         }
       />
-      <DialogContent className="sm:max-w-125">
+      <DialogContent className="max-h-[85dvh] overflow-y-auto sm:max-w-125">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5" />
