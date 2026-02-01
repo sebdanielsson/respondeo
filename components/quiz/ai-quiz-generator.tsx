@@ -344,7 +344,6 @@ export function AIQuizGenerator({ onGenerated, webSearchEnabled = false }: AIQui
                     disabled={isPending}
                     className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100 disabled:opacity-0"
                     aria-label="Remove image"
-                    aria-label="Remove image"
                   >
                     <X className="h-4 w-4 text-white" />
                   </button>
