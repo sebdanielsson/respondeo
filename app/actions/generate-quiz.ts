@@ -86,6 +86,9 @@ function buildMessages(input: AIQuizInput, prompt: string, imageMimeTypes?: stri
  * @returns The generated quiz data or an error
  */
 export async function generateQuizWithAI(input: AIQuizInput): Promise<GenerateQuizResult> {
+  // Declare hasImages at function scope so it's accessible in catch block
+  let hasImages = false;
+
   try {
     // 1. Check authentication
     const session = await auth.api.getSession({
@@ -148,7 +151,7 @@ export async function generateQuizWithAI(input: AIQuizInput): Promise<GenerateQu
     // 6. Generate quiz with AI
     const useWebSearch = validatedInput.data.useWebSearch && isWebSearchAvailable();
     const imageCount = validatedInput.data.images?.length ?? 0;
-    const hasImages = imageCount > 0;
+    hasImages = imageCount > 0;
     const prompt = generateQuizPrompt(validatedInput.data, useWebSearch);
     const model = getModelWithTracking(aiConfig.provider, aiConfig.model, session.user.id);
 

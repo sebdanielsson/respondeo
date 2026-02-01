@@ -210,7 +210,10 @@ export function AIQuizGenerator({ onGenerated, webSearchEnabled = false }: AIQui
         language,
         useWebSearch: webSearchEnabled && useWebSearch,
         images: images.length > 0 ? images.map((img) => img.base64) : undefined,
-        imageMimeTypes: images.length > 0 ? images.map((img) => img.mimeType) : undefined,
+        imageMimeTypes:
+          images.length > 0
+            ? (images.map((img) => img.mimeType) as ("image/png" | "image/jpeg" | "image/webp")[])
+            : undefined,
       });
 
       if (!result.success) {
