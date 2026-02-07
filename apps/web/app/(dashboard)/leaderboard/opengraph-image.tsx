@@ -110,6 +110,7 @@ export default async function Image() {
                   }}
                 >
                   {player.user?.image ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
                     <img
                       src={player.user.image}
                       alt=""

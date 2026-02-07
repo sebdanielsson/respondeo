@@ -209,7 +209,6 @@ export function ImagePickerDialog({ open, onOpenChange, onSelect }: ImagePickerD
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={isPending}
-            autoFocus
           />
           <Button type="button" onClick={handleSearch} disabled={isPending || !query.trim()}>
             {isPending ? (

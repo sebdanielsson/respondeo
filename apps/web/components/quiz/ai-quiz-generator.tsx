@@ -323,7 +323,6 @@ export function AIQuizGenerator({ onGenerated, webSearchEnabled = false }: AIQui
               value={theme}
               onChange={(e) => setTheme(e.target.value)}
               disabled={isPending}
-              autoFocus
               rows={4}
               className="resize-none"
             />
@@ -353,7 +352,7 @@ export function AIQuizGenerator({ onGenerated, webSearchEnabled = false }: AIQui
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={`data:${image.mimeType};base64,${image.base64}`}
-                    alt={`Preview of uploaded reference image ${index + 1}`}
+                    alt={`Preview of uploaded ${index + 1}`}
                     className="h-full w-full object-cover"
                   />
                   <button

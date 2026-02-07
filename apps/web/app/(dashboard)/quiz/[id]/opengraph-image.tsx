@@ -66,6 +66,7 @@ export default async function Image({ params }: { params: Promise<{ id: string }
     >
       {/* Background - hero image or gradient */}
       {hasHeroImage ? (
+        /* eslint-disable-next-line @next/next/no-img-element */
         <img
           src={quiz.heroImageUrl!}
           alt=""

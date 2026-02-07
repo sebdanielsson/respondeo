@@ -78,24 +78,24 @@ export default async function AttemptResultPage({ params }: PageProps) {
             <p className="text-muted-foreground text-lg">
               You must be signed in to view quiz attempts.
             </p>
-            <a
+            <Link
               href="/sign-in"
               className="bg-primary text-primary-foreground hover:bg-primary/80 mt-4 inline-flex h-10 items-center justify-center rounded-md px-4 text-base font-medium"
             >
               Sign In
-            </a>
+            </Link>
           </>
         ) : (
           <>
             <p className="text-muted-foreground text-lg">
               You need to play this quiz before you can view other players&apos; attempts.
             </p>
-            <a
+            <Link
               href={`/quiz/${quizId}`}
               className="bg-primary text-primary-foreground hover:bg-primary/80 mt-4 inline-flex h-10 items-center justify-center rounded-md px-4 text-base font-medium"
             >
               Play Quiz
-            </a>
+            </Link>
           </>
         )}
       </div>

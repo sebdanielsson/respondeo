@@ -193,6 +193,7 @@ export default async function Image({
             }}
           >
             {attempt.user?.image ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
               <img
                 src={attempt.user.image}
                 alt=""
