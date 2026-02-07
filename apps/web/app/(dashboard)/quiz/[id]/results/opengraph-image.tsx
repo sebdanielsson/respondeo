@@ -156,6 +156,7 @@ export default async function Image({ params }: { params: Promise<{ id: string }
 
                 {/* Avatar */}
                 {entry.user?.image ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
                   <img
                     src={entry.user.image}
                     alt=""
