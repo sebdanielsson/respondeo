@@ -10,7 +10,14 @@ const eslintConfig = defineConfig([
   },
   ...nextVitals,
   ...oxlint.configs["flat/recommended"],
-  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts", ".source/**", "components/ui/**"]),
+  globalIgnores([
+    ".next/**",
+    "out/**",
+    "build/**",
+    "next-env.d.ts",
+    ".source/**",
+    "components/ui/**",
+  ]),
 ]);
 
 export default eslintConfig;
