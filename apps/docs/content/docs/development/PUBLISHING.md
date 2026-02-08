@@ -1,4 +1,9 @@
-# Publishing to npm
+---
+title: Publishing to npm
+description: Guide for publishing the `create-respondeo-app` package to npm, including GitHub Actions setup and manual steps.
+---
+
+## Publishing to npm
 
 This repository uses GitHub Actions to automatically publish packages to npm.
 
