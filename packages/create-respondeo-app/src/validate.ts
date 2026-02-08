@@ -23,7 +23,7 @@ export function validateProjectName(input: string | undefined): string | undefin
   }
 
   // Allow alphanumeric, hyphens, underscores, and forward slashes for paths
-  if (!/^[a-zA-Z0-9\-_\/\.]+$/.test(trimmed)) {
+  if (!/^[a-zA-Z0-9\-_/.]+$/.test(trimmed)) {
     return "Project name can only contain letters, numbers, hyphens, underscores, and forward slashes";
   }
 

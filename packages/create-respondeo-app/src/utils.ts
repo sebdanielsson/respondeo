@@ -1,5 +1,5 @@
 import { existsSync } from "node:fs";
-import { resolve, dirname } from "node:path";
+import { resolve } from "node:path";
 import { PACKAGE_MANAGERS, type PackageManager } from "./constants";
 
 /**

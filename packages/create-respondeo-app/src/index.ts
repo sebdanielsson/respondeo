@@ -2,7 +2,7 @@
 
 import { intro, text, confirm, spinner, outro, isCancel, cancel } from "@clack/prompts";
 import { downloadTemplate } from "giget";
-import { resolve, join } from "node:path";
+import { join } from "node:path";
 import { existsSync, rmSync } from "node:fs";
 import { MESSAGES, TEMPLATE_SOURCE } from "./constants";
 import { validateProjectName, directoryExists, resolveProjectPath } from "./validate";

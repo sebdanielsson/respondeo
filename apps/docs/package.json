@@ -8,7 +8,8 @@
     "start": "next start",
     "types:check": "fumadocs-mdx && next typegen && tsc --noEmit",
     "postinstall": "fumadocs-mdx",
-    "lint": "oxlint && eslint"
+    "lint": "oxlint && eslint",
+    "stylelint": "stylelint --allow-empty-input \"./**/*.css\""
   },
   "dependencies": {
     "fumadocs-core": "16.5.1",
@@ -21,6 +22,7 @@
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
+    "@dreamsicle.io/stylelint-config-tailwindcss": "^1.2.2",
     "@fumadocs/cli": "^1.2.3",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/mdx": "^2.0.13",
@@ -33,6 +35,9 @@
     "oxfmt": "^0.28.0",
     "oxlint": "^1.43.0",
     "postcss": "^8.5.6",
+    "stylelint": "^17.1.1",
+    "stylelint-config-html": "^1.1.0",
+    "stylelint-config-standard": "^40.0.0",
     "tailwindcss": "^4.1.18",
     "typescript": "^5.9.3"
   }
