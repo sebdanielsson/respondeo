@@ -1,11 +1,11 @@
 # Plan: Next.js 16 Quiz App with OIDC & Group-Based Permissions
 
-A server-rendered Next.js 16 quiz app authenticating against `auth.hogwarts.zone` via BetterAuth's Generic OAuth plugin. SQLite with Drizzle ORM persists users, quizzes, questions, attempts with full answer history. Real-time answer feedback during play, optional time limits, per-quiz and global leaderboards with pagination, group-based permissions for quiz management.
+A server-rendered Next.js 16 app with OIDC auth via BetterAuth's Generic OAuth plugin. SQLite with Drizzle ORM persists users, quizzes, questions, attempts with full answer history. Real-time answer feedback during play, optional time limits, per-quiz and global leaderboards with pagination, group-based permissions for quiz management.
 
 ## Steps
 
 1. **Scaffold project & install dependencies**
-   - Run `bun create next-app@latest quiz-app` with App Router, TypeScript, Tailwind, ESLint
+   - Run `bun create next-app@latest respondeo` with App Router, TypeScript, Tailwind, ESLint
    - Install: `better-auth`, `drizzle-orm`, `next-themes`, `zod`, `lucide-react`
    - Dev deps: `drizzle-kit`, `@types/bun`
    - Run `bunx shadcn@latest init` (New York style, CSS variables)
@@ -92,8 +92,8 @@ A server-rendered Next.js 16 quiz app authenticating against `auth.hogwarts.zone
        genericOAuth({
          config: [
            {
-             providerId: "hogwarts",
-             discoveryUrl: "https://auth.hogwarts.zone/.well-known/openid-configuration",
+             providerId: process.env.OIDC_PROVIDER_ID!,
+             discoveryUrl: `${process.env.OIDC_ISSUER!}/.well-known/openid-configuration`,
              clientId: process.env.OIDC_CLIENT_ID!,
              clientSecret: process.env.OIDC_CLIENT_SECRET!,
              scopes: ["openid", "profile", "email", "groups"],
@@ -172,6 +172,7 @@ A server-rendered Next.js 16 quiz app authenticating against `auth.hogwarts.zone
 # Auth
 BETTER_AUTH_SECRET=<32+ char secret>
 BETTER_AUTH_URL=http://localhost:3000
+OIDC_PROVIDER_ID=provider-name
 OIDC_CLIENT_ID=1d65d35e-2832-4778-a2be-18eb72ba8ee2
 OIDC_CLIENT_SECRET=<your client secret>
 OIDC_ADMIN_GROUP=admin

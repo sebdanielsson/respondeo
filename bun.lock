@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "quiz-app-monorepo",
+      "name": "respondeo-monorepo",
       "devDependencies": {
         "@types/bun": "^1.3.8",
         "oxfmt": "^0.28.0",

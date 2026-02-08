@@ -1,5 +1,5 @@
 {
-  "name": "quiz-app-monorepo",
+  "name": "respondeo-monorepo",
   "version": "0.1.0",
   "private": true,
   "workspaces": [

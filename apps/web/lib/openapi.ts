@@ -6,12 +6,12 @@ const languageCodes = SUPPORTED_LANGUAGES.map((l) => l.code);
 export const openApiSpec = {
   openapi: "3.1.0",
   info: {
-    title: "Quiz App API",
+    title: "Respondeo API",
     description:
-      "REST API for the Quiz App. Create and manage quizzes, submit attempts, and view leaderboards.",
+      "REST API for Respondeo. Create and manage quizzes, submit attempts, and view leaderboards.",
     version: "1.0.0",
     contact: {
-      name: "Quiz App",
+      name: "Respondeo",
     },
   },
   servers: [

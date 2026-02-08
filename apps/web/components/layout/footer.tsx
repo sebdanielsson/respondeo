@@ -1,3 +1,5 @@
+import { siteConfig } from "@/lib/config";
+
 export async function Footer() {
   return (
     <div className="relative flex flex-col">
@@ -6,12 +8,12 @@ export async function Footer() {
           <span>
             View source code on{" "}
             <a
-              href="https://github.com/sebdanielsson/quiz-app"
+              href={siteConfig.sourceCodeUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="text-black dark:text-white"
             >
-              GitHub
+              {siteConfig.sourceCodeLinkText}
             </a>
           </span>
         </div>

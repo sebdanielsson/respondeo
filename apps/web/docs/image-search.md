@@ -1,6 +1,6 @@
 # Image Search
 
-The Quiz App includes an image picker that allows users to search and select images from web providers when creating quizzes. This feature makes it easy to add high-quality images to quiz questions and hero images.
+The app includes an image picker that allows users to search and select images from web providers when creating quizzes. This feature makes it easy to add high-quality images to quiz questions and hero images.
 
 ## Overview
 
@@ -230,8 +230,8 @@ Photo by [Photographer Name] on [Unsplash]
 
 With links including UTM parameters:
 
-- Photographer link: `https://unsplash.com/@username?utm_source=quiz_app&utm_medium=referral`
-- Unsplash link: `https://unsplash.com/?utm_source=quiz_app&utm_medium=referral`
+- Photographer link: `https://unsplash.com/@username?utm_source=respondeo&utm_medium=referral`
+- Unsplash link: `https://unsplash.com/?utm_source=respondeo&utm_medium=referral`
 
 ## Troubleshooting
 

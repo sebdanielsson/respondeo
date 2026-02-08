@@ -1,5 +1,5 @@
 /**
- * Redis cache client for the quiz app.
+ * Redis cache client.
  *
  * Uses Bun's native Redis client with graceful degradation:
  * - If Redis is unavailable, operations silently fail and queries hit the database

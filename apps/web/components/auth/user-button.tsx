@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import { siteConfig } from "@/lib/config";
 
 interface UserButtonProps {
   isAdmin?: boolean;
@@ -83,11 +84,7 @@ export function UserButton({ isAdmin = false, isLoggedIn = false }: UserButtonPr
                 Docs
               </DropdownMenuItem>
             </a>
-            <a
-              href="https://github.com/sebdanielsson/quiz-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a href={siteConfig.sourceCodeUrl} target="_blank" rel="noopener noreferrer">
               <DropdownMenuItem className="cursor-pointer">
                 <GitHub className="h-4 w-4" />
                 View source

@@ -61,7 +61,7 @@ const UNSPLASH_API_BASE = "https://api.unsplash.com";
 const DEFAULT_PER_PAGE = 12;
 
 // App name for UTM tracking (required by Unsplash API guidelines)
-const APP_NAME = "quiz_app";
+const APP_NAME = "respondeo";
 
 /**
  * Build UTM parameters for Unsplash attribution links.

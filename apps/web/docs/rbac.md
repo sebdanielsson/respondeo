@@ -1,6 +1,6 @@
 # Role-Based Access Control (RBAC)
 
-The Quiz App includes a flexible, environment-variable-driven RBAC system that allows you to configure authentication requirements, roles, and permissions for your specific use case.
+The app includes a flexible, environment-variable-driven RBAC system that allows you to configure authentication requirements, roles, and permissions for your specific use case.
 
 ## Overview
 
@@ -19,6 +19,8 @@ By default, the app requires authentication for all features:
 
 ```env
 # No RBAC_ variables needed - defaults to private, authenticated access
+OIDC_PROVIDER_ID=your-idp
+NEXT_PUBLIC_OIDC_PROVIDER_ID=your-idp
 OIDC_ISSUER=https://your-idp.example.com
 OIDC_CLIENT_ID=your-client-id
 OIDC_CLIENT_SECRET=your-secret
