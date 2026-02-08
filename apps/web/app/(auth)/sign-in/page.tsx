@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { authClient } from "@/lib/auth/client";
 import { ErrorDialog } from "@/components/ui/dialog";
+import { siteConfig } from "@/lib/config";
 
 function SignInContent() {
   const searchParams = useSearchParams();
@@ -49,13 +50,13 @@ function SignInContent() {
   };
 
   return (
-    <div className="from-background to-muted flex min-h-screen items-center justify-center bg-gradient-to-br">
+    <div className="from-background to-muted flex min-h-screen items-center justify-center bg-linear-to-br">
       <Card className="mx-4 w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mb-4 flex justify-center">
             <Brain className="text-primary h-12 w-12" />
           </div>
-          <CardTitle className="text-2xl">Welcome to Respondeo</CardTitle>
+          <CardTitle className="text-2xl">Welcome to {siteConfig.name}</CardTitle>
           <CardDescription>
             Sign in to start playing quizzes and compete with friends
           </CardDescription>
@@ -75,13 +76,13 @@ export default function SignInPage() {
   return (
     <Suspense
       fallback={
-        <div className="from-background to-muted flex min-h-screen items-center justify-center bg-gradient-to-br">
+        <div className="from-background to-muted flex min-h-screen items-center justify-center bg-linear-to-br">
           <Card className="mx-4 w-full max-w-md">
             <CardHeader className="text-center">
               <div className="mb-4 flex justify-center">
                 <Brain className="text-primary h-12 w-12" />
               </div>
-              <CardTitle className="text-2xl">Welcome to Respondeo</CardTitle>
+              <CardTitle className="text-2xl">Welcome to {siteConfig.name}</CardTitle>
               <CardDescription>Loading...</CardDescription>
             </CardHeader>
           </Card>
