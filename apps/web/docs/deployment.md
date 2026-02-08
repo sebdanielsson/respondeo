@@ -97,7 +97,7 @@ docker run -d \
   -e OIDC_CLIENT_SECRET=your-client-secret \
   -e OIDC_ISSUER=https://auth.example.com \
   -e DB_DIALECT=postgres \
-  -e DATABASE_URL=postgresql://user:pass@db:5432/quiz \
+  -e DATABASE_URL=postgresql://user:pass@db:5432/respondeo \
   respondeo
 ```
 
