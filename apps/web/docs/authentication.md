@@ -22,6 +22,7 @@ BETTER_AUTH_URL="https://respondeo.example.com"
 
 # OIDC Provider
 OIDC_PROVIDER_ID="your-oidc-provider-id"
+NEXT_PUBLIC_OIDC_PROVIDER_ID="your-oidc-provider-id"  # Must match OIDC_PROVIDER_ID
 OIDC_CLIENT_ID="your-client-id"
 OIDC_CLIENT_SECRET="your-client-secret"
 OIDC_ISSUER="https://auth.example.com"
@@ -53,7 +54,7 @@ Configure your identity provider with the callback URL:
 https://your-app-url.com/api/auth/callback/your-provider-id
 ```
 
-> **Note**: Replace `your-provider-id` with your chosen OIDC provider identifier. This is configured in `lib/auth/server.ts` via the `OIDC_PROVIDER_ID` environment variable.
+> **Note**: Replace `your-provider-id` with your chosen OIDC provider identifier. This is configured via the `OIDC_PROVIDER_ID` (server-side) and `NEXT_PUBLIC_OIDC_PROVIDER_ID` (client-side) environment variables. Both values must match.
 
 ### Required Claims
 
@@ -85,6 +86,7 @@ The app expects the following claims in the ID token:
 
 ```env
 OIDC_PROVIDER_ID=your-provider-id
+NEXT_PUBLIC_OIDC_PROVIDER_ID=your-provider-id
 OIDC_ISSUER=https://keycloak.example.com/realms/your-realm
 OIDC_CLIENT_ID=your-client-id
 OIDC_CLIENT_SECRET=your-client-secret
@@ -107,6 +109,7 @@ function addGroupsToToken(user, context, callback) {
 
 ```env
 OIDC_PROVIDER_ID=your-auth0-tenant
+NEXT_PUBLIC_OIDC_PROVIDER_ID=your-auth0-tenant
 OIDC_ISSUER=https://your-tenant.auth0.com
 OIDC_CLIENT_ID=your-client-id
 OIDC_CLIENT_SECRET=your-client-secret
@@ -124,6 +127,7 @@ OIDC_CLIENT_SECRET=your-client-secret
 
 ```env
 OIDC_PROVIDER_ID=your-okta-org
+NEXT_PUBLIC_OIDC_PROVIDER_ID=your-okta-org
 OIDC_ISSUER=https://your-org.okta.com
 OIDC_CLIENT_ID=your-client-id
 OIDC_CLIENT_SECRET=your-client-secret
@@ -138,6 +142,7 @@ OIDC_CLIENT_SECRET=your-client-secret
 
 ```env
 OIDC_PROVIDER_ID=your-provider-id
+NEXT_PUBLIC_OIDC_PROVIDER_ID=your-provider-id
 OIDC_ISSUER=https://authentik.example.com/application/o/your-app-name
 OIDC_CLIENT_ID=your-client-id
 OIDC_CLIENT_SECRET=your-client-secret
@@ -151,6 +156,7 @@ OIDC_CLIENT_SECRET=your-client-secret
 
 ```env
 OIDC_PROVIDER_ID=pocket-id
+NEXT_PUBLIC_OIDC_PROVIDER_ID=pocket-id
 OIDC_ISSUER=https://pocket-id.example.com
 OIDC_CLIENT_ID=your-client-id
 OIDC_CLIENT_SECRET=your-client-secret
@@ -164,6 +170,7 @@ OIDC_CLIENT_SECRET=your-client-secret
 
 ```env
 OIDC_PROVIDER_ID=google
+NEXT_PUBLIC_OIDC_PROVIDER_ID=google
 OIDC_ISSUER=https://accounts.google.com
 OIDC_CLIENT_ID=your-client-id.apps.googleusercontent.com
 OIDC_CLIENT_SECRET=your-client-secret
@@ -180,6 +187,7 @@ OIDC_CLIENT_SECRET=your-client-secret
 
 ```env
 OIDC_PROVIDER_ID=azure
+NEXT_PUBLIC_OIDC_PROVIDER_ID=azure
 OIDC_ISSUER=https://login.microsoftonline.com/your-tenant-id/v2.0
 OIDC_CLIENT_ID=your-application-id
 OIDC_CLIENT_SECRET=your-client-secret

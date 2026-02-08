@@ -10,7 +10,7 @@ import { ErrorDialog } from "@/components/ui/dialog";
 
 function SignInContent() {
   const searchParams = useSearchParams();
-  const providerId = process.env.OIDC_PROVIDER_ID!;
+  const providerId = process.env.NEXT_PUBLIC_OIDC_PROVIDER_ID!;
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
   const [error, setError] = useState<string | null>(null);
 
