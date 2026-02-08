@@ -296,12 +296,6 @@ export function QuizPlayer({
                       setCurrentSelection(answer.id);
                     }
                   }}
-                  onKeyDown={(e) => {
-                    if ((e.key === "Enter" || e.key === " ") && !showFeedback && !isSubmitting) {
-                      e.preventDefault();
-                      setCurrentSelection(answer.id);
-                    }
-                  }}
                 >
                   <RadioGroupItem value={answer.id} id={answer.id} />
                   <Label htmlFor={answer.id} className="flex-1 cursor-pointer font-normal">
