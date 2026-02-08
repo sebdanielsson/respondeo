@@ -4,6 +4,22 @@ import { genericOAuth, apiKey } from "better-auth/plugins";
 import { db } from "@/lib/db";
 import * as schema from "@/lib/db/schema";
 
+// Validate required OIDC environment variables
+if (process.env.NEXT_PHASE !== "phase-production-build") {
+  const requiredOidcVars = [
+    "OIDC_PROVIDER_ID",
+    "OIDC_ISSUER",
+    "OIDC_CLIENT_ID",
+    "OIDC_CLIENT_SECRET",
+  ];
+
+  const missingVars = requiredOidcVars.filter((varName) => !process.env[varName]);
+
+  if (missingVars.length > 0) {
+    throw new Error(`Missing required OIDC environment variables: ${missingVars.join(", ")}`);
+  }
+}
+
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",

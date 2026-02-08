@@ -10,9 +10,28 @@ import { ErrorDialog } from "@/components/ui/dialog";
 
 function SignInContent() {
   const searchParams = useSearchParams();
-  const providerId = process.env.NEXT_PUBLIC_OIDC_PROVIDER_ID!;
+  const providerId = process.env.NEXT_PUBLIC_OIDC_PROVIDER_ID;
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
   const [error, setError] = useState<string | null>(null);
+
+  // Validate provider ID is configured
+  if (!providerId) {
+    return (
+      <div className="from-background to-muted flex min-h-screen items-center justify-center bg-gradient-to-br">
+        <Card className="mx-4 w-full max-w-md">
+          <CardHeader className="text-center">
+            <div className="mb-4 flex justify-center">
+              <Brain className="text-primary h-12 w-12" />
+            </div>
+            <CardTitle className="text-2xl">Configuration Error</CardTitle>
+            <CardDescription>
+              OIDC provider is not configured. Please contact the administrator.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    );
+  }
 
   const handleSignIn = async () => {
     try {
