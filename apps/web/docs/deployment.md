@@ -89,9 +89,9 @@ docker build -t respondeo .
 # Run with environment variables
 docker run -d \
   -p 3000:3000 \
-  -e NEXT_PUBLIC_APP_URL=https://quiz.example.com \
+  -e NEXT_PUBLIC_APP_URL=https://respondeo.example.com \
   -e BETTER_AUTH_SECRET=your-secret-key \
-  -e BETTER_AUTH_URL=https://quiz.example.com \
+  -e BETTER_AUTH_URL=https://respondeo.example.com \
   -e OIDC_PROVIDER_ID=your-idp \
   -e OIDC_CLIENT_ID=your-client-id \
   -e OIDC_CLIENT_SECRET=your-client-secret \
@@ -138,7 +138,7 @@ The app automatically checks database connectivity. If the database is unavailab
 ```nginx
 server {
     listen 80;
-    server_name quiz.example.com;
+    server_name respondeo.example.com;
 
     location / {
         proxy_pass http://localhost:3000;
@@ -157,7 +157,7 @@ server {
 ### Caddy
 
 ```caddy
-quiz.example.com {
+respondeo.example.com {
     reverse_proxy localhost:3000
 }
 ```

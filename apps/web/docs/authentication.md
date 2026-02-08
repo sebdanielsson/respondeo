@@ -18,7 +18,7 @@ Authentication is handled by [BetterAuth](https://better-auth.com/) with the fol
 ```env
 # BetterAuth Configuration
 BETTER_AUTH_SECRET="your-super-secret-key-at-least-32-characters"
-BETTER_AUTH_URL="https://quiz.example.com"
+BETTER_AUTH_URL="https://respondeo.example.com"
 
 # OIDC Provider
 OIDC_PROVIDER_ID="your-oidc-provider-id"
@@ -77,7 +77,7 @@ The app expects the following claims in the ID token:
 
 1. Create a new client in your realm
 2. Set client authentication to **On**
-3. Configure valid redirect URIs: `https://quiz.example.com/api/auth/callback/your-provider-id`
+3. Configure valid redirect URIs: `https://respondeo.example.com/api/auth/callback/your-provider-id`
 4. Create a client scope for groups:
    - Add a mapper of type "Group Membership"
    - Set token claim name to `groups`
@@ -93,13 +93,13 @@ OIDC_CLIENT_SECRET=your-client-secret
 ### Auth0
 
 1. Create a new Regular Web Application
-2. Configure allowed callback URLs: `https://quiz.example.com/api/auth/callback/your-provider-id`
+2. Configure allowed callback URLs: `https://respondeo.example.com/api/auth/callback/your-provider-id`
 3. Enable OIDC Conformant mode
 4. Create a Rule to add groups to tokens:
 
 ```javascript
 function addGroupsToToken(user, context, callback) {
-  const namespace = "https://quiz.example.com/";
+  const namespace = "https://respondeo.example.com/";
   context.idToken[namespace + "groups"] = user.groups || [];
   callback(null, user, context);
 }
@@ -115,7 +115,7 @@ OIDC_CLIENT_SECRET=your-client-secret
 ### Okta
 
 1. Create a new OIDC Web Application
-2. Set sign-in redirect URI: `https://quiz.example.com/api/auth/callback/your-provider-id`
+2. Set sign-in redirect URI: `https://respondeo.example.com/api/auth/callback/your-provider-id`
 3. Assign users/groups to the application
 4. Add a groups claim to the ID token:
    - Go to Security → API → Authorization Servers
@@ -132,7 +132,7 @@ OIDC_CLIENT_SECRET=your-client-secret
 ### Authentik
 
 1. Create a new OAuth2/OpenID Provider
-2. Set redirect URI: `https://quiz.example.com/api/auth/callback/your-provider-id`
+2. Set redirect URI: `https://respondeo.example.com/api/auth/callback/your-provider-id`
 3. Enable the `groups` scope
 4. Create an Application and link the provider
 
@@ -146,7 +146,7 @@ OIDC_CLIENT_SECRET=your-client-secret
 ### Pocket ID
 
 1. Create a new OIDC client
-2. Configure callback URL: `https://quiz.example.com/api/auth/callback/your-provider-id`
+2. Configure callback URL: `https://respondeo.example.com/api/auth/callback/your-provider-id`
 3. Enable required scopes
 
 ```env
@@ -160,7 +160,7 @@ OIDC_CLIENT_SECRET=your-client-secret
 
 1. Go to Google Cloud Console → APIs & Services → Credentials
 2. Create OAuth 2.0 Client ID (Web application)
-3. Add authorized redirect URI: `https://quiz.example.com/api/auth/callback/your-provider-id`
+3. Add authorized redirect URI: `https://respondeo.example.com/api/auth/callback/your-provider-id`
 
 ```env
 OIDC_PROVIDER_ID=google
@@ -174,7 +174,7 @@ OIDC_CLIENT_SECRET=your-client-secret
 ### Microsoft Entra ID (Azure AD)
 
 1. Register a new application in Azure Portal
-2. Add a redirect URI: `https://quiz.example.com/api/auth/callback/your-provider-id`
+2. Add a redirect URI: `https://respondeo.example.com/api/auth/callback/your-provider-id`
 3. Create a client secret
 4. Configure token claims to include groups
 
@@ -203,7 +203,7 @@ Include the API key in the `x-api-key` header:
 
 ```bash
 curl -H "x-api-key: your-api-key" \
-  https://quiz.example.com/api/quizzes
+  https://respondeo.example.com/api/quizzes
 ```
 
 ### API Key Permissions
