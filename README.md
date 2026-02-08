@@ -70,6 +70,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 
 # OIDC Configuration
 OIDC_PROVIDER_ID=your-oidc-provider-id
+NEXT_PUBLIC_OIDC_PROVIDER_ID=your-oidc-provider-id # must match OIDC_PROVIDER_ID
 OIDC_ISSUER=https://your-oidc-provider.com
 OIDC_CLIENT_ID=your-client-id
 OIDC_CLIENT_SECRET=your-client-secret
