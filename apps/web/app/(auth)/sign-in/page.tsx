@@ -43,7 +43,7 @@ function SignInContent() {
         </CardHeader>
         <CardContent>
           <Button onClick={handleSignIn} className="w-full" size="lg">
-            Sign in with ${providerId}
+            {`Sign in with ${providerId}`}
           </Button>
         </CardContent>
       </Card>
