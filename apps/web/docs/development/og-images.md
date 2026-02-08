@@ -1,6 +1,6 @@
 # Open Graph Images
 
-This document explains the Open Graph (OG) image system in the Quiz App, including how images are generated, cached, and how to customize them.
+This document explains the Open Graph (OG) image system in Respondeo, including how images are generated, cached, and how to customize them.
 
 ## Overview
 

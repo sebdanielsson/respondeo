@@ -31,7 +31,7 @@ export const auth = betterAuth({
     genericOAuth({
       config: [
         {
-          providerId: "hogwarts",
+          providerId: process.env.OIDC_PROVIDER_ID!,
           discoveryUrl: `${process.env.OIDC_ISSUER}/.well-known/openid-configuration`,
           clientId: process.env.OIDC_CLIENT_ID!,
           clientSecret: process.env.OIDC_CLIENT_SECRET!,

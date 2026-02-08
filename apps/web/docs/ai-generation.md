@@ -1,6 +1,6 @@
 # AI Quiz Generation
 
-The Quiz App supports AI-powered quiz generation using the [Vercel AI SDK](https://ai-sdk.dev/). Users with the appropriate permissions can generate complete quizzes from a simple theme or topic description.
+The app supports AI-powered quiz generation using the [Vercel AI SDK](https://ai-sdk.dev/). Users with the appropriate permissions can generate complete quizzes from a simple theme or topic description.
 
 ## Overview
 

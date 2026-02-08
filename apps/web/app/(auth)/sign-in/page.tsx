@@ -10,13 +10,14 @@ import { ErrorDialog } from "@/components/ui/dialog";
 
 function SignInContent() {
   const searchParams = useSearchParams();
+  const providerId = process.env.OIDC_PROVIDER_ID!;
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
   const [error, setError] = useState<string | null>(null);
 
   const handleSignIn = async () => {
     try {
       await authClient.signIn.oauth2({
-        providerId: "hogwarts",
+        providerId: providerId,
         callbackURL: callbackUrl,
       });
     } catch (e: unknown) {
@@ -35,14 +36,14 @@ function SignInContent() {
           <div className="mb-4 flex justify-center">
             <Brain className="text-primary h-12 w-12" />
           </div>
-          <CardTitle className="text-2xl">Welcome to Quiz App</CardTitle>
+          <CardTitle className="text-2xl">Welcome to Respondeo</CardTitle>
           <CardDescription>
             Sign in to start playing quizzes and compete with friends
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Button onClick={handleSignIn} className="w-full" size="lg">
-            Sign in with Hogwarts
+            Sign in with ${providerId}
           </Button>
         </CardContent>
       </Card>
@@ -61,7 +62,7 @@ export default function SignInPage() {
               <div className="mb-4 flex justify-center">
                 <Brain className="text-primary h-12 w-12" />
               </div>
-              <CardTitle className="text-2xl">Welcome to Quiz App</CardTitle>
+              <CardTitle className="text-2xl">Welcome to Respondeo</CardTitle>
               <CardDescription>Loading...</CardDescription>
             </CardHeader>
           </Card>

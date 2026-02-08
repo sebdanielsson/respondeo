@@ -1,6 +1,6 @@
 # Deployment
 
-This guide covers deploying the Quiz App to various environments.
+This guide covers deploying Respondeo to various environments.
 
 ## Prerequisites
 
@@ -18,14 +18,15 @@ cp .env.example .env.local
 
 ### Required Variables
 
-| Variable              | Description                                        |
-| --------------------- | -------------------------------------------------- |
-| `NEXT_PUBLIC_APP_URL` | Public URL where the app is hosted                 |
-| `BETTER_AUTH_SECRET`  | Secret key for session encryption (min 32 chars)   |
-| `BETTER_AUTH_URL`     | URL for the auth service (usually same as app URL) |
-| `OIDC_CLIENT_ID`      | OAuth client ID from your identity provider        |
-| `OIDC_CLIENT_SECRET`  | OAuth client secret                                |
-| `OIDC_ISSUER`         | OIDC issuer URL (e.g., `https://auth.example.com`) |
+| Variable              | Description                                               |
+| --------------------- | --------------------------------------------------------- |
+| `NEXT_PUBLIC_APP_URL` | Public URL where the app is hosted                        |
+| `BETTER_AUTH_SECRET`  | Secret key for session encryption (min 32 chars)          |
+| `BETTER_AUTH_URL`     | URL for the auth service (usually same as app URL)        |
+| `OIDC_PROVIDER_ID`    | Unique identifier for your OIDC provider (e.g., "my-idp") |
+| `OIDC_CLIENT_ID`      | OAuth client ID from your identity provider               |
+| `OIDC_CLIENT_SECRET`  | OAuth client secret                                       |
+| `OIDC_ISSUER`         | OIDC issuer URL (e.g., `https://auth.example.com`)        |
 
 ### Optional Variables
 
@@ -83,7 +84,7 @@ docker compose down
 
 ```bash
 # Build the image
-docker build -t quiz-app .
+docker build -t respondeo .
 
 # Run with environment variables
 docker run -d \
@@ -91,12 +92,13 @@ docker run -d \
   -e NEXT_PUBLIC_APP_URL=https://quiz.example.com \
   -e BETTER_AUTH_SECRET=your-secret-key \
   -e BETTER_AUTH_URL=https://quiz.example.com \
+  -e OIDC_PROVIDER_ID=your-idp \
   -e OIDC_CLIENT_ID=your-client-id \
   -e OIDC_CLIENT_SECRET=your-client-secret \
   -e OIDC_ISSUER=https://auth.example.com \
   -e DB_DIALECT=postgres \
   -e DATABASE_URL=postgresql://user:pass@db:5432/quiz \
-  quiz-app
+  respondeo
 ```
 
 ## Vercel Deployment

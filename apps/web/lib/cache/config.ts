@@ -1,5 +1,5 @@
 /**
- * Cache configuration for the quiz app.
+ * Cache configuration.
  *
  * This module defines TTL (Time To Live) values for different cache keys
  * and provides utilities to check if caching is enabled.

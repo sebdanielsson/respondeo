@@ -1,13 +1,13 @@
 # Database Setup
 
-The Quiz App uses PostgreSQL with Bun's native SQL driver (`bun:sql`) and Drizzle ORM.
+Respondeo uses PostgreSQL with Bun's native SQL driver (`bun:sql`) and Drizzle ORM.
 
 ## Quick Start
 
 Set the following environment variable:
 
 ```env
-DATABASE_URL=postgresql://user:password@localhost:5432/quiz_app
+DATABASE_URL=postgresql://respondeo:password@localhost:5432/respondeo
 ```
 
 Then run migrations:
@@ -34,9 +34,9 @@ bun run db:push
 ### Connection String Format
 
 ```env
-DATABASE_URL=postgresql://user:password@localhost:5432/quiz_app
-DATABASE_URL=postgresql://user:password@localhost:5432/quiz_app?sslmode=require
-DATABASE_URL=postgres://user:password@db.example.com:5432/quiz_app
+DATABASE_URL=postgresql://user:password@localhost:5432/respondeo
+DATABASE_URL=postgresql://user:password@localhost:5432/respondeo?sslmode=require
+DATABASE_URL=postgres://user:password@db.example.com:5432/respondeo
 ```
 
 ## PostgreSQL Setup
@@ -48,7 +48,7 @@ DATABASE_URL=postgres://user:password@db.example.com:5432/quiz_app
 ```bash
 brew install postgresql@16
 brew services start postgresql@16
-createdb quiz_app
+createdb respondeo
 ```
 
 **Ubuntu/Debian:**
@@ -56,14 +56,14 @@ createdb quiz_app
 ```bash
 sudo apt install postgresql postgresql-contrib
 sudo systemctl start postgresql
-sudo -u postgres createdb quiz_app
+sudo -u postgres createdb respondeo
 ```
 
 **Create a dedicated user:**
 
 ```sql
-CREATE USER quiz_app WITH PASSWORD 'securepassword';
-GRANT ALL PRIVILEGES ON DATABASE quiz_app TO quiz_app;
+CREATE USER respondeo WITH PASSWORD 'securepassword';
+GRANT ALL PRIVILEGES ON DATABASE respondeo TO respondeo;
 ```
 
 ### Docker
@@ -71,9 +71,9 @@ GRANT ALL PRIVILEGES ON DATABASE quiz_app TO quiz_app;
 ```bash
 docker run -d \
   --name quiz-postgres \
-  -e POSTGRES_USER=quiz_app \
+  -e POSTGRES_DB=respondeo \
+  -e POSTGRES_USER=respondeo \
   -e POSTGRES_PASSWORD=securepassword \
-  -e POSTGRES_DB=quiz_app \
   -p 5432:5432 \
   -v quiz_data:/var/lib/postgresql/data \
   postgres:16-alpine
@@ -169,8 +169,8 @@ Drizzle doesn't have built-in rollback. To revert:
 
 ```bash
 # Drop and recreate
-dropdb quiz_app
-createdb quiz_app
+dropdb respondeo
+createdb respondeo
 bun run db:migrate
 ```
 
@@ -178,16 +178,16 @@ bun run db:migrate
 
 ```bash
 # Backup
-pg_dump -U quiz_app -h localhost quiz_app > backup.sql
+pg_dump -U respondeo -h localhost respondeo > backup.sql
 
 # Restore
-psql -U quiz_app -h localhost quiz_app < backup.sql
+psql -U respondeo -h localhost respondeo < backup.sql
 
 # Compressed backup
-pg_dump -U quiz_app -h localhost -Fc quiz_app > backup.dump
+pg_dump -U respondeo -h localhost -Fc respondeo > backup.dump
 
 # Restore from compressed
-pg_restore -U quiz_app -h localhost -d quiz_app backup.dump
+pg_restore -U respondeo -h localhost -d respondeo backup.dump
 ```
 
 ## Performance Optimization
@@ -213,7 +213,7 @@ For serverless deployments, use a connection pooler:
 Example with pooler:
 
 ```env
-DATABASE_URL=postgresql://user:pass@pooler.example.com:6543/quiz_app?pgbouncer=true
+DATABASE_URL=postgresql://user:pass@pooler.example.com:6543/respondeo?pgbouncer=true
 ```
 
 ## Troubleshooting
@@ -231,7 +231,7 @@ Error: connect ECONNREFUSED 127.0.0.1:5432
 ### Authentication Failed
 
 ```
-Error: password authentication failed for user "quiz_app"
+Error: password authentication failed for user "respondeo"
 ```
 
 - Verify username and password
@@ -253,15 +253,15 @@ DATABASE_URL=postgresql://user:pass@host:5432/db?sslmode=require
 ### Database Does Not Exist
 
 ```
-Error: database "quiz_app" does not exist
+Error: database "respondeo" does not exist
 ```
 
 Create the database:
 
 ```bash
-createdb quiz_app
+createdb respondeo
 # or
-psql -c "CREATE DATABASE quiz_app;"
+psql -c "CREATE DATABASE respondeo;"
 ```
 
 ### Schema Mismatch

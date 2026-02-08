@@ -16,7 +16,7 @@ interface DatabaseErrorProps {
 
 const answers = [
   { id: "database", text: "Database", isCorrect: true },
-  { id: "quiz-app", text: "Quiz App", isCorrect: false },
+  { id: "respondeo", text: "Respondeo", isCorrect: false },
   { id: "seaweedfs", text: "SeaweedFS (S3)", isCorrect: false },
 ];
 

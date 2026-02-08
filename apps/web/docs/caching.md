@@ -1,10 +1,10 @@
 # Caching
 
-This document describes the optional Redis/Valkey caching layer for the quiz app.
+This document describes the optional Redis/Valkey caching layer for the app.
 
 ## Overview
 
-The quiz app uses a cache-aside pattern to reduce database load for frequently accessed, read-heavy data:
+The app uses a cache-aside pattern to reduce database load for frequently accessed, read-heavy data:
 
 - **Quiz list** - paginated list of quizzes
 - **Quiz details** - individual quiz with questions and answers

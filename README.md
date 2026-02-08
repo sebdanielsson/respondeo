@@ -1,4 +1,4 @@
-# Quiz App
+# Respondeo
 
 A modern, full-stack quiz application built with Next.js 16, featuring OIDC authentication, real-time leaderboards, and a comprehensive REST API with API key authentication.
 
@@ -6,7 +6,7 @@ A modern, full-stack quiz application built with Next.js 16, featuring OIDC auth
 
 This is a **Bun workspaces + Turborepo monorepo** with:
 
-- **apps/web** — Main Next.js quiz application
+- **apps/web** — Main Next.js application
 - **apps/docs** — Documentation app (to be created)
 
 All commands should be run from the repository root using Turborepo.
@@ -50,8 +50,8 @@ All commands should be run from the repository root using Turborepo.
 
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd quiz-app
+git clone https://github.com/sebdanielsson/respondeo.git
+cd respondeo
 
 # Install dependencies
 bun install
@@ -69,12 +69,13 @@ Create a `.env.local` file with the following:
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 
 # OIDC Configuration
+OIDC_PROVIDER_ID=your-oidc-provider-id
 OIDC_ISSUER=https://your-oidc-provider.com
 OIDC_CLIENT_ID=your-client-id
 OIDC_CLIENT_SECRET=your-client-secret
 
 # Database (PostgreSQL required)
-DATABASE_URL=postgresql://user:password@localhost:5432/quiz_app
+DATABASE_URL=postgresql://respondeo:securepassword@localhost:5432/respondeo
 ```
 
 ### RBAC Configuration
@@ -149,7 +150,7 @@ bun --bun run start
 ## Project Structure
 
 ```plaintext
-quiz-app/
+respondeo/
 ├── app/
 │   ├── (auth)/           # Authentication pages
 │   │   └── sign-in/
@@ -184,7 +185,7 @@ quiz-app/
 
 ## REST API
 
-The Quiz App provides a comprehensive REST API for programmatic access. All endpoints require authentication via API key.
+The app provides a comprehensive REST API for programmatic access. All endpoints require authentication via API key.
 
 ### Authentication
 
