@@ -12,7 +12,7 @@
     "stylelint": "stylelint --allow-empty-input \"./**/*.css\""
   },
   "dependencies": {
-    "fumadocs-core": "16.6.1",
+    "fumadocs-core": "16.6.4",
     "fumadocs-mdx": "14.2.7",
     "fumadocs-ui": "npm:@fumadocs/base-ui@latest",
     "lucide-react": "^0.564.0",
