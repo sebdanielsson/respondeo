@@ -9,7 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface Answer {
@@ -288,32 +287,27 @@ export function QuizPlayer({
               }
 
               return (
-                <div
+                <button
+                  type="button"
                   key={answer.id}
+                  aria-disabled={showFeedback || isSubmitting}
                   className={className}
                   onClick={() => {
                     if (!showFeedback && !isSubmitting) {
                       setCurrentSelection(answer.id);
                     }
                   }}
-                  onKeyDown={(e) => {
-                    if ((e.key === "Enter" || e.key === " ") && !showFeedback && !isSubmitting) {
-                      e.preventDefault();
-                      setCurrentSelection(answer.id);
-                    }
-                  }}
+                  disabled={showFeedback || isSubmitting}
                 >
                   <RadioGroupItem value={answer.id} id={answer.id} />
-                  <Label htmlFor={answer.id} className="flex-1 cursor-pointer font-normal">
-                    {answer.text}
-                  </Label>
+                  <span className="flex-1 text-left font-normal">{answer.text}</span>
                   {showCorrectness && answer.isCorrect && (
                     <CheckCircle className="h-5 w-5 text-green-600" />
                   )}
                   {showCorrectness && isSelected && !answer.isCorrect && (
                     <XCircle className="h-5 w-5 text-red-600" />
                   )}
-                </div>
+                </button>
               );
             })}
           </RadioGroup>
