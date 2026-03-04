@@ -25,7 +25,7 @@
     "@ai-sdk/openai": "^3.0.39",
     "@base-ui/react": "^1.1.0",
     "@better-auth/api-key": "~1.5.2",
-    "@scalar/nextjs-api-reference": "^0.9.26",
+    "@scalar/nextjs-api-reference": "^0.10.0",
     "@vercel/analytics": "^1.6.1",
     "ai": "^6.0.111",
     "better-auth": "~1.5.2",

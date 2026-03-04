@@ -54,7 +54,7 @@
         "@ai-sdk/openai": "^3.0.39",
         "@base-ui/react": "^1.1.0",
         "@better-auth/api-key": "~1.5.2",
-        "@scalar/nextjs-api-reference": "^0.9.26",
+        "@scalar/nextjs-api-reference": "^0.10.0",
         "@vercel/analytics": "^1.6.1",
         "ai": "^6.0.111",
         "better-auth": "~1.5.2",
@@ -678,13 +678,13 @@
 
     "@rtsao/scc": ["@rtsao/scc@1.1.0", "", {}, "sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g=="],
 
-    "@scalar/core": ["@scalar/core@0.3.45", "", { "dependencies": { "@scalar/types": "0.6.10" } }, "sha512-f3jyzColUUcu3eYfjslgNjG2JABuFU8WR3P7a9GevMpisW3skWUqVVffyC1P4w4i9TVRk9FUjYEtGeP10Rw9lQ=="],
+    "@scalar/core": ["@scalar/core@0.4.0", "", { "dependencies": { "@scalar/types": "0.7.0" } }, "sha512-Zcl+V8oBxb0S7vR+Nro8J53GD/w/kSjuyX0UoT3r1sn0bUM3Buf4Ob44n3CSfluQzxmiMuZxfOROHqa9F+ckbg=="],
 
-    "@scalar/helpers": ["@scalar/helpers@0.2.18", "", {}, "sha512-w1d4tpNEVZ293oB2BAgLrS0kVPUtG3eByNmOCJA5eK9vcT4D3cmsGtWjUaaqit0BQCsBFHK51rasGvSWnApYTw=="],
+    "@scalar/helpers": ["@scalar/helpers@0.3.0", "", {}, "sha512-lhQdehgighJC+PiSTJbbggM/SM3UydcRQil6Cfp/M4l539qklIh35pt4eh1+H+5Esa03gHnJwhTHF3TwglSOJw=="],
 
-    "@scalar/nextjs-api-reference": ["@scalar/nextjs-api-reference@0.9.26", "", { "dependencies": { "@scalar/core": "0.3.45" }, "peerDependencies": { "next": "^15.0.0 || ^16.0.0", "react": "^19.0.0" } }, "sha512-en7ZrFFS0r9Y03GBRBCeUsl3cRCcRn5hFIXFQcvwFkToQEa0bYjfRsEmU9ww30xZMERXJYFf/vYgSWvqMxD3yA=="],
+    "@scalar/nextjs-api-reference": ["@scalar/nextjs-api-reference@0.10.0", "", { "dependencies": { "@scalar/core": "0.4.0" }, "peerDependencies": { "next": "^15.0.0 || ^16.0.0", "react": "^19.0.0" } }, "sha512-rLCnzH41hgdDaMKG8QctB6PZZZtSX7wOiv+bp7DVqajNzCkmVc5dvxz/HfrRiYhTdEsWDZiOhBYLKc8CZjmxCQ=="],
 
-    "@scalar/types": ["@scalar/types@0.6.10", "", { "dependencies": { "@scalar/helpers": "0.2.18", "nanoid": "^5.1.6", "type-fest": "^5.3.1", "zod": "^4.3.5" } }, "sha512-fZkelRwcEeAhsn4c0wjYXWrzSzLaEyfxTn/eazXJ4XfCIsgJTQyK0FD8mnOBZJ2vEIbtT2E1mBKnCbDxrJIlxA=="],
+    "@scalar/types": ["@scalar/types@0.7.0", "", { "dependencies": { "@scalar/helpers": "0.3.0", "nanoid": "^5.1.6", "type-fest": "^5.3.1", "zod": "^4.3.5" } }, "sha512-IkG62M4ztmqkYNVhLpcswBojlQctbXLdkDa3UFsY8FfT7yfZ2LppjptycW9tWjD09ZQb4QAZ070FAUHmFRIS7w=="],
 
     "@sec-ant/readable-stream": ["@sec-ant/readable-stream@0.4.1", "", {}, "sha512-831qok9r2t8AlxLko40y2ebgSDhenenCatLVeW/uBtnHPyhHOvG0C7TvfgecV+wHzIm5KUICgzmVpWS+IMEAeg=="],
 
