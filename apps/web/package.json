@@ -27,7 +27,7 @@
     "@scalar/nextjs-api-reference": "^0.9.26",
     "@vercel/analytics": "^1.6.1",
     "ai": "^6.0.111",
-    "better-auth": "~1.4.21",
+    "better-auth": "~1.5.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
