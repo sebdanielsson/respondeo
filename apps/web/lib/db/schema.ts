@@ -89,11 +89,12 @@ export const verification = pgTable("verification", {
 // ============================================================================
 export const apikey = pgTable("apikey", {
   id: text("id").primaryKey(),
+  configId: text("config_id").notNull().default("default"),
   name: text("name"),
   start: text("start"),
   prefix: text("prefix"),
   key: text("key").notNull(),
-  userId: text("user_id")
+  referenceId: text("reference_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   refillInterval: integer("refill_interval"),
@@ -241,7 +242,7 @@ export const accountRelations = relations(account, ({ one }) => ({
 
 export const apikeyRelations = relations(apikey, ({ one }) => ({
   user: one(user, {
-    fields: [apikey.userId],
+    fields: [apikey.referenceId],
     references: [user.id],
   }),
 }));

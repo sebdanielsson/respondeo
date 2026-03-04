@@ -67,7 +67,8 @@ export function ApiKeyManager({ userPermissions }: ApiKeyManagerProps) {
         setError(result.error.message || "Failed to fetch API keys");
         return;
       }
-      setApiKeys((result.data as ApiKey[]) || []);
+      const data = result.data as { apiKeys: ApiKey[] } | null;
+      setApiKeys(data?.apiKeys || []);
     } catch (err) {
       console.error("Failed to fetch API keys:", err);
       setError("Failed to fetch API keys");

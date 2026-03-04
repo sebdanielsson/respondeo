@@ -1,6 +1,7 @@
 {
   "extends": ["//"],
   "tasks": {
+    "build:only": {},
     "build": {
       "outputs": [".next/**", "!.next/cache/**"],
       "env": ["DATABASE_URL"],
