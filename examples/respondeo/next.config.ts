@@ -9,6 +9,13 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  turbopack: {
+    rules: {
+      "*.css": {
+        loaders: ["@tailwindcss/webpack"],
+      },
+    },
+  },
 };
 
 export default nextConfig;

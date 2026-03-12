@@ -24,7 +24,7 @@
   "devDependencies": {
     "@dreamsicle.io/stylelint-config-tailwindcss": "^1.2.2",
     "@fumadocs/cli": "^1.2.5",
-    "@tailwindcss/postcss": "^4.2.1",
+    "@tailwindcss/webpack": "^4.2.1",
     "@types/mdx": "^2.0.13",
     "@types/node": "^25.3.3",
     "@types/react": "^19.2.14",
@@ -34,7 +34,6 @@
     "eslint-plugin-oxlint": "^1.51.0",
     "oxfmt": "^0.36.0",
     "oxlint": "^1.51.0",
-    "postcss": "^8.5.8",
     "stylelint": "^17.4.0",
     "stylelint-config-html": "^1.1.0",
     "stylelint-config-standard": "^40.0.0",
