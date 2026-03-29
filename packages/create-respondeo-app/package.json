@@ -27,6 +27,7 @@
   "type": "module",
   "scripts": {
     "build": "bun build src/index.ts --outfile=dist/index.js --target=bun --external=giget --external=@clack/prompts",
+    "build:only": "bun --bun run build",
     "dev": "bun run src/index.ts",
     "tsc": "tsc --noEmit",
     "lint": "oxlint"
