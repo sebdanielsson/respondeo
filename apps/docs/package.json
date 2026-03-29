@@ -32,7 +32,6 @@
     "eslint": "^9.39.2",
     "eslint-config-next": "16.1.6",
     "eslint-plugin-oxlint": "^1.51.0",
-    "oxfmt": "^0.36.0",
     "oxlint": "^1.51.0",
     "stylelint": "^17.4.0",
     "stylelint-config-html": "^1.1.0",

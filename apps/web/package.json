@@ -58,7 +58,6 @@
     "eslint-config-next": "16.1.6",
     "eslint-config-turbo": "^2.8.14",
     "eslint-plugin-oxlint": "^1.43.0",
-    "oxfmt": "^0.36.0",
     "oxlint": "^1.43.0",
     "stylelint": "^17.1.0",
     "stylelint-config-html": "^1.1.0",
