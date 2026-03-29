@@ -27,7 +27,7 @@
     "@better-auth/api-key": "~1.5.4",
     "@better-auth/drizzle-adapter": "~1.5.4",
     "@scalar/nextjs-api-reference": "^0.10.0",
-    "@vercel/analytics": "^1.6.1",
+    "@vercel/analytics": "^2.0.0",
     "ai": "^6.0.116",
     "better-auth": "~1.5.4",
     "class-variance-authority": "^0.7.1",
