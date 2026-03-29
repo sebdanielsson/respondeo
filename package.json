@@ -13,8 +13,8 @@
     "start": "turbo run start",
     "tsc": "turbo run tsc",
     "lint": "turbo run lint",
-    "format": "bun run oxfmt",
-    "format:check": "bun run oxfmt --check",
+    "format": "bun --bun run oxfmt",
+    "format:check": "bun --bun run oxfmt --check",
     "stylelint": "turbo run stylelint",
     "test": "turbo run test",
     "db:generate": "turbo run db:generate --filter=web",
@@ -23,13 +23,13 @@
     "db:studio": "turbo run db:studio --filter=web"
   },
   "devDependencies": {
-    "@types/bun": "^1.3.10",
-    "oxfmt": "^0.36.0",
-    "turbo": "^2.8.14",
+    "@types/bun": "^1.3.11",
+    "oxfmt": "^0.42.0",
+    "turbo": "^2.8.21",
     "typescript": "~5.9.3"
   },
   "engines": {
-    "bun": ">=1.3.10"
+    "bun": ">=1.3.11"
   },
-  "packageManager": "bun@1.3.10"
+  "packageManager": "bun@1.3.11"
 }
