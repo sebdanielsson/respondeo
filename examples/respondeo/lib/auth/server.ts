@@ -54,30 +54,28 @@ export const auth = betterAuth({
         maxRequests: 100, // 100 requests per window
       },
     }),
-    ...(hasOidc
-      ? [
-          genericOAuth({
-            config: [
-              {
-                providerId: process.env.OIDC_PROVIDER_ID!,
-                discoveryUrl: `${process.env.OIDC_ISSUER!}/.well-known/openid-configuration`,
-                clientId: process.env.OIDC_CLIENT_ID!,
-                clientSecret: process.env.OIDC_CLIENT_SECRET!,
-                scopes: ["openid", "profile", "email", "groups"],
-                pkce: true,
-                mapProfileToUser: (profile) => ({
-                  name: profile.display_name || profile.name,
-                  displayName: profile.display_name,
-                  givenName: profile.given_name,
-                  familyName: profile.family_name,
-                  preferredUsername: profile.preferred_username,
-                  groups: JSON.stringify(profile.groups ?? []),
-                }),
-              },
-            ],
-          }),
-        ]
-      : []),
+    genericOAuth({
+      config: hasOidc
+        ? [
+            {
+              providerId: process.env.OIDC_PROVIDER_ID!,
+              discoveryUrl: `${process.env.OIDC_ISSUER!}/.well-known/openid-configuration`,
+              clientId: process.env.OIDC_CLIENT_ID!,
+              clientSecret: process.env.OIDC_CLIENT_SECRET!,
+              scopes: ["openid", "profile", "email", "groups"],
+              pkce: true,
+              mapProfileToUser: (profile) => ({
+                name: profile.display_name || profile.name,
+                displayName: profile.display_name,
+                givenName: profile.given_name,
+                familyName: profile.family_name,
+                preferredUsername: profile.preferred_username,
+                groups: JSON.stringify(profile.groups ?? []),
+              }),
+            },
+          ]
+        : [],
+    }),
   ],
   user: {
     additionalFields: {
