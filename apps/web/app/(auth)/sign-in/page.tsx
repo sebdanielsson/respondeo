@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { authClient, signInWithOidc } from "@/lib/auth/client";
+import { authClient } from "@/lib/auth/client";
 import { GitHub } from "@/components/icons";
 import { ErrorDialog } from "@/components/ui/dialog";
 import { siteConfig } from "@/lib/config";
@@ -36,7 +36,7 @@ function SignInContent() {
 
   const handleOidcSignIn = async () => {
     try {
-      await signInWithOidc({
+      await authClient.signIn.oauth2({
         providerId: oidcProviderId!,
         callbackURL: callbackUrl,
       });
