@@ -5,19 +5,20 @@ import { apiKey } from "@better-auth/api-key";
 import { db } from "@/lib/db";
 import * as schema from "@/lib/db/schema";
 
-// Validate required OIDC environment variables
+const hasGitHub = !!(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET);
+const hasOidc = !!(
+  process.env.OIDC_PROVIDER_ID &&
+  process.env.OIDC_ISSUER &&
+  process.env.OIDC_CLIENT_ID &&
+  process.env.OIDC_CLIENT_SECRET
+);
+
+// Require at least one authentication provider to be configured
 if (process.env.NEXT_PHASE !== "phase-production-build") {
-  const requiredOidcVars = [
-    "OIDC_PROVIDER_ID",
-    "OIDC_ISSUER",
-    "OIDC_CLIENT_ID",
-    "OIDC_CLIENT_SECRET",
-  ];
-
-  const missingVars = requiredOidcVars.filter((varName) => !process.env[varName]);
-
-  if (missingVars.length > 0) {
-    throw new Error(`Missing required OIDC environment variables: ${missingVars.join(", ")}`);
+  if (!hasGitHub && !hasOidc) {
+    throw new Error(
+      "No authentication provider configured. Set GITHUB_CLIENT_ID + GITHUB_CLIENT_SECRET and/or OIDC_PROVIDER_ID + OIDC_ISSUER + OIDC_CLIENT_ID + OIDC_CLIENT_SECRET.",
+    );
   }
 }
 
@@ -30,6 +31,14 @@ export const auth = betterAuth({
       account: schema.account,
       verification: schema.verification,
       apikey: schema.apikey,
+    },
+  }),
+  ...(hasGitHub && {
+    socialProviders: {
+      github: {
+        clientId: process.env.GITHUB_CLIENT_ID!,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+      },
     },
   }),
   plugins: [
@@ -45,26 +54,30 @@ export const auth = betterAuth({
         maxRequests: 100, // 100 requests per window
       },
     }),
-    genericOAuth({
-      config: [
-        {
-          providerId: process.env.OIDC_PROVIDER_ID!,
-          discoveryUrl: `${process.env.OIDC_ISSUER!}/.well-known/openid-configuration`,
-          clientId: process.env.OIDC_CLIENT_ID!,
-          clientSecret: process.env.OIDC_CLIENT_SECRET!,
-          scopes: ["openid", "profile", "email", "groups"],
-          pkce: true,
-          mapProfileToUser: (profile) => ({
-            name: profile.display_name || profile.name,
-            displayName: profile.display_name,
-            givenName: profile.given_name,
-            familyName: profile.family_name,
-            preferredUsername: profile.preferred_username,
-            groups: JSON.stringify(profile.groups ?? []),
+    ...(hasOidc
+      ? [
+          genericOAuth({
+            config: [
+              {
+                providerId: process.env.OIDC_PROVIDER_ID!,
+                discoveryUrl: `${process.env.OIDC_ISSUER!}/.well-known/openid-configuration`,
+                clientId: process.env.OIDC_CLIENT_ID!,
+                clientSecret: process.env.OIDC_CLIENT_SECRET!,
+                scopes: ["openid", "profile", "email", "groups"],
+                pkce: true,
+                mapProfileToUser: (profile) => ({
+                  name: profile.display_name || profile.name,
+                  displayName: profile.display_name,
+                  givenName: profile.given_name,
+                  familyName: profile.family_name,
+                  preferredUsername: profile.preferred_username,
+                  groups: JSON.stringify(profile.groups ?? []),
+                }),
+              },
+            ],
           }),
-        },
-      ],
-    }),
+        ]
+      : []),
   ],
   user: {
     additionalFields: {

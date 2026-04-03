@@ -6,38 +6,38 @@ import { Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { authClient } from "@/lib/auth/client";
+import { GitHub } from "@/components/icons";
 import { ErrorDialog } from "@/components/ui/dialog";
 import { siteConfig } from "@/lib/config";
 
 function SignInContent() {
   const searchParams = useSearchParams();
-  const providerId = process.env.NEXT_PUBLIC_OIDC_PROVIDER_ID;
+  const oidcProviderId = process.env.NEXT_PUBLIC_OIDC_PROVIDER_ID;
+  const githubEnabled = process.env.NEXT_PUBLIC_GITHUB_AUTH_ENABLED === "true";
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
   const [error, setError] = useState<string | null>(null);
 
-  // Validate provider ID is configured
-  if (!providerId) {
-    return (
-      <div className="from-background to-muted flex min-h-screen items-center justify-center bg-linear-to-br">
-        <Card className="mx-4 w-full max-w-md">
-          <CardHeader className="text-center">
-            <div className="mb-4 flex justify-center">
-              <Brain className="text-primary h-12 w-12" />
-            </div>
-            <CardTitle className="text-2xl">Configuration Error</CardTitle>
-            <CardDescription>
-              OIDC provider is not configured. Please contact the administrator.
-            </CardDescription>
-          </CardHeader>
-        </Card>
-      </div>
-    );
-  }
+  const hasProviders = oidcProviderId || githubEnabled;
 
-  const handleSignIn = async () => {
+  const handleGitHubSignIn = async () => {
+    try {
+      await authClient.signIn.social({
+        provider: "github",
+        callbackURL: callbackUrl,
+      });
+    } catch (e: unknown) {
+      if (e instanceof TypeError) {
+        setError("Network error or CORS issue. Check the console for more details.");
+      } else {
+        setError("An unexpected error occurred. Check the console for more details.");
+      }
+    }
+  };
+
+  const handleOidcSignIn = async () => {
     try {
       await authClient.signIn.oauth2({
-        providerId: providerId,
+        providerId: oidcProviderId!,
         callbackURL: callbackUrl,
       });
     } catch (e: unknown) {
@@ -56,16 +56,47 @@ function SignInContent() {
           <div className="mb-4 flex justify-center">
             <Brain className="text-primary h-12 w-12" />
           </div>
-          <CardTitle className="text-2xl">Welcome to {siteConfig.name}</CardTitle>
-          <CardDescription>
-            Sign in to start playing quizzes and compete with friends
-          </CardDescription>
+          {hasProviders ? (
+            <>
+              <CardTitle className="text-2xl">Welcome to {siteConfig.name}</CardTitle>
+              <CardDescription>
+                Sign in to start playing quizzes and compete with friends
+              </CardDescription>
+            </>
+          ) : (
+            <>
+              <CardTitle className="text-2xl">Configuration Error</CardTitle>
+              <CardDescription>
+                No authentication provider is configured. Please contact the administrator.
+              </CardDescription>
+            </>
+          )}
         </CardHeader>
-        <CardContent>
-          <Button onClick={handleSignIn} className="w-full" size="lg">
-            {`Sign in with ${providerId}`}
-          </Button>
-        </CardContent>
+        {hasProviders && (
+          <CardContent className="flex flex-col gap-3">
+            {githubEnabled && (
+              <Button onClick={handleGitHubSignIn} className="w-full" size="lg" variant="outline">
+                <GitHub className="mr-2 h-4 w-4" />
+                Sign in with GitHub
+              </Button>
+            )}
+            {githubEnabled && oidcProviderId && (
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="border-border w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card text-muted-foreground px-2">or</span>
+                </div>
+              </div>
+            )}
+            {oidcProviderId && (
+              <Button onClick={handleOidcSignIn} className="w-full" size="lg">
+                {`Sign in with ${oidcProviderId}`}
+              </Button>
+            )}
+          </CardContent>
+        )}
       </Card>
       {error && <ErrorDialog error={error} onClose={() => setError(null)} />}
     </div>
