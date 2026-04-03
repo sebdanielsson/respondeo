@@ -13,11 +13,8 @@ import { siteConfig } from "@/lib/config";
 function SignInContent() {
   const searchParams = useSearchParams();
   const oidcProviderId = process.env.NEXT_PUBLIC_OIDC_PROVIDER_ID;
-  const githubEnabled = process.env.NEXT_PUBLIC_GITHUB_AUTH_ENABLED === "true";
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
   const [error, setError] = useState<string | null>(null);
-
-  const hasProviders = oidcProviderId || githubEnabled;
 
   const handleGitHubSignIn = async () => {
     try {
@@ -56,31 +53,18 @@ function SignInContent() {
           <div className="mb-4 flex justify-center">
             <Brain className="text-primary h-12 w-12" />
           </div>
-          {hasProviders ? (
-            <>
-              <CardTitle className="text-2xl">Welcome to {siteConfig.name}</CardTitle>
-              <CardDescription>
-                Sign in to start playing quizzes and compete with friends
-              </CardDescription>
-            </>
-          ) : (
-            <>
-              <CardTitle className="text-2xl">Configuration Error</CardTitle>
-              <CardDescription>
-                No authentication provider is configured. Please contact the administrator.
-              </CardDescription>
-            </>
-          )}
+          <CardTitle className="text-2xl">Welcome to {siteConfig.name}</CardTitle>
+          <CardDescription>
+            Sign in to start playing quizzes and compete with friends
+          </CardDescription>
         </CardHeader>
-        {hasProviders && (
-          <CardContent className="flex flex-col gap-3">
-            {githubEnabled && (
-              <Button onClick={handleGitHubSignIn} className="w-full" size="lg" variant="outline">
-                <GitHub className="mr-2 h-4 w-4" />
-                Sign in with GitHub
-              </Button>
-            )}
-            {githubEnabled && oidcProviderId && (
+        <CardContent className="flex flex-col gap-3">
+          <Button onClick={handleGitHubSignIn} className="w-full" size="lg" variant="outline">
+            <GitHub className="mr-2 h-4 w-4" />
+            Sign in with GitHub
+          </Button>
+          {oidcProviderId && (
+            <>
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <span className="border-border w-full border-t" />
@@ -89,14 +73,12 @@ function SignInContent() {
                   <span className="bg-card text-muted-foreground px-2">or</span>
                 </div>
               </div>
-            )}
-            {oidcProviderId && (
               <Button onClick={handleOidcSignIn} className="w-full" size="lg">
                 {`Sign in with ${oidcProviderId}`}
               </Button>
-            )}
-          </CardContent>
-        )}
+            </>
+          )}
+        </CardContent>
       </Card>
       {error && <ErrorDialog error={error} onClose={() => setError(null)} />}
     </div>

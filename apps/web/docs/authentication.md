@@ -26,7 +26,6 @@ BETTER_AUTH_URL="https://respondeo.example.com"
 # GitHub OAuth (optional, configure to enable GitHub sign-in)
 GITHUB_CLIENT_ID="your-github-client-id"
 GITHUB_CLIENT_SECRET="your-github-client-secret"
-NEXT_PUBLIC_GITHUB_AUTH_ENABLED="true"
 
 # OIDC Provider (optional, configure to enable OIDC sign-in)
 OIDC_PROVIDER_ID="your-oidc-provider-id"
@@ -64,7 +63,6 @@ openssl rand -base64 32
 ```env
 GITHUB_CLIENT_ID="your-github-client-id"
 GITHUB_CLIENT_SECRET="your-github-client-secret"
-NEXT_PUBLIC_GITHUB_AUTH_ENABLED="true"
 ```
 
 ### GitHub and RBAC
