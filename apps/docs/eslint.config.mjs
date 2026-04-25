@@ -24,6 +24,11 @@ const eslintConfig = defineConfig([
     ".source/**",
     "components/ui/**",
   ]),
+  {
+    settings: {
+      react: { version: "19" }, // Avoids auto-detection crash
+    },
+  },
 ]);
 
 export default eslintConfig;
