@@ -446,7 +446,7 @@ export function ApiKeyManager({ userPermissions }: ApiKeyManagerProps) {
                 <TableHead>Permissions</TableHead>
                 <TableHead>Created</TableHead>
                 <TableHead>Expires</TableHead>
-                <TableHead className="w-[50px]"></TableHead>
+                <TableHead className="w-12.5"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
