@@ -78,7 +78,7 @@ export function ApiKeyManager({ userPermissions }: ApiKeyManagerProps) {
   };
 
   useEffect(() => {
-    fetchApiKeys();
+    startTransition(fetchApiKeys);
   }, []);
 
   const handleCreateKey = async () => {
