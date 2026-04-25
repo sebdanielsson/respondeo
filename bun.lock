@@ -16,6 +16,7 @@
       "name": "docs",
       "version": "0.0.1",
       "dependencies": {
+        "@vercel/analytics": "^2.0.1",
         "fumadocs-core": "16.8.3",
         "fumadocs-mdx": "14.3.1",
         "fumadocs-ui": "npm:@fumadocs/base-ui@16.8.3",
