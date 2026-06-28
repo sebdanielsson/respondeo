@@ -4,7 +4,8 @@ import { SQL } from "bun";
 
 async function runMigrations() {
   if (!process.env.DATABASE_URL) {
-    throw new Error("DATABASE_URL environment variable is required");
+    console.warn("⚠️  DATABASE_URL not set — skipping migrations.");
+    return;
   }
 
   console.log("🚀 Starting database migrations...");
