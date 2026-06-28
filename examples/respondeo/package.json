@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "pnpm run db:migrate && next build",
+    "build": "tsx ./lib/db/migrate.ts && next build",
     "build:only": "next build",
     "start": "next start",
     "tsc": "tsc --noEmit",
