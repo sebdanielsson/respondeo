@@ -1,6 +1,6 @@
 # Database Setup
 
-Respondeo uses PostgreSQL with Bun's native SQL driver (`bun:sql`) and Drizzle ORM.
+Respondeo uses PostgreSQL with the `postgres.js` driver and Drizzle ORM.
 
 ## Quick Start
 
@@ -17,10 +17,10 @@ Then run migrations:
 docker compose up -d
 
 # Run migrations
-bun run db:migrate
+pnpm db:migrate
 
 # Or push schema directly (development)
-bun run db:push
+pnpm db:push
 ```
 
 ## Configuration
@@ -91,12 +91,12 @@ docker compose up -d db
 
 ### Drizzle Commands
 
-| Command               | Description                          |
-| --------------------- | ------------------------------------ |
-| `bun run db:push`     | Push schema changes directly (dev)   |
-| `bun run db:generate` | Generate migration files             |
-| `bun run db:migrate`  | Run pending migrations               |
-| `bun run db:studio`   | Open Drizzle Studio (visual browser) |
+| Command            | Description                          |
+| ------------------ | ------------------------------------ |
+| `pnpm db:push`     | Push schema changes directly (dev)   |
+| `pnpm db:generate` | Generate migration files             |
+| `pnpm db:migrate`  | Run pending migrations               |
+| `pnpm db:studio`   | Open Drizzle Studio (visual browser) |
 
 ### Development Workflow
 
@@ -105,7 +105,7 @@ For development, `db:push` is fastest:
 ```bash
 # Make schema changes in lib/db/schema.ts
 # Then push directly
-bun run db:push
+pnpm db:push
 ```
 
 ### Production Workflow
@@ -114,11 +114,11 @@ For production, use migrations for safety and reproducibility:
 
 ```bash
 # 1. Generate migration from schema changes
-bun run db:generate
+pnpm db:generate
 
 # 2. Review generated SQL in drizzle/pg/
 # 3. Apply migration
-bun run db:migrate
+pnpm db:migrate
 ```
 
 ## Schema Overview
@@ -151,7 +151,7 @@ Migrations are stored in `drizzle/pg/`.
 
 ```bash
 # Generate migration from current schema
-bun run db:generate
+pnpm db:generate
 
 # This creates a new SQL file in drizzle/pg/
 # Review the generated SQL before applying
@@ -171,7 +171,7 @@ Drizzle doesn't have built-in rollback. To revert:
 # Drop and recreate
 dropdb respondeo
 createdb respondeo
-bun run db:migrate
+pnpm db:migrate
 ```
 
 ## Backup and Restore
@@ -270,9 +270,9 @@ If the database schema doesn't match the app:
 
 ```bash
 # Development - reset and push
-bun run db:push
+pnpm db:push
 
 # Production - generate and apply migration
-bun run db:generate
-bun run db:migrate
+pnpm db:generate
+pnpm db:migrate
 ```

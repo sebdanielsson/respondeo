@@ -18,7 +18,7 @@ Unit tests cover individual functions and components:
 Run unit tests:
 
 ```bash
-bun test
+pnpm test
 ```
 
 ### Integration Tests
@@ -107,10 +107,10 @@ choco install k6
 ```bash
 # Start the app
 docker compose up -d
-bun run dev
+pnpm dev
 
 # In another terminal
-bun run loadtest
+pnpm loadtest
 ```
 
 The load test script is located at `apps/web/tests/loadtest.js`.

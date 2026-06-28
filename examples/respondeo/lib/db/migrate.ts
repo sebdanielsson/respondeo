@@ -1,16 +1,18 @@
-import { drizzle } from "drizzle-orm/bun-sql";
-import { migrate } from "drizzle-orm/bun-sql/migrator";
-import { SQL } from "bun";
+import { drizzle } from "drizzle-orm/postgres-js";
+import { migrate } from "drizzle-orm/postgres-js/migrator";
+import postgres from "postgres";
 
 async function runMigrations() {
   if (!process.env.DATABASE_URL) {
-    throw new Error("DATABASE_URL environment variable is required");
+    console.warn("⚠️  DATABASE_URL not set — skipping migrations.");
+    return;
   }
 
   console.log("🚀 Starting database migrations...");
 
-  const client = new SQL(process.env.DATABASE_URL);
-  const db = drizzle({ client });
+  // Use a single connection for migrations (postgres.js recommendation).
+  const client = postgres(process.env.DATABASE_URL, { max: 1 });
+  const db = drizzle(client);
 
   try {
     await migrate(db, { migrationsFolder: "./drizzle/pg" });
@@ -19,7 +21,7 @@ async function runMigrations() {
     console.error("❌ Migration failed:", error);
     process.exit(1);
   } finally {
-    client.close();
+    await client.end();
   }
 }
 

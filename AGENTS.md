@@ -4,7 +4,7 @@ This file provides guidance to AI agents when working with code in this reposito
 
 ## Monorepo Structure
 
-This is a **Bun workspaces + Turborepo monorepo** with the following structure:
+This is a **pnpm workspaces + Turborepo monorepo** with the following structure:
 
 ```
 respondeo/
@@ -22,31 +22,31 @@ All commands should be run from the **repository root** using Turborepo.
 ### Development
 
 ```bash
-bun run dev                # Start development server for all apps (Turbopack)
-bun run dev --filter=web   # Start only web app
-bun run build              # Build all apps (runs migrations + Next.js build)
-bun run build --filter=web # Build only web app
-bun run start              # Start production server for all apps
+pnpm dev                # Start development server for all apps (Turbopack)
+pnpm --filter web dev   # Start only web app
+pnpm build              # Build all apps (runs migrations + Next.js build)
+pnpm --filter web build # Build only web app
+pnpm start              # Start production server for all apps
 ```
 
 ### Type Checking and Linting
 
 ```bash
-bun run tsc                # TypeScript type checking (all apps)
-bun run lint               # Run ESLint (all apps)
-bun run format             # Format code with oxfmt (all apps)
-bun run format:check       # Check code formatting (all apps)
-bun run stylelint          # Run Stylelint for CSS files (all apps)
-bun test                   # Run tests (all apps)
+pnpm tsc                # TypeScript type checking (all apps)
+pnpm lint               # Run ESLint (all apps)
+pnpm format             # Format code with oxfmt (all apps)
+pnpm format:check       # Check code formatting (all apps)
+pnpm stylelint          # Run Stylelint for CSS files (all apps)
+pnpm test                   # Run tests (all apps)
 ```
 
 ### Database Operations
 
 ```bash
-bun run db:migrate         # Run migrations (web app only)
-bun run db:push            # Push schema changes to database (development)
-bun run db:generate        # Generate migration files from schema changes
-bun run db:studio          # Open Drizzle Studio for database inspection
+pnpm db:migrate         # Run migrations (web app only)
+pnpm db:push            # Push schema changes to database (development)
+pnpm db:generate        # Generate migration files from schema changes
+pnpm db:studio          # Open Drizzle Studio for database inspection
 ```
 
 **Note:** Database commands are scoped to the web app via `--filter=web` in root package.json.
@@ -55,22 +55,23 @@ bun run db:studio          # Open Drizzle Studio for database inspection
 
 ### Tech Stack
 
-- **Monorepo**: Bun workspaces + Turborepo 2.4+
-- **Runtime**: Bun (required >= 1.3.8)
+- **Monorepo**: pnpm workspaces + Turborepo 2.4+
+- **Runtime**: Node.js (required >= 20)
 - **Framework**: Next.js 16 with App Router and Turbopack
-- **Database**: PostgreSQL via Bun's native SQL driver (`bun:sql`) with Drizzle ORM
-- **Cache**: Optional Redis/Valkey using Bun's native client
+- **Database**: PostgreSQL via postgres.js with Drizzle ORM
+- **Cache**: Optional Redis/Valkey using ioredis
 - **Auth**: BetterAuth with OIDC plugin + API Key plugin
 - **AI**: AI SDK with multi-provider support (OpenAI, Anthropic, Google)
 - **UI**: shadcn/ui (Base UI - Nova), Tailwind CSS 4
 
 ### Database Architecture
 
-The app uses Bun's native `bun:sql` driver for PostgreSQL, configured in `apps/web/lib/db/index.ts`:
+The app uses the [postgres.js](https://github.com/porsager/postgres) driver for PostgreSQL, configured in `apps/web/lib/db/index.ts`:
 
 ```typescript
-import { SQL } from "bun";
-const client = new SQL(process.env.DATABASE_URL!);
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+const client = postgres(process.env.DATABASE_URL!);
 export const db = drizzle({ client, schema });
 ```
 
@@ -81,7 +82,7 @@ export const db = drizzle({ client, schema });
 - **Attempts**: `quizAttempt` → `attemptAnswer` (stores each answer for review)
 - **Relations**: All foreign keys use cascade deletes for clean data management
 
-**Migrations**: Use `bun run db:migrate` (runs `apps/web/lib/db/migrate.ts`). Production builds automatically run migrations via the `build` script.
+**Migrations**: Use `pnpm db:migrate` (runs `apps/web/lib/db/migrate.ts`). Production builds automatically run migrations via the `build` script.
 
 ### Authentication & Authorization
 
@@ -200,7 +201,7 @@ export const db = drizzle({ client, schema });
 
 ## Important Notes
 
-- **Bun-Specific**: This project requires Bun runtime. Use `bun --bun run` prefix for scripts to avoid Node.js fallback.
+- **Package Manager**: This project uses pnpm. Run scripts with `pnpm <script>`, and target a single workspace with `pnpm --filter <pkg> <script>`.
 - **Database Required**: `DATABASE_URL` must be set (except during production build phase).
 - **OIDC Required**: `OIDC_PROVIDER_ID`, `NEXT_PUBLIC_OIDC_PROVIDER_ID` (must match `OIDC_PROVIDER_ID`), `OIDC_ISSUER`, `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET` required for authentication.
 - **Migrations in Build**: Production builds run `db:migrate` automatically. Use `build:only` to skip migrations.

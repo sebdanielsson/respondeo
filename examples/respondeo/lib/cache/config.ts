@@ -78,7 +78,7 @@ export function isCachingEnabled(): boolean {
 
 /**
  * Get the Redis connection URL from environment.
- * Bun's Redis client checks REDIS_URL, then VALKEY_URL, then defaults to localhost.
+ * The Redis client checks REDIS_URL, then VALKEY_URL, then defaults to localhost.
  *
  * @returns The configured Redis URL or undefined for default
  */

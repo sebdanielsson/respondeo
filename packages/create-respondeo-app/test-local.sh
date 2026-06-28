@@ -49,7 +49,7 @@ fi
 # Install dependencies
 echo "📦 Installing dependencies..."
 cd "$TARGET_DIR"
-bun install
+pnpm install
 
 echo ""
 echo "✅ Your Respondeo app is ready!"
@@ -57,5 +57,5 @@ echo ""
 echo "Next steps:"
 echo "  1. cd $PROJECT_NAME"
 echo "  2. Edit .env.local with your configuration"
-echo "  3. Run database migrations: bun run db:migrate"
-echo "  4. Start development server: bun run dev"
+echo "  3. Run database migrations: pnpm db:migrate"
+echo "  4. Start development server: pnpm dev"

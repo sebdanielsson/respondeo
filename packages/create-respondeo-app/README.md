@@ -8,10 +8,10 @@ Scaffolding tool for creating new [Respondeo](https://github.com/sebdanielsson/r
 
 ## Usage
 
-### With Bun (Recommended)
+### With pnpm (Recommended)
 
 ```bash
-bun create respondeo-app my-quiz-app
+pnpm create respondeo-app my-quiz-app
 ```
 
 ### With npm/npx
@@ -31,7 +31,7 @@ pnpm create respondeo-app my-quiz-app
 If you don't provide a project name, the CLI will prompt you:
 
 ```bash
-bun create respondeo-app
+pnpm create respondeo-app
 ```
 
 ## What It Does
@@ -81,13 +81,13 @@ Edit `.env.local` and configure the required settings:
 Run migrations to create the database schema:
 
 ```bash
-bun run db:migrate
+pnpm db:migrate
 ```
 
 ### 4. Start Development Server
 
 ```bash
-bun run dev
+pnpm dev
 ```
 
 Your app will be running at http://localhost:3000
@@ -113,7 +113,7 @@ For detailed documentation, visit the [Respondeo repository](https://github.com/
 
 ## Requirements
 
-- **Bun** >= 1.0.0 (or Node.js >= 18.0.0)
+- **Node.js** >= 20 (with pnpm)
 - **PostgreSQL** database
 - **OIDC Provider** for authentication
 
@@ -125,7 +125,7 @@ If dependency installation fails, you can install them manually:
 
 ```bash
 cd my-quiz-app
-bun install
+pnpm install
 ```
 
 ### Template Download Failed
@@ -137,7 +137,7 @@ git clone https://github.com/sebdanielsson/respondeo.git temp-repo
 cp -r temp-repo/examples/respondeo my-quiz-app
 rm -rf temp-repo
 cd my-quiz-app
-bun install
+pnpm install
 ```
 
 ### Database Connection Issues
@@ -175,16 +175,16 @@ git clone https://github.com/sebdanielsson/respondeo.git
 cd respondeo
 
 # Install dependencies
-bun install
+pnpm install
 
 # Navigate to the CLI package
 cd packages/create-respondeo-app
 
 # Run in development mode
-bun run dev my-test-app
+pnpm dev my-test-app
 
 # Build the package
-bun run build
+pnpm build
 
 # Test locally using the test script
 ./test-local.sh my-test-app
@@ -201,7 +201,7 @@ Manual publishing (if needed):
 npm version patch|minor|major
 
 # Build
-bun run build
+pnpm build
 
 # Publish to npm
 npm publish --access public

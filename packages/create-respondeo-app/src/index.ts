@@ -1,4 +1,4 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 
 import { intro, text, confirm, spinner, outro, isCancel, cancel } from "@clack/prompts";
 import { downloadTemplate } from "giget";

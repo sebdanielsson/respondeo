@@ -7,47 +7,47 @@ This guide covers common issues you might encounter when setting up or running R
 
 ## Installation Issues
 
-### "Bun not found"
+### "pnpm not found"
 
-**Problem:** The `bun` command is not recognized.
+**Problem:** The `pnpm` command is not recognized.
 
 **Solution:**
 
 ```bash
-# Install Bun
-curl -fsSL https://bun.sh/install | bash
+# Enable via Corepack (bundled with Node.js)
+corepack enable
 
-# Or via npm
-npm install -g bun
+# Or install globally
+npm install -g pnpm
 ```
 
 Verify installation:
 
 ```bash
-bun --version
+pnpm --version
 ```
 
 ### "Dependencies failed to install"
 
-**Problem:** `bun install` fails with errors.
+**Problem:** `pnpm install` fails with errors.
 
 **Solutions:**
 
-1. **Clear cache and retry:**
+1. **Clear and retry:**
 
    ```bash
-   rm -rf node_modules bun.lockb
-   bun install
+   rm -rf node_modules
+   pnpm install
    ```
 
-2. **Update Bun:**
+2. **Update pnpm:**
 
    ```bash
-   bun upgrade
+   npm install -g pnpm@latest
    ```
 
 3. **Check Node compatibility:**
-   Ensure you're using a compatible Node.js version (16+) if Bun falls back to Node.
+   Ensure you're using Node.js 20 or newer.
 
 ## Database Issues
 
@@ -108,13 +108,13 @@ psql -c "CREATE DATABASE quiz_app;"
    # Reset database (WARNING: deletes all data)
    dropdb quiz_app
    createdb quiz_app
-   bun run db:migrate
+   pnpm db:migrate
    ```
 
 2. **Use db:push for development:**
 
    ```bash
-   bun run db:push
+   pnpm db:push
    ```
 
 3. **Check migration files:**
@@ -241,7 +241,7 @@ See [RBAC Guide](/guides/rbac) for details.
 
 2. **Use a different port:**
    ```bash
-   PORT=3001 bun run dev
+   PORT=3001 pnpm dev
    ```
 
 ### "Changes not reflecting"
@@ -256,7 +256,7 @@ See [RBAC Guide](/guides/rbac) for details.
 
    ```bash
    rm -rf .next
-   bun run dev
+   pnpm dev
    ```
 
 3. **Restart dev server:** Stop (Ctrl+C) and restart
@@ -280,12 +280,12 @@ See [RBAC Guide](/guides/rbac) for details.
 2. **Check for multiple TypeScript versions:**
 
    ```bash
-   bun pm ls typescript
+   pnpm ls typescript
    ```
 
 3. **Regenerate types:**
    ```bash
-   bun run tsc --noEmit
+   pnpm tsc --noEmit
    ```
 
 ## API Issues
@@ -420,7 +420,7 @@ See [RBAC Guide](/guides/rbac) for details.
 
    ```bash
    # Stop dev server (Ctrl+C)
-   bun run dev
+   pnpm dev
    ```
 
 3. **Verify API key is valid:**
@@ -487,20 +487,20 @@ images: {
 
 ### "Build failed"
 
-**Problem:** `bun run build` fails.
+**Problem:** `pnpm build` fails.
 
 **Solutions:**
 
 1. **Check TypeScript errors:**
 
    ```bash
-   bun run tsc
+   pnpm tsc
    ```
 
 2. **Fix linting errors:**
 
    ```bash
-   bun run lint
+   pnpm lint
    ```
 
 3. **Ensure database is accessible:**
@@ -509,7 +509,7 @@ images: {
 
 4. **Use build:only to skip migrations:**
    ```bash
-   bun run build:only
+   pnpm build:only
    ```
 
 ### "App crashes on start"
@@ -547,7 +547,7 @@ If you're still stuck:
 1. **Check existing issues:** [GitHub Issues](https://github.com/sebdanielsson/quiz-app/issues)
 2. **Create a new issue:** Include:
    - Error messages (full stack trace)
-   - Environment (OS, Bun version, Node version)
+   - Environment (OS, Node.js version, pnpm version)
    - Steps to reproduce
    - Relevant configuration (without secrets!)
 3. **Join discussions:** [GitHub Discussions](https://github.com/sebdanielsson/quiz-app/discussions)

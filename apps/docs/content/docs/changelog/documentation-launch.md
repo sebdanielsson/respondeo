@@ -75,11 +75,11 @@ Launched a comprehensive, production-ready documentation site using Fumadocs. Al
 
 ```bash
 # Development
-bun run dev --filter=docs
+pnpm --filter docs dev
 
 # Production
-bun run build --filter=docs
-bun run start --filter=docs
+pnpm --filter docs build
+pnpm --filter docs start
 ```
 
 Visit <http://localhost:3001>
