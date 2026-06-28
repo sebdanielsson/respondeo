@@ -74,7 +74,7 @@ After publishing:
 1. Check npm: https://www.npmjs.com/package/create-respondeo-app
 2. Test installation:
    ```bash
-   bun create respondeo-app test-app
+   pnpm create respondeo-app test-app
    ```
 
 ## Important Notes

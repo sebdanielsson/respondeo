@@ -16,20 +16,20 @@ export const MESSAGES = {
      - DATABASE_URL (PostgreSQL connection string)
      - OIDC authentication settings
      - Optional: Redis, AI, Unsplash API keys
-  3. Run database migrations: bun run db:migrate
-  4. Start the development server: bun run dev
+  3. Run database migrations: pnpm run db:migrate
+  4. Start the development server: pnpm run dev
 
 For detailed setup instructions, see the README.md in your project.`,
 } as const;
 
 export const PACKAGE_MANAGERS = {
-  bun: {
-    lockfile: "bun.lockb",
-    install: "bun install",
-  },
   pnpm: {
     lockfile: "pnpm-lock.yaml",
     install: "pnpm install",
+  },
+  bun: {
+    lockfile: "bun.lock",
+    install: "bun install",
   },
   yarn: {
     lockfile: "yarn.lock",

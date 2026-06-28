@@ -22,7 +22,7 @@ This template includes:
 ### Using create-respondeo-app (Recommended)
 
 ```bash
-bun create respondeo-app my-quiz-app
+pnpm create respondeo-app my-quiz-app
 cd my-quiz-app
 ```
 
@@ -40,7 +40,7 @@ If you prefer to set up manually:
 2. **Install dependencies**
 
    ```bash
-   bun install
+   pnpm install
    ```
 
 3. **Configure environment**
@@ -53,12 +53,12 @@ If you prefer to set up manually:
 4. **Run database migrations**
 
    ```bash
-   bun run db:migrate
+   pnpm db:migrate
    ```
 
 5. **Start development server**
    ```bash
-   bun run dev
+   pnpm dev
    ```
 
 ## Environment Configuration
@@ -87,27 +87,27 @@ See `.env.example` for the complete list with descriptions.
 ## Available Scripts
 
 ```bash
-bun run dev          # Start development server with Turbopack
-bun run build        # Build for production
-bun run start        # Start production server
-bun run lint         # Run ESLint
-bun run tsc          # TypeScript type checking
-bun run format       # Format code with oxfmt
-bun run stylelint    # Lint CSS files
-bun test             # Run tests
-bun run db:migrate   # Run database migrations
-bun run db:push      # Push schema changes (dev only)
-bun run db:generate  # Generate migration files
-bun run db:studio    # Open Drizzle Studio
+pnpm dev          # Start development server with Turbopack
+pnpm build        # Build for production
+pnpm start        # Start production server
+pnpm lint         # Run ESLint
+pnpm tsc          # TypeScript type checking
+pnpm format       # Format code with oxfmt
+pnpm stylelint    # Lint CSS files
+pnpm test             # Run tests
+pnpm db:migrate   # Run database migrations
+pnpm db:push      # Push schema changes (dev only)
+pnpm db:generate  # Generate migration files
+pnpm db:studio    # Open Drizzle Studio
 ```
 
 ## Architecture
 
 ### Tech Stack
 
-- **Runtime**: Bun >= 1.3.8
+- **Runtime**: Node.js >= 20
 - **Framework**: Next.js 16 with App Router and Turbopack
-- **Database**: PostgreSQL via Bun's native SQL driver
+- **Database**: PostgreSQL via postgres.js
 - **ORM**: Drizzle ORM
 - **Auth**: BetterAuth with OIDC + API Key plugins
 - **Cache**: Redis/Valkey (optional)

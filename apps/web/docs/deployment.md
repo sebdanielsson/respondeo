@@ -4,7 +4,7 @@ This guide covers deploying Respondeo to various environments.
 
 ## Prerequisites
 
-- [Bun](https://bun.sh/) runtime installed
+- [Node.js](https://nodejs.org/) runtime installed
 - A PostgreSQL database (or SQLite for simple deployments)
 - An OIDC provider for authentication (see [authentication.md](authentication.md))
 
@@ -43,13 +43,13 @@ See [database.md](database.md) for database setup and [rbac.md](rbac.md) for acc
 
 ```bash
 # Install dependencies
-bun install
+pnpm install
 
 # Set up database
-bun run db:push
+pnpm db:push
 
 # Start development server
-bun run dev
+pnpm dev
 ```
 
 The app will be available at [http://localhost:3000](http://localhost:3000).
@@ -58,10 +58,10 @@ The app will be available at [http://localhost:3000](http://localhost:3000).
 
 ```bash
 # Build the application
-bun run build
+pnpm build
 
 # Start production server
-bun run start
+pnpm start
 ```
 
 ## Docker Deployment
@@ -169,7 +169,7 @@ respondeo.example.com {
 ### Application won't start
 
 1. Check all required environment variables are set
-2. Verify database connectivity with `bun run db:studio`
+2. Verify database connectivity with `pnpm db:studio`
 3. Check logs for specific error messages
 
 ### Authentication issues

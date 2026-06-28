@@ -30,11 +30,11 @@ Quick links:
 
 ## Tech Stack
 
-- **Monorepo**: Bun workspaces + Turborepo 2.4+
+- **Monorepo**: pnpm workspaces + Turborepo 2.4+
 - **Framework**: Next.js 16 (App Router, Turbopack)
-- **Runtime**: Bun
-- **Database**: PostgreSQL with Drizzle ORM (via `bun:sql`)
-- **Cache**: Valkey/Redis (optional, via Bun native client)
+- **Runtime**: Node.js (>= 20)
+- **Database**: PostgreSQL with Drizzle ORM (via postgres.js)
+- **Cache**: Valkey/Redis (optional, via ioredis)
 - **Auth**: BetterAuth with OIDC + API Key plugins
 - **UI**: shadcn/ui (Base UI - Nova), Lucide Icons
 - **Validation**: Zod
@@ -48,14 +48,11 @@ Quick links:
 The fastest way to get started is using `create-respondeo-app`:
 
 ```bash
-# Using Bun (recommended)
-bun create respondeo-app my-quiz-app
+# Using pnpm (recommended)
+pnpm create respondeo-app my-quiz-app
 
 # Or with npm
 npx create-respondeo-app my-quiz-app
-
-# Or with pnpm
-pnpm create respondeo-app my-quiz-app
 ```
 
 This will:
@@ -70,8 +67,8 @@ Then:
 ```bash
 cd my-quiz-app
 # Configure .env.local with your database and OIDC settings
-bun run db:migrate    # Run database migrations
-bun run dev           # Start development server
+pnpm db:migrate    # Run database migrations
+pnpm dev           # Start development server
 ```
 
 ### Manual Setup
@@ -80,7 +77,8 @@ If you prefer to clone the repository directly:
 
 #### Prerequisites
 
-- [Bun](https://bun.sh/) >= 1.3.8
+- [Node.js](https://nodejs.org/) >= 20
+- [pnpm](https://pnpm.io/) >= 10
 - PostgreSQL database
 - An OIDC provider (e.g., Keycloak, Auth0, Okta, Pocket ID)
 
@@ -90,7 +88,7 @@ If you prefer to clone the repository directly:
 # Clone and install
 git clone <repository-url>
 cd quiz-app
-bun install
+pnpm install
 
 # Start database
 docker compose up -d
@@ -100,10 +98,10 @@ cp apps/web/.env.example apps/web/.env.local
 # Edit apps/web/.env.local with your settings
 
 # Run migrations
-bun run db:migrate
+pnpm db:migrate
 
 # Start development server
-bun run dev
+pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
@@ -136,15 +134,15 @@ See [Configuration Guide](./docs/getting-started/configuration.mdx) for all avai
 ## Development
 
 ```bash
-bun run dev          # Start development server
-bun run build        # Build for production
-bun run start        # Start production server
-bun run tsc          # Type checking
-bun run lint         # Run ESLint
-bun run format       # Format code
-bun run db:migrate   # Run database migrations
-bun run db:studio    # Open Drizzle Studio
-bun test             # Run tests
+pnpm dev          # Start development server
+pnpm build        # Build for production
+pnpm start        # Start production server
+pnpm tsc          # Type checking
+pnpm lint         # Run ESLint
+pnpm format       # Format code
+pnpm db:migrate   # Run database migrations
+pnpm db:studio    # Open Drizzle Studio
+pnpm test             # Run tests
 ```
 
 See [Scripts Reference](./docs/development/scripts.mdx) for all available commands.
@@ -179,7 +177,7 @@ The app can be deployed to:
 
 - **Vercel** — Easiest, with Vercel Postgres
 - **Docker** — Use included `compose.yaml`
-- **VPS** — Any server with Bun and PostgreSQL
+- **VPS** — Any server with Node.js and PostgreSQL
 - **Railway, Fly.io** — Docker-based platforms
 
 See [Deployment Guide](./docs/guides/deployment.mdx) for detailed instructions.
@@ -191,7 +189,7 @@ This repository includes a Fumadocs-powered documentation site in `apps/docs/`.
 **To run the docs locally:**
 
 ```bash
-bun run dev --filter=docs
+pnpm --filter docs dev
 ```
 
 Visit http://localhost:3001
@@ -254,21 +252,21 @@ All endpoints return consistent error responses:
 
 ## Scripts
 
-| Command                      | Description                         |
-| ---------------------------- | ----------------------------------- |
-| `bun --bun run dev`          | Start development server            |
-| `bun --bun run build`        | Build for production                |
-| `bun --bun run start`        | Start production server             |
-| `bun --bun run tsc`          | TypeScript type checking            |
-| `bun --bun run lint`         | Run ESLint                          |
-| `bun --bun run format`       | Format code with Prettier           |
-| `bun --bun run format:check` | Check code formatting with Prettier |
-| `bun --bun run stylelint`    | Run Stylelint for CSS files         |
-| `bun --bun run db:push`      | Push schema changes to database     |
-| `bun --bun run db:generate`  | Generate migration files            |
-| `bun --bun run db:migrate`   | Run migrations                      |
-| `bun --bun run db:studio`    | Open Drizzle Studio                 |
-| `bun test`                   | Run tests                           |
+| Command             | Description                         |
+| ------------------- | ----------------------------------- |
+| `pnpm dev`          | Start development server            |
+| `pnpm build`        | Build for production                |
+| `pnpm start`        | Start production server             |
+| `pnpm tsc`          | TypeScript type checking            |
+| `pnpm lint`         | Run ESLint                          |
+| `pnpm format`       | Format code with Prettier           |
+| `pnpm format:check` | Check code formatting with Prettier |
+| `pnpm stylelint`    | Run Stylelint for CSS files         |
+| `pnpm db:push`      | Push schema changes to database     |
+| `pnpm db:generate`  | Generate migration files            |
+| `pnpm db:migrate`   | Run migrations                      |
+| `pnpm db:studio`    | Open Drizzle Studio                 |
+| `pnpm test`         | Run tests                           |
 
 ## License
 

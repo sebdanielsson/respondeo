@@ -87,7 +87,7 @@ The 1.0.0-beta releases include a completely rewritten Relational Query Builder 
 
 Once drizzle-orm 1.0.0 is released:
 
-- [ ] Update drizzle-orm: `bun add drizzle-orm@latest`
+- [ ] Update drizzle-orm: `pnpm add drizzle-orm@latest`
 - [ ] Follow the RQBv1 to RQBv2 migration guide: [https://orm.drizzle.team/docs/relations-v1-v2](https://orm.drizzle.team/docs/relations-v1-v2)
 - [ ] Revert the workarounds to use nested `with` queries
 - [ ] Test thoroughly with PostgreSQL

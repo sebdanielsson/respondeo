@@ -1,4 +1,6 @@
+import { spawn } from "node:child_process";
 import { existsSync } from "node:fs";
+import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { PACKAGE_MANAGERS, type PackageManager } from "./constants";
 
@@ -14,8 +16,8 @@ export function detectPackageManager(projectPath: string): PackageManager {
     }
   }
 
-  // Default to bun since this is a Bun-first project
-  return "bun";
+  // Default to pnpm since this is a pnpm-first project
+  return "pnpm";
 }
 
 /**
@@ -26,36 +28,40 @@ export async function runCommand(
   args: string[],
   cwd: string,
 ): Promise<{ success: boolean; error?: string }> {
-  try {
-    const proc = Bun.spawn([command, ...args], {
+  return new Promise((resolvePromise) => {
+    const child = spawn(command, args, {
       cwd,
-      stdout: "pipe",
-      stderr: "pipe",
+      stdio: ["ignore", "pipe", "pipe"],
     });
 
-    const exitCode = await proc.exited;
+    let stderr = "";
+    child.stderr?.on("data", (chunk) => {
+      stderr += chunk.toString();
+    });
 
-    if (exitCode !== 0) {
-      const errorOutput = await new Response(proc.stderr).text();
-      return { success: false, error: errorOutput };
-    }
+    child.on("error", (error) => {
+      resolvePromise({
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    });
 
-    return { success: true };
-  } catch (error) {
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : String(error),
-    };
-  }
+    child.on("close", (code) => {
+      if (code !== 0) {
+        resolvePromise({ success: false, error: stderr });
+      } else {
+        resolvePromise({ success: true });
+      }
+    });
+  });
 }
 
 /**
  * Copies a file from source to destination
  */
 export async function copyFile(source: string, destination: string): Promise<void> {
-  const file = Bun.file(source);
-  const content = await file.text();
-  await Bun.write(destination, content);
+  const content = await readFile(source, "utf8");
+  await writeFile(destination, content);
 }
 
 /**

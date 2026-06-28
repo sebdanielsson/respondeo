@@ -15,7 +15,7 @@ Yes, Respondeo is open-source and MIT licensed. You can use it for free, modify 
 
 ### What are the system requirements?
 
-- **Runtime:** Bun >= 1.3.8
+- **Runtime:** Node.js >= 20
 - **Database:** PostgreSQL (any version)
 - **OIDC Provider:** Any standards-compliant provider
 - **Optional:** Redis/Valkey for caching
@@ -123,11 +123,11 @@ See [Caching Guide](/features/caching).
 
 ### Can I use MySQL instead of PostgreSQL?
 
-No, the app is built specifically for PostgreSQL using Bun's native `bun:sql` driver and Drizzle ORM's PostgreSQL dialect.
+No, the app is built specifically for PostgreSQL using the `postgres.js` driver and Drizzle ORM's PostgreSQL dialect.
 
 ### Can I use SQLite?
 
-No, PostgreSQL is required. The app uses PostgreSQL-specific features and Bun's native PostgreSQL driver.
+No, PostgreSQL is required. The app uses PostgreSQL-specific features and the postgres.js PostgreSQL driver.
 
 ## Deployment
 
@@ -135,7 +135,7 @@ No, PostgreSQL is required. The app uses PostgreSQL-specific features and Bun's 
 
 The app deploys anywhere that supports:
 
-- Bun runtime (or Node.js with Bun compatibility)
+- Node.js runtime
 - PostgreSQL database
 - (Optional) Redis/Valkey
 
@@ -143,8 +143,8 @@ Popular options:
 
 - **Vercel** — Easiest, use Vercel Postgres
 - **Docker** — Included `compose.yaml`
-- **VPS** — Any Linux server with Bun installed
-- **Railway** — Supports Bun and PostgreSQL
+- **VPS** — Any Linux server with Node.js installed
+- **Railway** — Supports Node.js and PostgreSQL
 - **Fly.io** — Docker deployments
 
 See [Deployment Guide](/guides/deployment).
@@ -170,10 +170,10 @@ This starts PostgreSQL, Valkey, and the app (if you add a Dockerfile for the app
 
 ### How do I handle migrations in production?
 
-Migrations run automatically during `bun run build`. If you need to run them separately:
+Migrations run automatically during `pnpm build`. If you need to run them separately:
 
 ```bash
-bun run db:migrate
+pnpm db:migrate
 ```
 
 For zero-downtime deployments, run migrations before deploying the new version.
@@ -245,24 +245,23 @@ Valkey is an open-source Redis fork. They're compatible — the app supports bot
 ### How do I run tests?
 
 ```bash
-bun test
+pnpm test
 ```
 
 For load testing:
 
 ```bash
-bun run loadtest
+pnpm loadtest
 ```
 
 See [Testing Guide](/development/testing).
 
-### Can I use npm/pnpm/yarn instead of Bun?
+### Can I use npm or yarn instead of pnpm?
 
-Not recommended. The app uses Bun-specific features:
-
-- `bun:sql` — Native PostgreSQL driver
-- Bun's native Redis client
-- Bun workspaces
+pnpm is recommended — the repository is configured for it (pnpm workspaces,
+`pnpm-lock.yaml`, and an `onlyBuiltDependencies` allowlist for native packages
+like `sharp` and `esbuild`). npm or yarn may work but are untested: you would
+need to regenerate the lockfile and replicate the build-script allowlist.
 
 ### Is there a development roadmap?
 

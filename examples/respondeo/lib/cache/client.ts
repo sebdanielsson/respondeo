@@ -1,7 +1,7 @@
 /**
  * Redis cache client.
  *
- * Uses Bun's native Redis client with graceful degradation:
+ * Uses ioredis with graceful degradation:
  * - If Redis is unavailable, operations silently fail and queries hit the database
  * - Implements cache-aside pattern via cachedFetch()
  * - Supports selective cache invalidation via invalidateCache()
@@ -9,7 +9,7 @@
  * @see docs/caching.md for full documentation
  */
 
-import { RedisClient } from "bun";
+import { Redis } from "ioredis";
 import { isCachingEnabled, getRedisUrl, CACHE_TTL, SCAN_COUNT } from "./config";
 
 /** ISO 8601 date string pattern for JSON reviver */
@@ -27,10 +27,10 @@ function dateReviver(_key: string, value: unknown): unknown {
 }
 
 /** Singleton Redis client instance */
-let redisClient: RedisClient | null = null;
+let redisClient: Redis | null = null;
 
 /** Promise guard to prevent concurrent initialization */
-let initPromise: Promise<RedisClient | null> | null = null;
+let initPromise: Promise<Redis | null> | null = null;
 
 /** Track if we've already logged a connection failure */
 let connectionWarningLogged = false;
@@ -40,9 +40,9 @@ let connectionWarningLogged = false;
  * Returns null if caching is disabled or connection fails.
  * Uses promise-based guard to prevent race conditions during initialization.
  *
- * @returns RedisClient instance or null
+ * @returns Redis instance or null
  */
-export async function getRedis(): Promise<RedisClient | null> {
+export async function getRedis(): Promise<Redis | null> {
   if (!isCachingEnabled()) {
     return null;
   }
@@ -58,16 +58,30 @@ export async function getRedis(): Promise<RedisClient | null> {
 
   // Start initialization with promise guard
   initPromise = (async () => {
+    let client: Redis | null = null;
     try {
-      const url = getRedisUrl();
-      const client = url ? new RedisClient(url) : new RedisClient();
+      const url = getRedisUrl() ?? "redis://localhost:6379";
+      client = new Redis(url, {
+        lazyConnect: true,
+        maxRetriesPerRequest: 1,
+        enableOfflineQueue: false,
+        // Don't endlessly reconnect on failure — caching is best-effort.
+        retryStrategy: () => null,
+      });
 
-      // Test connection with a ping
-      await client.send("PING", []);
+      // Prevent unhandled "error" events from crashing the process.
+      client.on("error", () => {});
+
+      // Establish the connection and verify it with a ping.
+      await client.connect();
+      await client.ping();
 
       redisClient = client;
       return redisClient;
     } catch (error) {
+      if (client) {
+        client.disconnect();
+      }
       if (!connectionWarningLogged) {
         console.warn("[cache] Redis connection failed, caching disabled:", error);
         connectionWarningLogged = true;
@@ -121,9 +135,9 @@ export async function cachedFetch<T>(
   try {
     if (data === undefined || data === null) {
       // Cache not-found with short TTL to prevent DB hammering
-      await redis.send("SETEX", [key, CACHE_TTL.NOT_FOUND.toString(), JSON.stringify(null)]);
+      await redis.setex(key, CACHE_TTL.NOT_FOUND, JSON.stringify(null));
     } else {
-      await redis.send("SETEX", [key, ttlSeconds.toString(), JSON.stringify(data)]);
+      await redis.setex(key, ttlSeconds, JSON.stringify(data));
     }
   } catch (error) {
     // Log at debug level for troubleshooting
@@ -149,18 +163,11 @@ export async function invalidateCache(pattern: string): Promise<void> {
     let cursor = "0";
     do {
       // SCAN returns [cursor, keys[]]
-      const result = (await redis.send("SCAN", [
-        cursor,
-        "MATCH",
-        pattern,
-        "COUNT",
-        SCAN_COUNT.toString(),
-      ])) as [string, string[]];
-      cursor = result[0];
-      const keys = result[1];
+      const [nextCursor, keys] = await redis.scan(cursor, "MATCH", pattern, "COUNT", SCAN_COUNT);
+      cursor = nextCursor;
 
       if (keys && keys.length > 0) {
-        await redis.send("DEL", keys);
+        await redis.del(...keys);
       }
     } while (cursor !== "0");
   } catch {
@@ -190,7 +197,7 @@ export async function deleteCache(key: string): Promise<void> {
  */
 export function closeRedis(): void {
   if (redisClient) {
-    redisClient.close();
+    redisClient.disconnect();
     redisClient = null;
   }
   // Reset warning flag so future connection failures are logged

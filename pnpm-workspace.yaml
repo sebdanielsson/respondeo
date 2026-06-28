@@ -1,0 +1,15 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+# Use a flat node_modules layout (like npm/bun) so workspace packages can
+# resolve hoisted tooling. Keeps the Bun -> pnpm migration low-friction.
+nodeLinker: hoisted
+
+# Native packages allowed to run install/build lifecycle scripts.
+# pnpm v11 replaced onlyBuiltDependencies with the allowBuilds map.
+allowBuilds:
+  "@tailwindcss/oxide": true
+  esbuild: true
+  sharp: true
+  unrs-resolver: true

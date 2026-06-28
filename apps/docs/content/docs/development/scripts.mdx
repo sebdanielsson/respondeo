@@ -1,6 +1,6 @@
 ---
 title: Scripts
-description: Available npm/bun scripts
+description: Available pnpm scripts
 ---
 
 All scripts should be run from the repository root using Bun and Turborepo.
@@ -10,7 +10,7 @@ All scripts should be run from the repository root using Bun and Turborepo.
 ### Start Development Server
 
 ```bash
-bun run dev
+pnpm dev
 ```
 
 Starts the Next.js development server with Turbopack for fast hot-reloading.
@@ -21,8 +21,8 @@ Starts the Next.js development server with Turbopack for fast hot-reloading.
 ### Filter by App
 
 ```bash
-bun run dev --filter=web    # Only web app
-bun run dev --filter=docs   # Only docs
+pnpm --filter web dev    # Only web app
+pnpm --filter docs dev   # Only docs
 ```
 
 ## Building
@@ -30,7 +30,7 @@ bun run dev --filter=docs   # Only docs
 ### Build All Apps
 
 ```bash
-bun run build
+pnpm build
 ```
 
 Runs:
@@ -41,14 +41,14 @@ Runs:
 ### Build Specific App
 
 ```bash
-bun run build --filter=web
-bun run build --filter=docs
+pnpm --filter web build
+pnpm --filter docs build
 ```
 
 ### Build Without Migrations
 
 ```bash
-bun run build:only
+pnpm build:only
 ```
 
 Skips database migrations (useful for CI or when migrations already ran).
@@ -58,7 +58,7 @@ Skips database migrations (useful for CI or when migrations already ran).
 ### Start Production Server
 
 ```bash
-bun run start
+pnpm start
 ```
 
 Starts the production server for all apps.
@@ -68,7 +68,7 @@ Starts the production server for all apps.
 ### Run Migrations
 
 ```bash
-bun run db:migrate
+pnpm db:migrate
 ```
 
 Applies pending database migrations. Safe to run multiple times.
@@ -76,7 +76,7 @@ Applies pending database migrations. Safe to run multiple times.
 ### Push Schema (Development)
 
 ```bash
-bun run db:push
+pnpm db:push
 ```
 
 Pushes schema changes directly to the database without creating migration files. **Development only** — use migrations for production.
@@ -84,7 +84,7 @@ Pushes schema changes directly to the database without creating migration files.
 ### Generate Migration
 
 ```bash
-bun run db:generate
+pnpm db:generate
 ```
 
 Generates a new migration file from schema changes.
@@ -92,7 +92,7 @@ Generates a new migration file from schema changes.
 ### Open Database Studio
 
 ```bash
-bun run db:studio
+pnpm db:studio
 ```
 
 Opens Drizzle Studio for visual database browsing and editing at http://localhost:4983
@@ -102,7 +102,7 @@ Opens Drizzle Studio for visual database browsing and editing at http://localhos
 ### Type Checking
 
 ```bash
-bun run tsc
+pnpm tsc
 ```
 
 Runs TypeScript type checker across all apps.
@@ -110,7 +110,7 @@ Runs TypeScript type checker across all apps.
 ### Linting
 
 ```bash
-bun run lint
+pnpm lint
 ```
 
 Runs ESLint on all apps. Auto-fixes where possible.
@@ -118,8 +118,8 @@ Runs ESLint on all apps. Auto-fixes where possible.
 ### Formatting
 
 ```bash
-bun run format        # Format all files
-bun run format:check  # Check without formatting
+pnpm format        # Format all files
+pnpm format:check  # Check without formatting
 ```
 
 Formats code with oxfmt (Rust-based formatter).
@@ -127,7 +127,7 @@ Formats code with oxfmt (Rust-based formatter).
 ### CSS Linting
 
 ```bash
-bun run stylelint
+pnpm stylelint
 ```
 
 Runs Stylelint on CSS files.
@@ -137,7 +137,7 @@ Runs Stylelint on CSS files.
 ### Run All Tests
 
 ```bash
-bun test
+pnpm test
 ```
 
 Runs the test suite.
@@ -147,10 +147,10 @@ Runs the test suite.
 ```bash
 # Start the app first
 docker compose up -d
-bun run dev
+pnpm dev
 
 # In another terminal
-bun run loadtest
+pnpm loadtest
 ```
 
 Runs k6 load tests against the local development server.
@@ -184,7 +184,7 @@ docker compose down
 ```bash
 docker compose down -v  # Removes volumes
 docker compose up -d
-bun run db:migrate
+pnpm db:migrate
 ```
 
 ## Turborepo
@@ -211,21 +211,21 @@ Visualizes task dependencies.
 
 | Command                | Description                            |
 | ---------------------- | -------------------------------------- |
-| `bun run dev`          | Start development server (Turbopack)   |
-| `bun run build`        | Build for production (with migrations) |
-| `bun run build:only`   | Build without running migrations       |
-| `bun run start`        | Start production server                |
-| `bun run tsc`          | TypeScript type checking               |
-| `bun run lint`         | Run ESLint                             |
-| `bun run format`       | Format code with oxfmt                 |
-| `bun run format:check` | Check formatting without changes       |
-| `bun run stylelint`    | Run Stylelint for CSS                  |
-| `bun test`             | Run tests                              |
-| `bun run db:migrate`   | Run database migrations                |
-| `bun run db:push`      | Push schema to database (dev only)     |
-| `bun run db:generate`  | Generate migration files               |
-| `bun run db:studio`    | Open Drizzle Studio                    |
-| `bun run loadtest`     | Run k6 load tests                      |
+| `pnpm dev`             | Start development server (Turbopack)   |
+| `pnpm build`           | Build for production (with migrations) |
+| `pnpm build:only`      | Build without running migrations       |
+| `pnpm start`           | Start production server                |
+| `pnpm tsc`             | TypeScript type checking               |
+| `pnpm lint`            | Run ESLint                             |
+| `pnpm format`          | Format code with oxfmt                 |
+| `pnpm format:check`    | Check formatting without changes       |
+| `pnpm stylelint`       | Run Stylelint for CSS                  |
+| `pnpm test`            | Run tests                              |
+| `pnpm db:migrate`      | Run database migrations                |
+| `pnpm db:push`         | Push schema to database (dev only)     |
+| `pnpm db:generate`     | Generate migration files               |
+| `pnpm db:studio`       | Open Drizzle Studio                    |
+| `pnpm loadtest`        | Run k6 load tests                      |
 | `docker compose up -d` | Start PostgreSQL and Valkey            |
 | `docker compose down`  | Stop Docker services                   |
 
