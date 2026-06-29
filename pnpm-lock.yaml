@@ -113,7 +113,7 @@ importers:
         version: 3.0.86(zod@4.4.3)
       '@ai-sdk/openai':
         specifier: ^3.0.50
-        version: 3.0.77(zod@4.4.3)
+        version: 3.0.78(zod@4.4.3)
       '@base-ui/react':
         specifier: ^1.3.0
         version: 1.6.0(@date-fns/tz@1.5.0)(@types/react@19.2.17)(date-fns@4.4.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -287,8 +287,8 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/openai@3.0.77':
-    resolution: {integrity: sha512-DK0sGy/9j6KhgSrdhSKplTo3qf5frzGjLNYo9DVloH37L6DT42AxR/26UVCCoTEjR+WdsA9svm+5cT3Aye9NTg==}
+  '@ai-sdk/openai@3.0.78':
+    resolution: {integrity: sha512-XlRHyAe1zvetAO1lXVQSNy8acsdd+kznTfmedXBCe7Pvu7lEGGePL8iUg/jH2qLqnlrIpYovuCd3jC2hSTOTsA==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -5393,6 +5393,10 @@ packages:
     resolution: {integrity: sha512-FfR8sjd4em2T6fb3I2MwAJU7HWVMr9zba+enmQeeWFfCbm+UOC/0X4DS8XtpUTMwWMGbjKYP7xjfNekzyGmB3A==}
     engines: {node: ^10 || ^12 || >=14}
 
+  postcss@8.5.16:
+    resolution: {integrity: sha512-vuwillviilfKZsg0VGj5R/YwwcHx4SLsIOI/7K6mQkWx+l5cUHTjj5g0AasTBcyXsbfTgrwsUNmVUb5xVwyPwg==}
+    engines: {node: ^10 || ^12 || >=14}
+
   postgres@3.4.9:
     resolution: {integrity: sha512-GD3qdB0x1z9xgFI6cdRD6xu2Sp2WCOEoe3mtnyB5Ee0XrrL5Pe+e4CCnJrRMnL1zYtRDZmQQVbvOttLnKDLnaw==}
     engines: {node: '>=12'}
@@ -6382,7 +6386,7 @@ snapshots:
       '@ai-sdk/provider-utils': 4.0.33(zod@4.4.3)
       zod: 4.4.3
 
-  '@ai-sdk/openai@3.0.77(zod@4.4.3)':
+  '@ai-sdk/openai@3.0.78(zod@4.4.3)':
     dependencies:
       '@ai-sdk/provider': 3.0.12
       '@ai-sdk/provider-utils': 4.0.33(zod@4.4.3)
@@ -11223,8 +11227,8 @@ snapshots:
     dependencies:
       htmlparser2: 8.0.2
       js-tokens: 9.0.1
-      postcss: 8.5.15
-      postcss-safe-parser: 6.0.0(postcss@8.5.15)
+      postcss: 8.5.16
+      postcss-safe-parser: 6.0.0(postcss@8.5.16)
 
   postcss-load-config@6.0.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4):
     dependencies:
@@ -11234,9 +11238,9 @@ snapshots:
       postcss: 8.5.15
       tsx: 4.22.4
 
-  postcss-safe-parser@6.0.0(postcss@8.5.15):
+  postcss-safe-parser@6.0.0(postcss@8.5.16):
     dependencies:
-      postcss: 8.5.15
+      postcss: 8.5.16
 
   postcss-safe-parser@7.0.1(postcss@8.5.15):
     dependencies:
@@ -11256,6 +11260,12 @@ snapshots:
       source-map-js: 1.2.1
 
   postcss@8.5.15:
+    dependencies:
+      nanoid: 3.3.15
+      picocolors: 1.1.1
+      source-map-js: 1.2.1
+
+  postcss@8.5.16:
     dependencies:
       nanoid: 3.3.15
       picocolors: 1.1.1
@@ -12356,7 +12366,7 @@ snapshots:
     dependencies:
       lightningcss: 1.32.0
       picomatch: 4.0.4
-      postcss: 8.5.15
+      postcss: 8.5.16
       rolldown: 1.1.3
       tinyglobby: 0.2.17
     optionalDependencies:
