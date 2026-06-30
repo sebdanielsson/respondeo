@@ -1,5 +1,15 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
-  "minimumReleaseAge": "3 days"
+  "minimumReleaseAge": "3 days",
+  "packageRules": [
+    {
+      "groupName": "AI SDK",
+      "matchPackageNames": ["ai", "@ai-sdk/**"]
+    },
+    {
+      "groupName": "Fumadocs",
+      "matchPackageNames": ["fumadocs-**", "@fumadocs/**"]
+    }
+  ]
 }
