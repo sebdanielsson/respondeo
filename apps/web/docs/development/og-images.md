@@ -89,13 +89,7 @@ export default async function Image() {
   const logoSrc = `data:image/png;base64,${logoData.toString("base64")}`;
 
   return new ImageResponse(
-    <div
-      style={
-        {
-          /* ... */
-        }
-      }
-    >
+    <div style={{/* ... */}}>
       <img src={logoSrc} width={100} height={100} />
       {/* ... */}
     </div>,
