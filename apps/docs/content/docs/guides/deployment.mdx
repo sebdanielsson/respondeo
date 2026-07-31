@@ -130,9 +130,10 @@ Set all required environment variables in **Settings → Environment Variables**
 3. **Supabase** - PostgreSQL with additional features
 4. **PlanetScale** - MySQL-compatible (requires schema changes)
 
-Set the project's **function region** to the region your database lives in.
-Functions default to `iad1` (Washington, D.C.), so a European database means
-every query pays a transatlantic round trip on every request.
+Co-locate functions with your database. `apps/web/vercel.json` pins
+`regions: ["iad1"]` (Washington, D.C.) to match a Neon database in AWS
+`us-east-1`. If you host the database elsewhere, change this — otherwise every
+query on every request pays the round trip between the two regions.
 
 ### Rate limiting on Vercel
 
@@ -158,13 +159,15 @@ Each app is its own Vercel project with **Root Directory** set to `apps/web` or
 belong in `apps/web/vercel.json` and `apps/docs/vercel.json` — a `vercel.json`
 at the repository root is ignored under this layout.
 
-Both apps set:
+Both apps set `installCommand: pnpm install --frozen-lockfile`, so a stale
+lockfile fails the build instead of silently resolving different versions than
+CI did.
 
-- `installCommand: pnpm install --frozen-lockfile` — fail on a stale lockfile
-  instead of silently resolving different versions than CI did.
-- `ignoreCommand: npx turbo-ignore <app>` — skip the build when the commit
-  didn't touch that app or its dependencies, so a docs-only change doesn't
-  redeploy the web app.
+Neither sets an `ignoreCommand`. Skipping builds for commits that don't touch an
+app is handled by Vercel's built-in **Settings → Git → Skip unaffected
+projects**, which supersedes the deprecated `turbo-ignore`. Note that an
+`ignoreCommand` in `vercel.json` takes precedence over that setting, so don't
+reintroduce one without removing the toggle.
 
 ### Function duration
 
