@@ -109,6 +109,33 @@ RATE_LIMIT_AI_GLOBAL=10
 RATE_LIMIT_AI_GLOBAL_WINDOW_MS=3600000
 ```
 
+<Callout type="warn">
+  Rate limits are only enforceable across instances when `REDIS_URL` (or `VALKEY_URL`) is
+  configured. Without it, each server instance keeps its own private counters — on a serverless
+  platform such as Vercel that multiplies the effective limit by the number of concurrent instances.
+  See [Caching](/features/caching).
+</Callout>
+
+### Remote Images
+
+Next.js Image Optimization will fetch and re-serve any host matched by its
+remote-pattern allowlist, so the list is kept narrow. Unsplash hosts
+(`images.unsplash.com`, `plus.unsplash.com`) are always allowed; add any other
+host authors paste image URLs from:
+
+```bash
+# Comma-separated. Supports Next.js hostname wildcards:
+#   *  matches a single subdomain segment
+#   ** matches any number of leading segments
+IMAGE_ALLOWED_HOSTS=cdn.example.com,**.wikimedia.org
+```
+
+<Callout type="warn">
+  `IMAGE_ALLOWED_HOSTS` is read at **build time**. Changing it requires a rebuild. Avoid broad
+  patterns like `**` — they turn `/_next/image` into an open image proxy that anyone can point at
+  arbitrary hosts.
+</Callout>
+
 ## Environment Files
 
 - **`.env.local`** — Local development (git-ignored)

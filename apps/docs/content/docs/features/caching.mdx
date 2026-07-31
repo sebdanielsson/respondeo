@@ -17,6 +17,17 @@ Respondeo uses a cache-aside pattern to reduce database load for frequently acce
 
 Caching is **optional** and **graceful** - the app works without Redis, queries just hit the database directly.
 
+The same connection also backs **rate limiting** (guest plays and AI generation).
+That part is not merely an optimization:
+
+<Callout type="warn">
+  Without Redis, rate limit counters live in each server instance's memory. A single long-running
+  server enforces them correctly, but any multi-instance deployment — including serverless platforms
+  such as Vercel, where each concurrent function instance is its own process — multiplies the
+  effective limit by the number of instances. Configure `REDIS_URL` or `VALKEY_URL` in production if
+  you rely on the AI generation limits to cap provider spend.
+</Callout>
+
 ## Quick Start
 
 ### Local Development with Docker
@@ -52,7 +63,22 @@ The app checks for either variable. If neither is set, caching is disabled.
 | `REDIS_URL`  | Redis connection URL (checked first)   | -       |
 | `VALKEY_URL` | Valkey connection URL (checked second) | -       |
 
-If neither is set, caching is disabled and all queries hit the database.
+If neither is set, caching is disabled and all queries hit the database, and rate
+limiting falls back to its per-instance in-memory store.
+
+### Rate limit keys
+
+Rate limiting uses fixed-window counters under the `ratelimit:` prefix, separate
+from the cache keys above:
+
+| Key                          | Window                           |
+| ---------------------------- | -------------------------------- |
+| `ratelimit:guest-play:{ip}`  | `RATE_LIMIT_WINDOW_MS`           |
+| `ratelimit:ai:user:{userId}` | `RATE_LIMIT_AI_USER_WINDOW_MS`   |
+| `ratelimit:ai:global`        | `RATE_LIMIT_AI_GLOBAL_WINDOW_MS` |
+
+If a Redis command fails mid-request the limiter logs a warning and falls back to
+the in-memory store for that request rather than failing the request outright.
 
 ### TTL (Time To Live)
 

@@ -130,6 +130,48 @@ Set all required environment variables in **Settings → Environment Variables**
 3. **Supabase** - PostgreSQL with additional features
 4. **PlanetScale** - MySQL-compatible (requires schema changes)
 
+Set the project's **function region** to the region your database lives in.
+Functions default to `iad1` (Washington, D.C.), so a European database means
+every query pays a transatlantic round trip on every request.
+
+### Rate limiting on Vercel
+
+Configure `REDIS_URL` (or `VALKEY_URL`). Vercel runs many concurrent function
+instances, and without a shared store each one keeps its own rate limit
+counters — so `RATE_LIMIT_AI_GLOBAL=10` becomes "10 per instance per hour"
+rather than a real cap on AI provider spend. See [Caching](/features/caching).
+
+### Migrations on Vercel
+
+Migrations run as part of the `build` script. On Vercel they are applied for
+**production deployments only**, so a preview build cannot migrate a schema that
+production is still serving against — the common case when previews and
+production share one `DATABASE_URL`.
+
+If your previews point at their own branch database and you want them migrated
+too, set `RUN_MIGRATIONS=true` for the Preview environment.
+
+### Monorepo build settings
+
+Each app is its own Vercel project with **Root Directory** set to `apps/web` or
+`apps/docs`. Vercel reads `vercel.json` from that directory, so per-app settings
+belong in `apps/web/vercel.json` and `apps/docs/vercel.json` — a `vercel.json`
+at the repository root is ignored under this layout.
+
+Both apps set:
+
+- `installCommand: pnpm install --frozen-lockfile` — fail on a stale lockfile
+  instead of silently resolving different versions than CI did.
+- `ignoreCommand: npx turbo-ignore <app>` — skip the build when the commit
+  didn't touch that app or its dependencies, so a docs-only change doesn't
+  redeploy the web app.
+
+### Function duration
+
+AI quiz generation runs as a server action on the quiz create and edit routes,
+which set `maxDuration = 300`. A long generation with image inputs can otherwise
+be cut off by the platform default mid-request.
+
 ## Health Checks
 
 The app automatically checks database connectivity. If the database is unavailable, pages will display an error message rather than crashing.

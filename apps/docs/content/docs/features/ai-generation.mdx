@@ -70,6 +70,13 @@ By default, `admin`, `moderator`, and `creator` roles have the `ai:quiz-generate
 | `RATE_LIMIT_AI_GLOBAL`           | number | `10`       | Total AI generations across all users |
 | `RATE_LIMIT_AI_GLOBAL_WINDOW_MS` | number | `3600000`  | Global window in ms (default: 1h)     |
 
+<Callout type="warn">
+  These limits are what stands between an open sign-up and an unbounded AI provider bill, so they
+  need a shared counter to be real. Configure `REDIS_URL` or `VALKEY_URL` in any multi-instance or
+  serverless deployment — otherwise each instance counts separately and the global limit scales with
+  your traffic. See [Caching](/features/caching).
+</Callout>
+
 ## Supported Providers
 
 ### OpenAI (Default)

@@ -132,7 +132,7 @@ export async function generateQuizWithAI(input: AIQuizInput): Promise<GenerateQu
     }
 
     // 5. Check rate limits
-    const rateLimitResult = checkAIGenerationRateLimit(session.user.id);
+    const rateLimitResult = await checkAIGenerationRateLimit(session.user.id);
     if (!rateLimitResult.allowed) {
       const resetMinutes = Math.ceil(rateLimitResult.resetInMs / 60000);
       const limitTypeMessage =

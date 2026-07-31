@@ -46,7 +46,7 @@ export default async function PlayQuizPage({ params }: PageProps) {
       redirect(`/quiz/${id}?error=ip-missing`);
     }
 
-    const { allowed, resetInMs } = checkGuestRateLimit(ip);
+    const { allowed, resetInMs } = await checkGuestRateLimit(ip);
     if (!allowed) {
       const resetInSeconds = Math.ceil(resetInMs / 1000);
       redirect(`/quiz/${id}?error=rate-limit&retry=${resetInSeconds}`);

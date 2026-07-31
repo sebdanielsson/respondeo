@@ -41,9 +41,33 @@ Click the search icon next to any image URL input to open the picker dialog.
 
 ## Environment Variables
 
-| Variable              | Type   | Required | Description             |
-| --------------------- | ------ | -------- | ----------------------- |
-| `UNSPLASH_ACCESS_KEY` | string | Yes      | Unsplash API access key |
+| Variable              | Type   | Required | Description                                        |
+| --------------------- | ------ | -------- | -------------------------------------------------- |
+| `UNSPLASH_ACCESS_KEY` | string | Yes      | Unsplash API access key                            |
+| `IMAGE_ALLOWED_HOSTS` | string | No       | Extra hosts allowed for remote images (build-time) |
+
+## Allowed image hosts
+
+Next.js optimizes and re-serves remote images through `/_next/image`, but only
+for hosts on an allowlist. Unsplash's hosts (`images.unsplash.com`,
+`plus.unsplash.com`) are always allowed, so the image picker works out of the box.
+
+Manual URL entry accepts any URL, but an image whose host is not on the
+allowlist will fail to render. To allow additional hosts, list them in
+`IMAGE_ALLOWED_HOSTS`:
+
+```bash
+# Comma-separated. Supports Next.js hostname wildcards:
+#   *  matches a single subdomain segment
+#   ** matches any number of leading segments
+IMAGE_ALLOWED_HOSTS="cdn.example.com,**.wikimedia.org"
+```
+
+<Callout type="warn">
+  Read at **build time** — a change requires a rebuild. Keep the list narrow: a catch-all pattern
+  makes `/_next/image` an open image proxy that anyone can point at arbitrary hosts, consuming your
+  image optimization quota.
+</Callout>
 
 ## Features
 

@@ -194,7 +194,7 @@ export const db = drizzle({ client, schema });
 
 1. **Permission Checks**: Always use `hasPermission(user, PERMISSIONS.X)` or helper functions (`canEditQuiz`, etc.) before allowing actions
 2. **Resource Ownership**: Use `canEditQuiz(user, quiz.authorId)` for resource-level checks (users can edit own, admins can edit any)
-3. **Rate Limiting**: Guest plays use in-memory rate limiter (`apps/web/lib/rate-limit.ts`), AI generation has per-user and global limits
+3. **Rate Limiting**: `apps/web/lib/rate-limit.ts` covers guest plays and AI generation (per-user + global). Backed by Redis/Valkey when `REDIS_URL`/`VALKEY_URL` is set, with a per-instance in-memory fallback. All functions are **async** — the fallback is for development and single-instance deployments only.
 4. **Error Handling**: API routes return consistent `{ error: string }` JSON responses
 5. **Randomization**: Questions and answers can be randomized per attempt (controlled by quiz settings)
 6. **Time Limits**: Optional per-quiz time limits with timeout tracking in attempts
@@ -204,7 +204,8 @@ export const db = drizzle({ client, schema });
 - **Package Manager**: This project uses pnpm. Run scripts with `pnpm <script>`, and target a single workspace with `pnpm --filter <pkg> <script>`.
 - **Database Required**: `DATABASE_URL` must be set (except during production build phase).
 - **OIDC Required**: `OIDC_PROVIDER_ID`, `NEXT_PUBLIC_OIDC_PROVIDER_ID` (must match `OIDC_PROVIDER_ID`), `OIDC_ISSUER`, `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET` required for authentication.
-- **Migrations in Build**: Production builds run `db:migrate` automatically. Use `build:only` to skip migrations.
+- **Migrations in Build**: Production builds run `db:migrate` automatically. Use `build:only` to skip migrations. On Vercel, migrations are applied for production deployments only so preview builds can't migrate a shared production schema — set `RUN_MIGRATIONS=true` to override.
+- **Remote Images**: `next.config.ts` builds `images.remotePatterns` from `lib/images/remote-hosts.ts` (Unsplash by default, extended via the build-time `IMAGE_ALLOWED_HOSTS`). Don't widen this to a catch-all — it makes `/_next/image` an open image proxy.
 - **Cache Optional**: Redis/Valkey caching is opt-in. App works without it.
 - **Environment Variables**: See `.env.example` for complete configuration. Most RBAC settings have sensible defaults.
 - **Cascade Deletes**: Deleting a quiz deletes all questions, answers, attempts, and attempt answers.
