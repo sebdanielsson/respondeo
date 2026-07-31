@@ -143,10 +143,42 @@ React's `cache()` prevents duplicate database queries within the same request (e
 
 ## Monitoring
 
-Cache operations are logged:
+The connection reports its state once per process, so an unconfigured
+deployment is distinguishable from a configured-but-broken one. Look for a
+`[cache]` line in your runtime logs shortly after a cold start:
 
 ```plaintext
-[cache] Connected to Redis/Valkey
+# Connected — caching and shared rate limiting are active
+[cache] Connected to eu1.example.upstash.io:6379 over TLS — caching and shared rate limiting active.
+
+# Not configured — this is the state to look for if rate limits aren't holding
+[cache] No REDIS_URL or VALKEY_URL set — caching is off (queries hit the database) and rate
+limits are per-instance only, which does not hold across serverless instances. See docs/caching.md.
+
+# Configured, but the server can't be reached
+[cache] Could not connect to eu1.example.upstash.io:6379 over TLS — caching disabled and rate
+limits fall back to per-instance. Retrying in 10s. ...
+
+# Was connected, then the connection dropped
+[cache] Disconnected from eu1.example.upstash.io:6379 over TLS — falling back to the database
+and per-instance rate limits until it reconnects.
+```
+
+Only host, port, and TLS are logged — never the credentials embedded in the
+connection URL.
+
+After a failed connection the client waits 10 seconds before redialing, so an
+unreachable server costs one connect attempt per 10s rather than one per
+request. A dropped connection clears the cached client, so the next request
+after the cooldown reconnects rather than sending commands to a dead socket.
+
+`getRedisStatus()` from `lib/cache/client.ts` returns the current state
+(`unconfigured`, `connecting`, `connected`, `unavailable`) if you want to expose
+it from a health check.
+
+Individual cache operations log on failure:
+
+```plaintext
 [cache] Invalidated 5 keys matching "leaderboard:quiz:abc123:*"
 [cache] Read error for key quizzes:list:public:1:30 ...
 ```
@@ -155,9 +187,17 @@ Cache operations are logged:
 
 ### Caching not working
 
-1. Check if `REDIS_URL` or `VALKEY_URL` is set
-2. Verify Redis is reachable: `redis-cli ping`
-3. Check logs for `[cache] Connected to Redis/Valkey`
+Find the `[cache]` line in your runtime logs from the last cold start — it says
+which of these you're in:
+
+1. **`No REDIS_URL or VALKEY_URL set`** — the variable isn't reaching the
+   runtime. On Vercel, confirm it's set for the environment you're testing and
+   redeploy; environment variable changes only apply to new deployments.
+2. **`Could not connect to ...`** — the variable is set but the server is
+   unreachable. Check the host and port in the message, and verify with
+   `redis-cli -u "$REDIS_URL" ping`.
+3. **`Connected to ...`** — the cache is live, so look elsewhere (TTLs,
+   invalidation) for the behaviour you're chasing.
 
 ### Stale data
 

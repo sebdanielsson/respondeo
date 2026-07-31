@@ -26,14 +26,62 @@ function dateReviver(_key: string, value: unknown): unknown {
   return value;
 }
 
+/**
+ * Connection lifecycle state, surfaced in logs so an unconfigured deployment is
+ * distinguishable from a configured-but-broken one. Without this the two look
+ * identical at runtime: both silently fall back to the database and to
+ * per-instance rate limiting.
+ */
+export type RedisStatus = "unconfigured" | "connecting" | "connected" | "unavailable";
+
 /** Singleton Redis client instance */
 let redisClient: Redis | null = null;
 
 /** Promise guard to prevent concurrent initialization */
 let initPromise: Promise<Redis | null> | null = null;
 
-/** Track if we've already logged a connection failure */
+let redisStatus: RedisStatus = "unconfigured";
+
+/** Log-once guards — each process should report a state change, not every request. */
+let unconfiguredWarningLogged = false;
 let connectionWarningLogged = false;
+
+/** Timestamp of the last failed connection attempt, for retry backoff. */
+let lastFailureAt = 0;
+
+/**
+ * How long to wait before retrying after a failed connection. Without this a
+ * down server is dialed once per request, adding its connect timeout to every
+ * page load.
+ */
+const RETRY_COOLDOWN_MS = 10_000;
+
+/**
+ * Current connection state. Useful for health checks and diagnostics.
+ */
+export function getRedisStatus(): RedisStatus {
+  return redisStatus;
+}
+
+/**
+ * Render a connection target safe for logging.
+ *
+ * Redis URLs carry credentials in the userinfo component, so the URL must never
+ * be logged as-is. Only host, port, and whether TLS is in use are emitted.
+ *
+ * Exported for testing — treat as internal.
+ */
+export function describeRedisTarget(rawUrl: string): string {
+  try {
+    const url = new URL(rawUrl);
+    const port = url.port || "6379";
+    const tls = url.protocol === "rediss:" ? " over TLS" : "";
+    return `${url.hostname}:${port}${tls}`;
+  } catch {
+    // Malformed URL — say nothing rather than risk echoing credentials.
+    return "the configured Redis endpoint";
+  }
+}
 
 /**
  * Get or create the Redis client singleton.
@@ -44,6 +92,15 @@ let connectionWarningLogged = false;
  */
 export async function getRedis(): Promise<Redis | null> {
   if (!isCachingEnabled()) {
+    redisStatus = "unconfigured";
+    if (!unconfiguredWarningLogged) {
+      unconfiguredWarningLogged = true;
+      console.warn(
+        "[cache] No REDIS_URL or VALKEY_URL set — caching is off (queries hit the database) " +
+          "and rate limits are per-instance only, which does not hold across serverless " +
+          "instances. See docs/caching.md.",
+      );
+    }
     return null;
   }
 
@@ -56,11 +113,21 @@ export async function getRedis(): Promise<Redis | null> {
     return initPromise;
   }
 
+  // Back off after a failure instead of redialing a down server every request.
+  if (redisStatus === "unavailable" && Date.now() - lastFailureAt < RETRY_COOLDOWN_MS) {
+    return null;
+  }
+
+  const url = getRedisUrl() ?? "redis://localhost:6379";
+  const target = describeRedisTarget(url);
+
   // Start initialization with promise guard
   initPromise = (async () => {
     let client: Redis | null = null;
+    let runtimeErrorLogged = false;
+    redisStatus = "connecting";
+
     try {
-      const url = getRedisUrl() ?? "redis://localhost:6379";
       client = new Redis(url, {
         lazyConnect: true,
         maxRetriesPerRequest: 1,
@@ -69,22 +136,52 @@ export async function getRedis(): Promise<Redis | null> {
         retryStrategy: () => null,
       });
 
-      // Prevent unhandled "error" events from crashing the process.
-      client.on("error", () => {});
+      // Prevent unhandled "error" events from crashing the process. Failures
+      // during connect are reported by the catch below, so only surface errors
+      // that arrive after the connection was established.
+      client.on("error", (error) => {
+        if (redisStatus !== "connected" || runtimeErrorLogged) return;
+        runtimeErrorLogged = true;
+        console.warn(`[cache] Error from ${target}:`, error);
+      });
+
+      // retryStrategy returns null, so a dropped connection is permanent for
+      // this client. Clear the singleton so the next call builds a fresh one
+      // instead of routing every command at a dead socket.
+      client.on("end", () => {
+        if (redisClient !== client) return;
+        redisClient = null;
+        redisStatus = "unavailable";
+        lastFailureAt = Date.now();
+        connectionWarningLogged = false;
+        console.warn(
+          `[cache] Disconnected from ${target} — falling back to the database and ` +
+            "per-instance rate limits until it reconnects.",
+        );
+      });
 
       // Establish the connection and verify it with a ping.
       await client.connect();
       await client.ping();
 
       redisClient = client;
+      redisStatus = "connected";
+      connectionWarningLogged = false;
+      console.info(`[cache] Connected to ${target} — caching and shared rate limiting active.`);
       return redisClient;
     } catch (error) {
       if (client) {
         client.disconnect();
       }
+      redisStatus = "unavailable";
+      lastFailureAt = Date.now();
       if (!connectionWarningLogged) {
-        console.warn("[cache] Redis connection failed, caching disabled:", error);
         connectionWarningLogged = true;
+        console.warn(
+          `[cache] Could not connect to ${target} — caching disabled and rate limits ` +
+            `fall back to per-instance. Retrying in ${RETRY_COOLDOWN_MS / 1000}s.`,
+          error,
+        );
       }
       return null;
     } finally {
@@ -200,6 +297,9 @@ export function closeRedis(): void {
     redisClient.disconnect();
     redisClient = null;
   }
-  // Reset warning flag so future connection failures are logged
+  // Reset state so a later reconnect reports itself again.
+  redisStatus = isCachingEnabled() ? "unavailable" : "unconfigured";
   connectionWarningLogged = false;
+  unconfiguredWarningLogged = false;
+  lastFailureAt = 0;
 }
