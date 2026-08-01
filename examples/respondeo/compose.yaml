@@ -36,7 +36,7 @@ services:
           cpus: 1
 
   cache:
-    image: valkey/valkey:9-trixie
+    image: valkey/valkey:9.1-trixie
     env_file:
       - .env.compose
     volumes:

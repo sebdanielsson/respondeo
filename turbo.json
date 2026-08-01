@@ -3,10 +3,12 @@
   "globalPassThroughEnv": ["NODE_USE_SYSTEM_CA", "NODE_USE_ENV_PROXY", "NODE_EXTRA_CA_CERTS"],
   "tasks": {
     "build": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "build:only": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "dev": {
       "cache": false,

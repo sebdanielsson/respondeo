@@ -116,9 +116,13 @@ async function main() {
     console.error(`\nYou can install them manually by running:`);
     console.error(`  cd ${projectName}`);
     console.error(`  ${pmCommand} ${pmArgs.join(" ")}`);
-  } else {
-    s.stop(`Dependencies installed with ${packageManager}`);
+    // The project was scaffolded but has no node_modules, so it will not run.
+    // Reporting "your app is ready!" and exiting 0 here told both the user and
+    // any surrounding automation that a broken project was good to go.
+    process.exit(1);
   }
+
+  s.stop(`Dependencies installed with ${packageManager}`);
 
   // Success message
   outro(MESSAGES.OUTRO_SUCCESS);
