@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { headers } from "next/headers";
 import { db } from "@/lib/db";
-import { quiz, question, answer } from "@/lib/db/schema";
+import { quiz } from "@/lib/db/schema";
 import { auth } from "@/lib/auth/server";
 import { canCreateQuiz, canEditQuiz, canDeleteQuiz } from "@/lib/rbac";
 import { quizSchema, type QuizFormData } from "@/lib/validations/quiz";
@@ -15,6 +15,7 @@ import {
   invalidateQuizLists,
   invalidateDeletedQuiz,
 } from "@/lib/cache/invalidation";
+import { insertQuizContent, syncQuizContent } from "@/lib/quiz/content";
 
 async function getSession() {
   const session = await auth.api.getSession({
@@ -44,47 +45,28 @@ export async function createQuiz(data: QuizFormData) {
   const validData = parsed.data;
 
   try {
-    // Create quiz
-    const [newQuiz] = await db
-      .insert(quiz)
-      .values({
-        title: validData.title,
-        description: validData.description || null,
-        heroImageUrl: validData.heroImageUrl || null,
-        authorId: session.user.id,
-        language: validData.language,
-        difficulty: validData.difficulty,
-        maxAttempts: validData.maxAttempts,
-        timeLimitSeconds: validData.timeLimitSeconds,
-        randomizeQuestions: validData.randomizeQuestions,
-        randomizeAnswers: validData.randomizeAnswers,
-        publishedAt: validData.publishedAt || null,
-      })
-      .returning();
-
-    // Create questions and answers
-    for (let i = 0; i < validData.questions.length; i++) {
-      const q = validData.questions[i];
-
-      const [newQuestion] = await db
-        .insert(question)
+    const newQuiz = await db.transaction(async (tx) => {
+      const [row] = await tx
+        .insert(quiz)
         .values({
-          quizId: newQuiz.id,
-          text: q.text,
-          imageUrl: q.imageUrl || null,
-          order: i,
+          title: validData.title,
+          description: validData.description || null,
+          heroImageUrl: validData.heroImageUrl || null,
+          authorId: session.user.id,
+          language: validData.language,
+          difficulty: validData.difficulty,
+          maxAttempts: validData.maxAttempts,
+          timeLimitSeconds: validData.timeLimitSeconds,
+          randomizeQuestions: validData.randomizeQuestions,
+          randomizeAnswers: validData.randomizeAnswers,
+          publishedAt: validData.publishedAt || null,
         })
         .returning();
 
-      // Create answers
-      await db.insert(answer).values(
-        q.answers.map((a) => ({
-          questionId: newQuestion.id,
-          text: a.text,
-          isCorrect: a.isCorrect,
-        })),
-      );
-    }
+      await insertQuizContent(tx, row.id, validData.questions);
+
+      return row;
+    });
 
     await invalidateQuizLists();
     revalidatePath("/");
@@ -129,50 +111,28 @@ export async function updateQuiz(quizId: string, data: QuizFormData) {
   const validData = parsed.data;
 
   try {
-    // Update quiz
-    await db
-      .update(quiz)
-      .set({
-        title: validData.title,
-        description: validData.description || null,
-        heroImageUrl: validData.heroImageUrl || null,
-        language: validData.language,
-        difficulty: validData.difficulty,
-        maxAttempts: validData.maxAttempts,
-        timeLimitSeconds: validData.timeLimitSeconds,
-        randomizeQuestions: validData.randomizeQuestions,
-        randomizeAnswers: validData.randomizeAnswers,
-        publishedAt: validData.publishedAt || null,
-        updatedAt: new Date(),
-      })
-      .where(eq(quiz.id, quizId));
-
-    // Delete existing questions (cascade will delete answers)
-    await db.delete(question).where(eq(question.quizId, quizId));
-
-    // Create new questions and answers
-    for (let i = 0; i < validData.questions.length; i++) {
-      const q = validData.questions[i];
-
-      const [newQuestion] = await db
-        .insert(question)
-        .values({
-          quizId: quizId,
-          text: q.text,
-          imageUrl: q.imageUrl || null,
-          order: i,
+    await db.transaction(async (tx) => {
+      await tx
+        .update(quiz)
+        .set({
+          title: validData.title,
+          description: validData.description || null,
+          heroImageUrl: validData.heroImageUrl || null,
+          language: validData.language,
+          difficulty: validData.difficulty,
+          maxAttempts: validData.maxAttempts,
+          timeLimitSeconds: validData.timeLimitSeconds,
+          randomizeQuestions: validData.randomizeQuestions,
+          randomizeAnswers: validData.randomizeAnswers,
+          publishedAt: validData.publishedAt || null,
+          updatedAt: new Date(),
         })
-        .returning();
+        .where(eq(quiz.id, quizId));
 
-      // Create answers
-      await db.insert(answer).values(
-        q.answers.map((a) => ({
-          questionId: newQuestion.id,
-          text: a.text,
-          isCorrect: a.isCorrect,
-        })),
-      );
-    }
+      // Reconcile in place rather than delete-and-recreate: questions the
+      // author kept retain their ids, so attempt history survives the edit.
+      await syncQuizContent(tx, quizId, validData.questions);
+    });
 
     await invalidateQuiz(quizId);
     revalidatePath("/");

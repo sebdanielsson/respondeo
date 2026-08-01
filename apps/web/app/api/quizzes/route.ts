@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { quiz, question, answer } from "@/lib/db/schema";
+import { quiz } from "@/lib/db/schema";
 import { getQuizzes } from "@/lib/db/queries/quiz";
 import { quizSchema } from "@/lib/validations/quiz";
 import { getApiContext, requirePermission, errorResponse, API_SCOPES } from "@/lib/auth/api";
 import { canCreateQuiz } from "@/lib/rbac";
 import { parsePageParam, parseLimitParam } from "@/lib/pagination";
 import { invalidateQuizLists } from "@/lib/cache/invalidation";
+import { insertQuizContent } from "@/lib/quiz/content";
 
 /**
  * GET /api/quizzes
@@ -62,47 +63,28 @@ export async function POST(request: NextRequest) {
   const validData = parsed.data;
 
   try {
-    // Create quiz
-    const [newQuiz] = await db
-      .insert(quiz)
-      .values({
-        title: validData.title,
-        description: validData.description,
-        heroImageUrl: validData.heroImageUrl,
-        authorId: ctx!.user.id,
-        language: validData.language,
-        difficulty: validData.difficulty,
-        maxAttempts: validData.maxAttempts,
-        timeLimitSeconds: validData.timeLimitSeconds,
-        randomizeQuestions: validData.randomizeQuestions,
-        randomizeAnswers: validData.randomizeAnswers,
-        publishedAt: validData.publishedAt || null,
-      })
-      .returning();
-
-    // Create questions and answers
-    for (let i = 0; i < validData.questions.length; i++) {
-      const q = validData.questions[i];
-
-      const [newQuestion] = await db
-        .insert(question)
+    const newQuiz = await db.transaction(async (tx) => {
+      const [row] = await tx
+        .insert(quiz)
         .values({
-          quizId: newQuiz.id,
-          text: q.text,
-          imageUrl: q.imageUrl || null,
-          order: i,
+          title: validData.title,
+          description: validData.description,
+          heroImageUrl: validData.heroImageUrl,
+          authorId: ctx!.user.id,
+          language: validData.language,
+          difficulty: validData.difficulty,
+          maxAttempts: validData.maxAttempts,
+          timeLimitSeconds: validData.timeLimitSeconds,
+          randomizeQuestions: validData.randomizeQuestions,
+          randomizeAnswers: validData.randomizeAnswers,
+          publishedAt: validData.publishedAt || null,
         })
         .returning();
 
-      // Create answers
-      await db.insert(answer).values(
-        q.answers.map((a) => ({
-          questionId: newQuestion.id,
-          text: a.text,
-          isCorrect: a.isCorrect,
-        })),
-      );
-    }
+      await insertQuizContent(tx, row.id, validData.questions);
+
+      return row;
+    });
 
     await invalidateQuizLists();
 
