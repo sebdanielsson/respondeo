@@ -10,6 +10,7 @@ import { QuizLeaderboard } from "@/components/quiz/quiz-leaderboard";
 import { PaginationControls } from "@/components/layout/pagination-controls";
 import type { Metadata } from "next";
 import { siteConfig } from "@/lib/config";
+import { parsePageParam } from "@/lib/pagination";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -35,7 +36,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function QuizResultsPage({ params, searchParams }: PageProps) {
   const { id: quizId } = await params;
   const { page: pageParam } = await searchParams;
-  const page = parseInt(pageParam ?? "1", 10);
+  const page = parsePageParam(pageParam);
 
   const session = await auth.api.getSession({
     headers: await headers(),

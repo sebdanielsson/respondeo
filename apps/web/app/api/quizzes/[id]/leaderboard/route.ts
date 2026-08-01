@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getQuizLeaderboard } from "@/lib/db/queries/quiz";
 import { getApiContext, requirePermission, errorResponse, API_SCOPES } from "@/lib/auth/api";
+import { parsePageParam, parseLimitParam } from "@/lib/pagination";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -18,8 +19,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
   const { id } = await params;
   const searchParams = request.nextUrl.searchParams;
-  const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
-  const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "30", 10)));
+  const page = parsePageParam(searchParams.get("page"));
+  const limit = parseLimitParam(searchParams.get("limit"));
 
   try {
     const result = await getQuizLeaderboard(id, page, limit);

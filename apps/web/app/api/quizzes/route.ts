@@ -5,6 +5,7 @@ import { getQuizzes } from "@/lib/db/queries/quiz";
 import { quizSchema } from "@/lib/validations/quiz";
 import { getApiContext, requirePermission, errorResponse, API_SCOPES } from "@/lib/auth/api";
 import { canCreateQuiz } from "@/lib/rbac";
+import { parsePageParam, parseLimitParam } from "@/lib/pagination";
 
 /**
  * GET /api/quizzes
@@ -17,8 +18,8 @@ export async function GET(request: NextRequest) {
   if (permError) return permError;
 
   const searchParams = request.nextUrl.searchParams;
-  const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
-  const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "30", 10)));
+  const page = parsePageParam(searchParams.get("page"));
+  const limit = parseLimitParam(searchParams.get("limit"));
 
   try {
     const result = await getQuizzes(page, limit);
@@ -105,6 +106,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(newQuiz, { status: 201 });
   } catch (error) {
     console.error("Failed to create quiz:", error);
-    return errorResponse(error instanceof Error ? error.message : "Failed to create quiz", 500);
+    return errorResponse("Failed to create quiz", 500);
   }
 }

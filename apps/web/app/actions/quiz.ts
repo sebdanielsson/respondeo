@@ -89,7 +89,7 @@ export async function createQuiz(data: QuizFormData) {
       throw error;
     }
     console.error("Failed to create quiz:", error);
-    return { error: error instanceof Error ? error.message : "Failed to create quiz" };
+    return { error: "Failed to create quiz" };
   }
 }
 
@@ -177,7 +177,7 @@ export async function updateQuiz(quizId: string, data: QuizFormData) {
       throw error;
     }
     console.error("Failed to update quiz:", error);
-    return { error: error instanceof Error ? error.message : "Failed to update quiz" };
+    return { error: "Failed to update quiz" };
   }
 }
 
@@ -211,6 +211,6 @@ export async function deleteQuiz(quizId: string) {
       throw error;
     }
     console.error("Failed to delete quiz:", error);
-    return { error: error instanceof Error ? error.message : "Failed to delete quiz" };
+    return { error: "Failed to delete quiz" };
   }
 }

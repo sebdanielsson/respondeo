@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { QuizCard } from "@/components/quiz/quiz-card";
 import { PaginationControls } from "@/components/layout/pagination-controls";
 import { DatabaseError } from "@/components/errors/database-error";
+import { parsePageParam } from "@/lib/pagination";
 
 interface PageProps {
   searchParams: Promise<{ page?: string }>;
@@ -23,7 +24,7 @@ export default async function HomePage({ searchParams }: PageProps) {
   }
 
   const params = await searchParams;
-  const page = parseInt(params.page ?? "1", 10);
+  const page = parsePageParam(params.page);
 
   const session = await auth.api.getSession({
     headers: await headers(),
