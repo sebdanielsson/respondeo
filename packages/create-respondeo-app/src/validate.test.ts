@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { resolve } from "node:path";
 import { validateProjectName, resolveProjectPath } from "./validate";
 
 describe("validateProjectName", () => {
@@ -61,6 +62,12 @@ describe("validateProjectName", () => {
 
 describe("resolveProjectPath", () => {
   it("resolves relative to the working directory", () => {
-    expect(resolveProjectPath("my-app")).toBe(`${process.cwd()}/my-app`);
+    // Built with node:path rather than a "/" template literal: the CLI is
+    // published to npm and runs on Windows, where the separator is "\".
+    expect(resolveProjectPath("my-app")).toBe(resolve(process.cwd(), "my-app"));
+  });
+
+  it("resolves a nested path relative to the working directory", () => {
+    expect(resolveProjectPath("apps/my-app")).toBe(resolve(process.cwd(), "apps", "my-app"));
   });
 });

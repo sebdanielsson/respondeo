@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { MAX_QUESTIONS_PER_QUIZ } from "./quiz";
 
 /**
  * Validation for a submitted quiz attempt.
@@ -22,9 +23,9 @@ export const submitAttemptSchema = z.object({
         displayOrder: z.number().int().min(0),
       }),
     )
-    // A quiz cannot have more questions than this, so a larger submission is
+    // quizSchema caps a quiz at this many questions, so a larger submission is
     // never legitimate. Bounds the work grading does on untrusted input.
-    .max(500, "Too many answers submitted"),
+    .max(MAX_QUESTIONS_PER_QUIZ, "Too many answers submitted"),
   totalTimeMs: z.number().int().min(0),
   timedOut: z.boolean().default(false),
   /**

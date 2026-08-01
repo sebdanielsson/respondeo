@@ -41,6 +41,20 @@ export type LanguageCode = (typeof SUPPORTED_LANGUAGES)[number]["code"];
 export const DIFFICULTY_LEVELS = ["easy", "medium", "hard"] as const;
 export type DifficultyLevel = (typeof DIFFICULTY_LEVELS)[number];
 
+/**
+ * Largest number of questions a quiz may have.
+ *
+ * This is a real ceiling, not a formality: attempt submissions are bounded by
+ * it (`lib/validations/attempt.ts`) and progression tokens carry the ordered
+ * question list inside a signed payload (`lib/quiz/attempt-token.ts`), which
+ * cannot grow without bound. Enforcing it at creation as well is what keeps
+ * those consistent — without it a quiz could be created, via the API, that no
+ * player could ever submit.
+ *
+ * All three limits must move together; import this rather than restating it.
+ */
+export const MAX_QUESTIONS_PER_QUIZ = 500;
+
 export const quizSchema = z.object({
   title: z.string().min(1, "Title is required").max(70, "Title is too long"),
   description: z.string().min(1, "Description is required").max(120, "Description is too long"),
@@ -52,7 +66,13 @@ export const quizSchema = z.object({
   randomizeQuestions: z.boolean().default(true),
   randomizeAnswers: z.boolean().default(true),
   publishedAt: z.coerce.date().optional().nullable(),
-  questions: z.array(questionSchema).min(1, "At least 1 question is required"),
+  questions: z
+    .array(questionSchema)
+    .min(1, "At least 1 question is required")
+    .max(
+      MAX_QUESTIONS_PER_QUIZ,
+      `A quiz cannot have more than ${MAX_QUESTIONS_PER_QUIZ} questions`,
+    ),
 });
 
 export type QuizFormData = z.infer<typeof quizSchema>;

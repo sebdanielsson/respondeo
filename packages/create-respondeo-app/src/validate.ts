@@ -27,7 +27,7 @@ export function validateProjectName(input: string | undefined): string | undefin
 
   // Allow alphanumeric, hyphens, underscores, dots and forward slashes for paths
   if (!/^[a-zA-Z0-9\-_/.]+$/.test(trimmed)) {
-    return "Project name can only contain letters, numbers, hyphens, underscores, and forward slashes";
+    return "Project name can only contain letters, numbers, hyphens, underscores, dots, and forward slashes";
   }
 
   const segments = trimmed.split("/").filter((segment) => segment.length > 0);

@@ -1,4 +1,5 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
+import { MAX_QUESTIONS_PER_QUIZ } from "@/lib/validations/quiz";
 
 /**
  * Signed attempt-start tokens.
@@ -166,8 +167,13 @@ export function resolveAttemptTiming(
  * first. Signing the ordered ids closes that.
  */
 
-/** Cap on questions in a progression token, matching the submission bound. */
-const MAX_PROGRESS_QUESTIONS = 500;
+/**
+ * Cap on questions in a progression token.
+ *
+ * Shared with quizSchema and the submission schema so a quiz can never be
+ * created that is too large to play.
+ */
+const MAX_PROGRESS_QUESTIONS = MAX_QUESTIONS_PER_QUIZ;
 
 interface ProgressPayload {
   /** Quiz id. */

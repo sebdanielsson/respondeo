@@ -7,18 +7,25 @@ import { getImageRemotePatterns } from "./lib/images/remote-hosts";
  * These are the ones that are safe to apply unconditionally — none of them
  * depend on how the page is built, so they cannot break rendering.
  *
- * A Content-Security-Policy is deliberately *not* set here. Next.js inlines
- * bootstrap scripts and styles, so a useful policy needs per-request nonces
- * threaded through middleware, and a policy written without verifying it
- * against the running app fails closed: the page silently stops working.
- * Adding one is worth doing, but it needs to be developed against a running
- * instance rather than declared blind.
+ * The Content-Security-Policy below carries `frame-ancestors` only. That
+ * directive governs who may embed the page, not what it may load, so it cannot
+ * break rendering — it is the modern counterpart to X-Frame-Options, which is
+ * sent alongside it for older browsers.
+ *
+ * The *resource* directives — `script-src`, `style-src` and friends — are
+ * deliberately absent. Next.js inlines bootstrap scripts and styles, so a
+ * useful policy for those needs per-request nonces threaded through
+ * middleware, and one written without verifying it against the running app
+ * fails closed: the page silently stops working. Adding them is worth doing,
+ * but it has to be developed against a running instance rather than declared
+ * blind.
  */
 const securityHeaders = [
   // Stop the browser second-guessing declared content types.
   { key: "X-Content-Type-Options", value: "nosniff" },
   // No framing: the app has no embeddable surface, so clickjacking has no
-  // legitimate use case to preserve here.
+  // legitimate use case to preserve here. X-Frame-Options for older browsers,
+  // frame-ancestors for the ones that supersede it with CSP.
   { key: "X-Frame-Options", value: "DENY" },
   { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
   // Send the origin cross-site, the full path same-site. Keeps quiz ids and
