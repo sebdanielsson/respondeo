@@ -1,5 +1,11 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { issueAttemptToken, verifyAttemptToken, resolveAttemptTiming } from "./attempt-token";
+import {
+  issueAttemptToken,
+  verifyAttemptToken,
+  resolveAttemptTiming,
+  issueProgressToken,
+  verifyProgressToken,
+} from "./attempt-token";
 
 const quizId = "quiz-1";
 const userId = "user-1";
@@ -119,5 +125,65 @@ describe("resolveAttemptTiming", () => {
 
     expect(timing.totalTimeMs).toBe(3_600_000);
     expect(timing.timedOut).toBe(false);
+  });
+});
+
+describe("issueProgressToken / verifyProgressToken", () => {
+  const ids = ["q-a", "q-b", "q-c"];
+
+  it("round-trips the index and question order", () => {
+    const token = issueProgressToken(quizId, userId, 1, ids);
+    const verified = verifyProgressToken(token, quizId, userId);
+
+    expect(verified).toEqual({ index: 1, orderedQuestionIds: ids });
+  });
+
+  it("rejects a token issued for another quiz or player", () => {
+    const token = issueProgressToken(quizId, userId, 0, ids);
+
+    expect(verifyProgressToken(token, "quiz-2", userId)).toBeNull();
+    expect(verifyProgressToken(token, quizId, "user-2")).toBeNull();
+  });
+
+  it("rejects a tampered index", () => {
+    // Re-encoding the payload with a different index invalidates the signature,
+    // which is what stops a client asking for a later question's answer.
+    const token = issueProgressToken(quizId, userId, 0, ids);
+    const signature = token.slice(token.lastIndexOf(".") + 1);
+    const forgedPayload = Buffer.from(JSON.stringify({ q: quizId, u: userId, i: 2, ids })).toString(
+      "base64url",
+    );
+
+    expect(verifyProgressToken(`${forgedPayload}.${signature}`, quizId, userId)).toBeNull();
+  });
+
+  it("rejects a tampered question order", () => {
+    const token = issueProgressToken(quizId, userId, 0, ids);
+    const signature = token.slice(token.lastIndexOf(".") + 1);
+    const reordered = Buffer.from(
+      JSON.stringify({ q: quizId, u: userId, i: 0, ids: ["q-c", "q-b", "q-a"] }),
+    ).toString("base64url");
+
+    expect(verifyProgressToken(`${reordered}.${signature}`, quizId, userId)).toBeNull();
+  });
+
+  it("rejects an out-of-range index", () => {
+    const token = issueProgressToken(quizId, userId, 99, ids);
+    expect(verifyProgressToken(token, quizId, userId)).toBeNull();
+  });
+
+  it("rejects absent or malformed tokens", () => {
+    expect(verifyProgressToken(undefined, quizId, userId)).toBeNull();
+    expect(verifyProgressToken("", quizId, userId)).toBeNull();
+    expect(verifyProgressToken("garbage", quizId, userId)).toBeNull();
+    expect(verifyProgressToken("not-base64.sig", quizId, userId)).toBeNull();
+  });
+
+  it("issues distinct tokens per index that each only unlock their own question", () => {
+    const first = verifyProgressToken(issueProgressToken(quizId, userId, 0, ids), quizId, userId);
+    const second = verifyProgressToken(issueProgressToken(quizId, userId, 1, ids), quizId, userId);
+
+    expect(ids[first!.index]).toBe("q-a");
+    expect(ids[second!.index]).toBe("q-b");
   });
 });

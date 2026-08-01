@@ -14,7 +14,6 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 interface Answer {
   id: string;
   text: string;
-  isCorrect: boolean;
 }
 
 interface Question {
@@ -43,6 +42,23 @@ interface QuizPlayerProps {
    * the elapsed time itself instead of trusting the value below.
    */
   startToken?: string;
+  /**
+   * Grants the reveal of the first question. The answer key is not sent with
+   * the page; correctness comes back one question at a time from `onReveal`,
+   * which hands over a token for the next question each time.
+   */
+  initialProgressToken: string;
+  onReveal: (input: {
+    quizId: string;
+    questionId: string;
+    selectedAnswerId: string;
+    progressToken: string;
+  }) => Promise<{
+    correctAnswerId: string | null;
+    isCorrect: boolean;
+    nextProgressToken?: string;
+    error?: string;
+  }>;
 }
 
 export function QuizPlayer({
@@ -53,6 +69,8 @@ export function QuizPlayer({
   onSubmit,
   isGuest = false,
   startToken,
+  initialProgressToken,
+  onReveal,
 }: QuizPlayerProps) {
   const router = useRouter();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -62,6 +80,12 @@ export function QuizPlayer({
   const [currentSelection, setCurrentSelection] = useState<string | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
+  // Revealed by the server for the current question only.
+  const [correctAnswerId, setCorrectAnswerId] = useState<string | null>(null);
+  const [isRevealing, setIsRevealing] = useState(false);
+  const [progressToken, setProgressToken] = useState(initialProgressToken);
+  // Guests are scored from the server's reveals rather than a local answer key.
+  const guestCorrectRef = useRef(0);
   const [elapsedMs, setElapsedMs] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -110,13 +134,10 @@ export function QuizPlayer({
         displayOrder: q.displayOrder,
       }));
 
-      // For guests, calculate score client-side and show results without saving
+      // Guests are not persisted, so their score is the running total of the
+      // server's per-question reveals rather than a local answer key.
       if (isGuest) {
-        const score = questions.reduce((acc, q) => {
-          const selectedAnswerId = selectedAnswers[q.id]?.answerId;
-          const correctAnswer = q.answers.find((a) => a.isCorrect);
-          return acc + (selectedAnswerId === correctAnswer?.id ? 1 : 0);
-        }, 0);
+        const score = guestCorrectRef.current;
         setGuestResult({ score, total: questions.length, timeMs: elapsedMsRef.current });
         setIsSubmitting(false);
         return;
@@ -176,26 +197,51 @@ export function QuizPlayer({
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  const handleConfirmAnswer = () => {
-    if (!currentSelection) return;
+  const handleConfirmAnswer = async () => {
+    if (!currentSelection || isRevealing) return;
 
-    const selectedAnswer = currentQuestion.answers.find((a) => a.id === currentSelection);
-    const correct = selectedAnswer?.isCorrect ?? false;
+    setIsRevealing(true);
+    setError(null);
 
-    setIsCorrect(correct);
-    setShowFeedback(true);
-    setSelectedAnswers((prev) => ({
-      ...prev,
-      [currentQuestion.id]: {
-        answerId: currentSelection,
-        displayOrder: currentQuestion.displayOrder,
-      },
-    }));
+    try {
+      const revealed = await onReveal({
+        quizId,
+        questionId: currentQuestion.id,
+        selectedAnswerId: currentSelection,
+        progressToken,
+      });
+
+      if (revealed.error) {
+        setError(revealed.error);
+        return;
+      }
+
+      if (revealed.isCorrect) guestCorrectRef.current += 1;
+
+      setIsCorrect(revealed.isCorrect);
+      setCorrectAnswerId(revealed.correctAnswerId);
+      if (revealed.nextProgressToken) setProgressToken(revealed.nextProgressToken);
+
+      setShowFeedback(true);
+      setSelectedAnswers((prev) => ({
+        ...prev,
+        [currentQuestion.id]: {
+          answerId: currentSelection,
+          displayOrder: currentQuestion.displayOrder,
+        },
+      }));
+    } catch (err) {
+      console.error("Failed to reveal answer:", err);
+      setError("Could not check that answer. Please try again.");
+    } finally {
+      setIsRevealing(false);
+    }
   };
 
   const handleNext = () => {
     setShowFeedback(false);
     setCurrentSelection(null);
+    setCorrectAnswerId(null);
 
     if (isLastQuestion) {
       handleSubmit(false);
@@ -204,7 +250,9 @@ export function QuizPlayer({
     }
   };
 
-  const correctAnswer = currentQuestion.answers.find((a) => a.isCorrect);
+  const correctAnswer = correctAnswerId
+    ? currentQuestion.answers.find((a) => a.id === correctAnswerId)
+    : undefined;
 
   // Show guest result screen
   if (guestResult) {
@@ -299,14 +347,16 @@ export function QuizPlayer({
             {currentQuestion.answers.map((answer) => {
               const isSelected = currentSelection === answer.id;
               const showCorrectness = showFeedback;
+              // Only known once the server has revealed this question.
+              const answerIsCorrect = correctAnswerId === answer.id;
 
               let className =
                 "flex items-center space-x-3 p-4 rounded-lg border transition-colors cursor-pointer ";
 
               if (showCorrectness) {
-                if (answer.isCorrect) {
+                if (answerIsCorrect) {
                   className += "border-green-500 bg-green-50 dark:bg-green-950";
-                } else if (isSelected && !answer.isCorrect) {
+                } else if (isSelected && !answerIsCorrect) {
                   className += "border-red-500 bg-red-50 dark:bg-red-950";
                 } else {
                   className += "opacity-50";
@@ -330,10 +380,10 @@ export function QuizPlayer({
                 >
                   <RadioGroupItem value={answer.id} id={answer.id} />
                   <span className="flex-1 text-left font-normal">{answer.text}</span>
-                  {showCorrectness && answer.isCorrect && (
+                  {showCorrectness && answerIsCorrect && (
                     <CheckCircle className="h-5 w-5 text-green-600" />
                   )}
-                  {showCorrectness && isSelected && !answer.isCorrect && (
+                  {showCorrectness && isSelected && !answerIsCorrect && (
                     <XCircle className="h-5 w-5 text-red-600" />
                   )}
                 </button>
@@ -355,7 +405,11 @@ export function QuizPlayer({
           {/* Actions */}
           <div className="flex justify-end gap-2">
             {!showFeedback ? (
-              <Button onClick={handleConfirmAnswer} disabled={!currentSelection || isSubmitting}>
+              <Button
+                onClick={handleConfirmAnswer}
+                disabled={!currentSelection || isSubmitting || isRevealing}
+              >
+                {isRevealing && <Loader2 className="h-4 w-4 animate-spin" />}
                 Confirm Answer
               </Button>
             ) : (

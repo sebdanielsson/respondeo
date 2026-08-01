@@ -145,3 +145,99 @@ export function resolveAttemptTiming(
     timedOut: hasLimit && elapsed >= limitMs,
   };
 }
+
+/**
+ * Progression tokens.
+ *
+ * The play page used to ship `isCorrect` for every answer of every question,
+ * so the full answer key was readable in the page payload before the player
+ * answered anything. It could not simply be removed: the player renders
+ * immediate per-question feedback from it and scores guest attempts locally.
+ *
+ * Instead the key stays on the server and is revealed one question at a time.
+ * A signed progression token records how far the player has actually got, so
+ * revelation is *ordered*: the server will only disclose the question at the
+ * index the token carries, then hand back a token for the next index.
+ *
+ * The token also commits to the question order. The play page shuffles
+ * questions per visit and never persists that order, so without the list in the
+ * token the server could not tell which question index 0 refers to — and a
+ * client could ask for the last question's answer while claiming to be at the
+ * first. Signing the ordered ids closes that.
+ */
+
+/** Cap on questions in a progression token, matching the submission bound. */
+const MAX_PROGRESS_QUESTIONS = 500;
+
+interface ProgressPayload {
+  /** Quiz id. */
+  q: string;
+  /** User id, or "guest". */
+  u: string;
+  /** Index of the question the player may currently reveal. */
+  i: number;
+  /** The shuffled question ids, in display order. */
+  ids: string[];
+}
+
+/**
+ * Issue a token granting the right to reveal the question at `index`.
+ *
+ * @param quizId The quiz being played
+ * @param userId The player, or "guest" for unauthenticated play
+ * @param index Zero-based index into `orderedQuestionIds`
+ * @param orderedQuestionIds Question ids in the order shown to this player
+ * @returns An opaque token to hand to the client
+ */
+export function issueProgressToken(
+  quizId: string,
+  userId: string,
+  index: number,
+  orderedQuestionIds: string[],
+): string {
+  const payload: ProgressPayload = { q: quizId, u: userId, i: index, ids: orderedQuestionIds };
+  const encoded = Buffer.from(JSON.stringify(payload)).toString("base64url");
+  return `${encoded}.${sign(encoded)}`;
+}
+
+/**
+ * Verify a progression token.
+ *
+ * @param token The token supplied by the client
+ * @param quizId The quiz the reveal is for
+ * @param userId The player, or "guest"
+ * @returns The current index and question order, or null if the token is
+ *   absent, malformed, tampered with, or issued for another quiz or player
+ */
+export function verifyProgressToken(
+  token: string | undefined | null,
+  quizId: string,
+  userId: string,
+): { index: number; orderedQuestionIds: string[] } | null {
+  if (!token) return null;
+
+  const separator = token.lastIndexOf(".");
+  if (separator <= 0) return null;
+
+  const encoded = token.slice(0, separator);
+  const providedSignature = token.slice(separator + 1);
+
+  const expectedBuffer = Buffer.from(sign(encoded));
+  const providedBuffer = Buffer.from(providedSignature);
+  if (expectedBuffer.length !== providedBuffer.length) return null;
+  if (!timingSafeEqual(expectedBuffer, providedBuffer)) return null;
+
+  let payload: ProgressPayload;
+  try {
+    payload = JSON.parse(Buffer.from(encoded, "base64url").toString("utf8")) as ProgressPayload;
+  } catch {
+    return null;
+  }
+
+  if (payload?.q !== quizId || payload?.u !== userId) return null;
+  if (!Array.isArray(payload.ids) || payload.ids.length > MAX_PROGRESS_QUESTIONS) return null;
+  if (!payload.ids.every((id) => typeof id === "string")) return null;
+  if (!Number.isInteger(payload.i) || payload.i < 0 || payload.i >= payload.ids.length) return null;
+
+  return { index: payload.i, orderedQuestionIds: payload.ids };
+}
