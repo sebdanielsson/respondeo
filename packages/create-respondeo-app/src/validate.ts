@@ -1,5 +1,5 @@
 import { existsSync } from "node:fs";
-import { isAbsolute, resolve, sep } from "node:path";
+import { isAbsolute, relative, resolve, sep } from "node:path";
 
 /**
  * Validates a project name/path.
@@ -53,10 +53,22 @@ export function validateProjectName(input: string | undefined): string | undefin
   // Belt and braces: confirm the resolved path really is inside the working
   // directory, so anything the segment checks miss (symlink-ish inputs,
   // platform-specific separators) still cannot escape.
+  //
+  // Compared with node:path rather than `resolved.startsWith(cwd + sep)`: at a
+  // filesystem root that concatenation is "//" (or "C:\\"), which no valid
+  // child path starts with, so running the CLI from "/" — ordinary inside a
+  // container — would reject every project name.
   const cwd = process.cwd();
   const resolved = resolve(cwd, trimmed);
+  const relativeToCwd = relative(cwd, resolved);
 
-  if (resolved === cwd || !resolved.startsWith(cwd + sep)) {
+  const escapesCwd =
+    relativeToCwd === "" ||
+    relativeToCwd === ".." ||
+    relativeToCwd.startsWith(`..${sep}`) ||
+    isAbsolute(relativeToCwd);
+
+  if (escapesCwd) {
     return "Project name must resolve to a new directory inside the current one";
   }
 

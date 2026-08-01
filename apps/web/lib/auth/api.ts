@@ -2,16 +2,12 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { auth, type User } from "./server";
 import { API_SCOPES, ALL_API_SCOPES, type ApiScope } from "./scopes";
-import {
-  getUserRole,
-  getPermissionsForRole,
-  PERMISSIONS,
-  ALL_PERMISSIONS,
-  type Permission,
-} from "@/lib/rbac";
+import { getUserRole, getPermissionsForRole, PERMISSIONS, type Permission } from "@/lib/rbac";
+import { permissionsFromKeyRecord } from "./key-permissions";
 
 // Re-export for convenience
 export { API_SCOPES, ALL_API_SCOPES, type ApiScope } from "./scopes";
+export { permissionsFromKeyRecord, type KeyGrant } from "./key-permissions";
 
 /**
  * Context returned from API authentication
@@ -77,51 +73,6 @@ function rbacToApiScopes(permissions: Permission[]): ApiScope[] {
 }
 
 /**
- * Decode the per-key permission grant stored by BetterAuth.
- *
- * Keys are created with `{ resource: [action, ...] }` (see
- * `app/actions/api-keys.ts`), which is the wire form of our `resource:action`
- * permission strings. BetterAuth may hand this back as an object or as its JSON
- * encoding, so both are accepted.
- *
- * @param raw The `permissions` field from a verified key
- * @returns The permissions the key was granted, or null when the key declares
- *   none — which is how keys issued before scopes were enforced look, and which
- *   callers treat as "fall back to the role" rather than "deny everything".
- */
-function permissionsFromKeyRecord(raw: unknown): Permission[] | null {
-  let record = raw;
-
-  if (typeof record === "string") {
-    try {
-      record = JSON.parse(record);
-    } catch {
-      return null;
-    }
-  }
-
-  if (!record || typeof record !== "object" || Array.isArray(record)) {
-    return null;
-  }
-
-  const granted: Permission[] = [];
-  for (const [resource, actions] of Object.entries(record as Record<string, unknown>)) {
-    if (!Array.isArray(actions)) continue;
-    for (const action of actions) {
-      if (typeof action !== "string") continue;
-      const candidate = `${resource}:${action}`;
-      // Ignore anything that is not a permission we recognise, so a malformed
-      // or stale grant cannot widen access.
-      if ((ALL_PERMISSIONS as string[]).includes(candidate)) {
-        granted.push(candidate as Permission);
-      }
-    }
-  }
-
-  return granted.length > 0 ? granted : null;
-}
-
-/**
  * Authenticate an API request via API key or session
  * Returns user context with permissions, or null if unauthorized
  */
@@ -159,11 +110,23 @@ export async function getApiContext(): Promise<ApiContext | null> {
         // never grant more than its owner currently has.
         const role = getUserRole(session.user);
         const rolePermissions = getPermissionsForRole(role);
-        const keyPermissions = permissionsFromKeyRecord(result.key.permissions);
-        const rbacPermissions =
-          keyPermissions === null
-            ? rolePermissions
-            : rolePermissions.filter((permission) => keyPermissions.includes(permission));
+        const grant = permissionsFromKeyRecord(result.key.permissions);
+
+        let rbacPermissions: Permission[];
+        if (grant.kind === "absent") {
+          // Issued before scopes were enforced: the role is the only signal.
+          rbacPermissions = rolePermissions;
+        } else if (grant.kind === "granted") {
+          rbacPermissions = rolePermissions.filter((permission) =>
+            grant.permissions.includes(permission),
+          );
+        } else {
+          // Malformed grant. Deny rather than fall back to the role, which
+          // would hand a key with unreadable scopes its owner's full access.
+          console.error("[auth] API key has an unreadable permission grant; denying its scopes");
+          rbacPermissions = [];
+        }
+
         const apiScopes = rbacToApiScopes(rbacPermissions);
 
         return {

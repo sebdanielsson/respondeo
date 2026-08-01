@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, afterEach, vi } from "vitest";
 import { resolve } from "node:path";
 import { validateProjectName, resolveProjectPath } from "./validate";
 
@@ -69,5 +69,29 @@ describe("resolveProjectPath", () => {
 
   it("resolves a nested path relative to the working directory", () => {
     expect(resolveProjectPath("apps/my-app")).toBe(resolve(process.cwd(), "apps", "my-app"));
+  });
+});
+
+describe("validateProjectName from a filesystem root", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("accepts an ordinary name when cwd is the filesystem root", () => {
+    // `resolved.startsWith(cwd + sep)` fails here: cwd + sep is "//", which
+    // "/my-app" does not start with, so every name was rejected. Running from
+    // "/" is ordinary inside a container.
+    vi.spyOn(process, "cwd").mockReturnValue("/");
+
+    expect(validateProjectName("my-app")).toBeUndefined();
+    expect(validateProjectName("apps/my-app")).toBeUndefined();
+  });
+
+  it("still rejects traversal when cwd is the filesystem root", () => {
+    vi.spyOn(process, "cwd").mockReturnValue("/");
+
+    expect(validateProjectName("..")).toBeTruthy();
+    expect(validateProjectName("../elsewhere")).toBeTruthy();
+    expect(validateProjectName(".")).toBeTruthy();
   });
 });
