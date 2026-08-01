@@ -7,6 +7,7 @@ import { quiz, quizAttempt, attemptAnswer, question, answer } from "@/lib/db/sch
 import type { Question, Answer } from "@/lib/db/schema";
 import { auth } from "@/lib/auth/server";
 import { hasPermission, PERMISSIONS } from "@/lib/rbac";
+import { gradeAttempt } from "@/lib/quiz/grading";
 import { eq, and, count, sql, asc } from "drizzle-orm";
 
 interface SubmitAttemptData {
@@ -91,36 +92,11 @@ export async function submitQuizAttempt(data: SubmitAttemptData) {
     return { error: "Maximum attempts reached" };
   }
 
-  // Calculate correct count
-  let correctCount = 0;
-  const answerResults: {
-    questionId: string;
-    answerId: string | null;
-    isCorrect: boolean;
-    displayOrder: number;
-  }[] = [];
-
-  for (const submittedAnswer of data.answers) {
-    const questionItem = quizWithQuestions.questions.find(
-      (q: Question) => q.id === submittedAnswer.questionId,
-    );
-
-    if (!questionItem) continue;
-
-    const selectedAnswer = questionItem.answers.find(
-      (a: Answer) => a.id === submittedAnswer.answerId,
-    );
-
-    const isCorrect = selectedAnswer?.isCorrect ?? false;
-    if (isCorrect) correctCount++;
-
-    answerResults.push({
-      questionId: submittedAnswer.questionId,
-      answerId: submittedAnswer.answerId || null,
-      isCorrect,
-      displayOrder: submittedAnswer.displayOrder,
-    });
-  }
+  const {
+    correctCount,
+    totalQuestions,
+    answers: answerResults,
+  } = gradeAttempt(quizWithQuestions.questions, data.answers);
 
   try {
     // Create attempt
@@ -130,7 +106,7 @@ export async function submitQuizAttempt(data: SubmitAttemptData) {
         quizId: data.quizId,
         userId: session.user.id,
         correctCount,
-        totalQuestions: quizWithQuestions.questions.length,
+        totalQuestions,
         totalTimeMs: data.totalTimeMs,
         timedOut: data.timedOut,
       })

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { quizAttempt, attemptAnswer } from "@/lib/db/schema";
-import type { Question, Answer } from "@/lib/db/schema";
 import { getApiContext, requirePermission, errorResponse, API_SCOPES } from "@/lib/auth/api";
+import { gradeAttempt } from "@/lib/quiz/grading";
 import { eq, and, count, desc } from "drizzle-orm";
 import { z } from "zod";
 import { getQuizById } from "@/lib/db/queries/quiz";
@@ -120,36 +120,11 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     return errorResponse("Maximum attempts reached", 400);
   }
 
-  // Calculate correct count
-  let correctCount = 0;
-  const answerResults: {
-    questionId: string;
-    answerId: string | null;
-    isCorrect: boolean;
-    displayOrder: number;
-  }[] = [];
-
-  for (const submittedAnswer of data.answers) {
-    const questionItem = quizWithQuestions.questions.find(
-      (q: Question) => q.id === submittedAnswer.questionId,
-    );
-
-    if (!questionItem) continue;
-
-    const selectedAnswer = questionItem.answers.find(
-      (a: Answer) => a.id === submittedAnswer.answerId,
-    );
-
-    const isCorrect = selectedAnswer?.isCorrect ?? false;
-    if (isCorrect) correctCount++;
-
-    answerResults.push({
-      questionId: submittedAnswer.questionId,
-      answerId: submittedAnswer.answerId || null,
-      isCorrect,
-      displayOrder: submittedAnswer.displayOrder,
-    });
-  }
+  const {
+    correctCount,
+    totalQuestions,
+    answers: answerResults,
+  } = gradeAttempt(quizWithQuestions.questions, data.answers);
 
   try {
     // Create attempt
@@ -159,7 +134,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         quizId,
         userId: ctx!.user.id,
         correctCount,
-        totalQuestions: quizWithQuestions.questions.length,
+        totalQuestions,
         totalTimeMs: data.totalTimeMs,
         timedOut: data.timedOut,
       })
