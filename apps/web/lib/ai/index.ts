@@ -2,7 +2,7 @@
  * AI Module
  *
  * Provides a unified interface for AI-powered features.
- * See docs/ai-generation.md for configuration and usage.
+ * See https://docs.respondeo.app/docs/features/ai-generation for configuration and usage.
  */
 
 export { aiConfig, getAIConfigSummary, AI_PROVIDERS, DEFAULT_MODELS } from "./config";

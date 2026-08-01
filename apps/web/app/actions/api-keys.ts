@@ -86,7 +86,7 @@ export async function createApiKey(input: CreateApiKeyInput): Promise<CreateApiK
     console.error("Failed to create API key:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to create API key",
+      error: "Failed to create API key",
     };
   }
 }
@@ -120,7 +120,7 @@ export async function deleteApiKey(keyId: string): Promise<DeleteApiKeyResult> {
     console.error("Failed to delete API key:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to delete API key",
+      error: "Failed to delete API key",
     };
   }
 }

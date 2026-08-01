@@ -153,7 +153,7 @@ deployment is distinguishable from a configured-but-broken one. Look for a
 
 # Not configured — this is the state to look for if rate limits aren't holding
 [cache] No REDIS_URL or VALKEY_URL set — caching is off (queries hit the database) and rate
-limits are per-instance only, which does not hold across serverless instances. See docs/caching.md.
+limits are per-instance only, which does not hold across serverless instances. See https://docs.respondeo.app/docs/features/caching.
 
 # Configured, but the server can't be reached
 [cache] Could not connect to eu1.example.upstash.io:6379 over TLS — caching disabled and rate

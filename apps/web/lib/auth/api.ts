@@ -2,18 +2,12 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { auth, type User } from "./server";
 import { API_SCOPES, ALL_API_SCOPES, type ApiScope } from "./scopes";
-import {
-  getUserRole,
-  getPermissionsForRole,
-  hasPermission as rbacHasPermission,
-  canEditQuiz as rbacCanEditQuiz,
-  canDeleteQuiz as rbacCanDeleteQuiz,
-  PERMISSIONS,
-  type Permission,
-} from "@/lib/rbac";
+import { getUserRole, getPermissionsForRole, PERMISSIONS, type Permission } from "@/lib/rbac";
+import { permissionsFromKeyRecord } from "./key-permissions";
 
 // Re-export for convenience
 export { API_SCOPES, ALL_API_SCOPES, type ApiScope } from "./scopes";
+export { permissionsFromKeyRecord, type KeyGrant } from "./key-permissions";
 
 /**
  * Context returned from API authentication
@@ -105,10 +99,34 @@ export async function getApiContext(): Promise<ApiContext | null> {
       // If enableSessionForAPIKey is working, we should have a session
       // Otherwise, we need to fetch the user manually
       if (session?.user) {
-        // API key permissions are now derived from the user's current role
-        // This ensures config changes take effect immediately
+        // Effective permissions are the role's *intersected with* the scopes
+        // the key was actually granted. Deriving them from the role alone —
+        // as this used to — silently discarded the per-key scopes that the
+        // creation flow collects, stores and displays, making every key
+        // full-power for its owner's role.
+        //
+        // Intersecting keeps the property that motivated the role lookup: a
+        // role narrowed in config takes effect immediately, and a key can
+        // never grant more than its owner currently has.
         const role = getUserRole(session.user);
-        const rbacPermissions = getPermissionsForRole(role);
+        const rolePermissions = getPermissionsForRole(role);
+        const grant = permissionsFromKeyRecord(result.key.permissions);
+
+        let rbacPermissions: Permission[];
+        if (grant.kind === "absent") {
+          // Issued before scopes were enforced: the role is the only signal.
+          rbacPermissions = rolePermissions;
+        } else if (grant.kind === "granted") {
+          rbacPermissions = rolePermissions.filter((permission) =>
+            grant.permissions.includes(permission),
+          );
+        } else {
+          // Malformed grant. Deny rather than fall back to the role, which
+          // would hand a key with unreadable scopes its owner's full access.
+          console.error("[auth] API key has an unreadable permission grant; denying its scopes");
+          rbacPermissions = [];
+        }
+
         const apiScopes = rbacToApiScopes(rbacPermissions);
 
         return {
@@ -158,10 +176,20 @@ export function hasPermission(ctx: ApiContext, scope: ApiScope): boolean {
 }
 
 /**
- * Check if context has required RBAC permission
+ * Check if context has required RBAC permission.
+ *
+ * Reads the permissions resolved onto the context rather than recomputing them
+ * from the user's role. For an API key those have already been intersected with
+ * the key's own grant, so recomputing would hand back the role's full set and
+ * defeat the per-key scoping.
  */
 export function hasRbacPermission(ctx: ApiContext, permission: Permission): boolean {
-  return rbacHasPermission(ctx.user, permission);
+  // Wildcard admin, matching lib/rbac's hasPermission.
+  if (ctx.rbacPermissions.includes(PERMISSIONS.ADMIN_ALL)) {
+    return true;
+  }
+
+  return ctx.rbacPermissions.includes(permission);
 }
 
 /**
@@ -180,15 +208,29 @@ export function requirePermission(ctx: ApiContext | null, scope: ApiScope): Next
 }
 
 /**
- * Check if user can edit a specific quiz (author or has quiz:edit-any permission)
+ * Check if user can edit a specific quiz (author or has quiz:edit-any permission).
+ *
+ * Mirrors lib/rbac's canEditQuiz, but against the context's resolved
+ * permissions so a narrowly scoped API key cannot edit through its owner's
+ * broader role.
  */
 export function canEditQuizApi(ctx: ApiContext, authorId: string): boolean {
-  return rbacCanEditQuiz(ctx.user, authorId);
+  if (hasRbacPermission(ctx, PERMISSIONS.QUIZ_EDIT_ANY)) {
+    return true;
+  }
+
+  return hasRbacPermission(ctx, PERMISSIONS.QUIZ_EDIT_OWN) && ctx.user.id === authorId;
 }
 
 /**
- * Check if user can delete a specific quiz (author or has quiz:delete-any permission)
+ * Check if user can delete a specific quiz (author or has quiz:delete-any permission).
+ *
+ * Scoped against the context's resolved permissions, as canEditQuizApi is.
  */
 export function canDeleteQuizApi(ctx: ApiContext, authorId: string): boolean {
-  return rbacCanDeleteQuiz(ctx.user, authorId);
+  if (hasRbacPermission(ctx, PERMISSIONS.QUIZ_DELETE_ANY)) {
+    return true;
+  }
+
+  return hasRbacPermission(ctx, PERMISSIONS.QUIZ_DELETE_OWN) && ctx.user.id === authorId;
 }

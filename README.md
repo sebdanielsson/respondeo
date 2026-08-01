@@ -4,15 +4,15 @@ A modern, full-stack quiz application built with Next.js 16, featuring OIDC auth
 
 ## 📚 Documentation
 
-**Complete documentation is available at:** [`/docs`](./docs/index.mdx) or online at https://quiz-app-docs.example.com
+**Complete documentation is available at:** [`/docs`](https://docs.respondeo.app/docs) or online at https://docs.respondeo.app
 
 Quick links:
 
-- [Getting Started](./docs/getting-started/installation.mdx)
-- [Configuration](./docs/getting-started/configuration.mdx)
-- [API Reference](./docs/api-reference/overview.mdx)
-- [RBAC Guide](./docs/guides/rbac.mdx)
-- [Troubleshooting](./docs/troubleshooting.mdx)
+- [Getting Started](https://docs.respondeo.app/docs/installation)
+- [Configuration](https://docs.respondeo.app/docs/configuration)
+- [API Reference](https://docs.respondeo.app/docs/api-reference/overview)
+- [RBAC Guide](https://docs.respondeo.app/docs/guides/rbac)
+- [Troubleshooting](https://docs.respondeo.app/docs/troubleshooting)
 
 ## Features
 
@@ -86,8 +86,8 @@ If you prefer to clone the repository directly:
 
 ```bash
 # Clone and install
-git clone <repository-url>
-cd quiz-app
+git clone https://github.com/sebdanielsson/respondeo.git
+cd respondeo
 pnpm install
 
 # Start database
@@ -106,7 +106,7 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-See [Installation Guide](./docs/getting-started/installation.mdx) for detailed setup instructions.
+See [Installation Guide](https://docs.respondeo.app/docs/installation) for detailed setup instructions.
 
 ## Configuration
 
@@ -129,7 +129,7 @@ OIDC_CLIENT_SECRET=your-client-secret
 DATABASE_URL=postgresql://user:password@localhost:5432/quiz_app
 ```
 
-See [Configuration Guide](./docs/getting-started/configuration.mdx) for all available options.
+See [Configuration Guide](https://docs.respondeo.app/docs/configuration) for all available options.
 
 ## Development
 
@@ -145,12 +145,12 @@ pnpm db:studio    # Open Drizzle Studio
 pnpm test             # Run tests
 ```
 
-See [Scripts Reference](./docs/development/scripts.mdx) for all available commands.
+See [Scripts Reference](https://docs.respondeo.app/docs/development/scripts) for all available commands.
 
 ## Project Structure
 
 ```plaintext
-quiz-app/
+respondeo/
 ├── apps/
 │   ├── web/              # Main Next.js application
 │   └── docs/             # Fumadocs documentation site
@@ -159,15 +159,15 @@ quiz-app/
 └── turbo.json            # Turborepo configuration
 ```
 
-See [Architecture Guide](./docs/development/architecture.mdx) for detailed system architecture.
+See [Architecture Guide](https://docs.respondeo.app/docs/development/architecture) for detailed system architecture.
 
 ## API
 
 Respondeo provides a comprehensive REST API. Get started:
 
-1. [Create an API key](./docs/features/api-keys.mdx) at `/settings` (admin only)
+1. [Create an API key](https://docs.respondeo.app/docs/features/api-keys) at `/settings` (admin only)
 2. Include it in the `x-api-key` header
-3. Explore endpoints in the [API Reference](./docs/api-reference/overview.mdx)
+3. Explore endpoints in the [API Reference](https://docs.respondeo.app/docs/api-reference/overview)
 
 Interactive API documentation available at `/docs` when running the app.
 
@@ -180,7 +180,7 @@ The app can be deployed to:
 - **VPS** — Any server with Node.js and PostgreSQL
 - **Railway, Fly.io** — Docker-based platforms
 
-See [Deployment Guide](./docs/guides/deployment.mdx) for detailed instructions.
+See [Deployment Guide](https://docs.respondeo.app/docs/guides/deployment) for detailed instructions.
 
 ## Documentation
 
@@ -202,10 +202,10 @@ MIT
 
 ## Support
 
-- **Documentation**: [Complete docs](./docs/index.mdx)
-- **GitHub Issues**: [Report bugs](https://github.com/sebdanielsson/quiz-app/issues)
-- **Discussions**: [Ask questions](https://github.com/sebdanielsson/quiz-app/discussions)
-- **Troubleshooting**: [Common issues](./docs/troubleshooting.mdx)
+- **Documentation**: [Complete docs](https://docs.respondeo.app/docs)
+- **GitHub Issues**: [Report bugs](https://github.com/sebdanielsson/respondeo/issues)
+- **Discussions**: [Ask questions](https://github.com/sebdanielsson/respondeo/discussions)
+- **Troubleshooting**: [Common issues](https://docs.respondeo.app/docs/troubleshooting)
 
 | Scope            | Description                                              |
 | ---------------- | -------------------------------------------------------- |

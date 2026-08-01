@@ -112,7 +112,7 @@ export const db = drizzle({ client, schema });
 - First matching role wins (highest priority)
 - Unauthenticated users get `guest` role
 - Admin role has wildcard (`*`) permission
-- See `docs/rbac.md` for detailed configuration
+- See `https://docs.respondeo.app/docs/guides/rbac` for detailed configuration
 
 ### Caching Layer
 
@@ -123,7 +123,7 @@ export const db = drizzle({ client, schema });
 - **Graceful Degradation**: If no `REDIS_URL`/`VALKEY_URL`, queries hit database directly
 - **Two-Layer**: Redis (cross-request) + React `cache()` (per-request deduplication)
 - **Keys**: `quizzes:list:{admin|public}:{page}:{limit}`, `quizzes:detail:{id}`, `leaderboard:quiz:{id}:{page}:{limit}`, `leaderboard:global:{page}:{limit}`
-- See `docs/caching.md` for architecture details
+- See `https://docs.respondeo.app/docs/features/caching` for architecture details
 
 ### AI Generation
 
@@ -134,7 +134,7 @@ export const db = drizzle({ client, schema });
 - **Web Search**: Optional tool integration via `AI_WEB_SEARCH_ENABLED`
 - **Rate Limiting**: Per-user (4/day default) and global (10/hour default) limits
 - **Usage**: `getModel()` for default, `getModelForProvider()` for specific provider
-- See `apps/web/docs/ai-generation.md` for provider setup
+- See `https://docs.respondeo.app/docs/features/ai-generation` for provider setup
 
 ### API Structure
 
@@ -170,7 +170,7 @@ export const db = drizzle({ client, schema });
 - **Provider Pattern**: Abstracted via `ImageProvider` interface
 - **Configuration**: `UNSPLASH_ACCESS_KEY` env var
 - **Usage**: Server action `search-images.ts` with permission check
-- See `apps/web/docs/image-search.md` for setup
+- See `https://docs.respondeo.app/docs/features/image-search` for setup
 
 ### Validation
 

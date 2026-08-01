@@ -17,7 +17,10 @@ services:
       -c min_wal_size=1GB
       -c max_wal_size=4GB
     volumes:
-      - db:/var/lib/postgresql/data
+      # postgres:18+ stores data in a major-version subdirectory and refuses to
+      # start if the legacy /var/lib/postgresql/data path is mounted directly.
+      # See https://github.com/docker-library/postgres/pull/1259
+      - db:/var/lib/postgresql
     env_file:
       - .env.compose
     ports:

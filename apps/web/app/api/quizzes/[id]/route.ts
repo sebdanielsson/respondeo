@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { quiz, question, answer } from "@/lib/db/schema";
+import { quiz } from "@/lib/db/schema";
 import { getQuizById } from "@/lib/db/queries/quiz";
 import { quizSchema } from "@/lib/validations/quiz";
 import {
@@ -12,6 +12,8 @@ import {
   API_SCOPES,
 } from "@/lib/auth/api";
 import { eq } from "drizzle-orm";
+import { invalidateQuiz, invalidateDeletedQuiz } from "@/lib/cache/invalidation";
+import { syncQuizContent } from "@/lib/quiz/content";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -33,6 +35,16 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const quizData = await getQuizById(id);
 
     if (!quizData) {
+      return errorResponse("Quiz not found", 404);
+    }
+
+    // An unpublished quiz (no publish date, or one still in the future) is a
+    // draft: only its author or someone who could edit it may read it. Without
+    // this, anyone holding the id could read a draft — including its answer
+    // key — before release. 404 rather than 403 so the endpoint does not
+    // confirm that an unreleased quiz exists.
+    const isPublished = quizData.publishedAt !== null && quizData.publishedAt <= new Date();
+    if (!isPublished && !canEditQuizApi(ctx!, quizData.authorId)) {
       return errorResponse("Quiz not found", 404);
     }
 
@@ -85,56 +97,38 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   const validData = parsed.data;
 
   try {
-    // Update quiz
-    const [updatedQuiz] = await db
-      .update(quiz)
-      .set({
-        title: validData.title,
-        description: validData.description,
-        heroImageUrl: validData.heroImageUrl,
-        language: validData.language,
-        difficulty: validData.difficulty,
-        maxAttempts: validData.maxAttempts,
-        timeLimitSeconds: validData.timeLimitSeconds,
-        randomizeQuestions: validData.randomizeQuestions,
-        randomizeAnswers: validData.randomizeAnswers,
-        publishedAt: validData.publishedAt || null,
-        updatedAt: new Date(),
-      })
-      .where(eq(quiz.id, id))
-      .returning();
-
-    // Delete existing questions (cascade will delete answers)
-    await db.delete(question).where(eq(question.quizId, id));
-
-    // Create new questions and answers
-    for (let i = 0; i < validData.questions.length; i++) {
-      const q = validData.questions[i];
-
-      const [newQuestion] = await db
-        .insert(question)
-        .values({
-          quizId: id,
-          text: q.text,
-          imageUrl: q.imageUrl || null,
-          order: i,
+    const updatedQuiz = await db.transaction(async (tx) => {
+      const [row] = await tx
+        .update(quiz)
+        .set({
+          title: validData.title,
+          description: validData.description,
+          heroImageUrl: validData.heroImageUrl,
+          language: validData.language,
+          difficulty: validData.difficulty,
+          maxAttempts: validData.maxAttempts,
+          timeLimitSeconds: validData.timeLimitSeconds,
+          randomizeQuestions: validData.randomizeQuestions,
+          randomizeAnswers: validData.randomizeAnswers,
+          publishedAt: validData.publishedAt || null,
+          updatedAt: new Date(),
         })
+        .where(eq(quiz.id, id))
         .returning();
 
-      // Create answers
-      await db.insert(answer).values(
-        q.answers.map((a) => ({
-          questionId: newQuestion.id,
-          text: a.text,
-          isCorrect: a.isCorrect,
-        })),
-      );
-    }
+      // Reconcile in place rather than delete-and-recreate: questions the
+      // author kept retain their ids, so attempt history survives the edit.
+      await syncQuizContent(tx, id, validData.questions);
+
+      return row;
+    });
+
+    await invalidateQuiz(id);
 
     return NextResponse.json(updatedQuiz);
   } catch (error) {
     console.error("Failed to update quiz:", error);
-    return errorResponse(error instanceof Error ? error.message : "Failed to update quiz", 500);
+    return errorResponse("Failed to update quiz", 500);
   }
 }
 
@@ -166,9 +160,10 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
   try {
     await db.delete(quiz).where(eq(quiz.id, id));
+    await invalidateDeletedQuiz(id);
     return new NextResponse(null, { status: 204 });
   } catch (error) {
     console.error("Failed to delete quiz:", error);
-    return errorResponse(error instanceof Error ? error.message : "Failed to delete quiz", 500);
+    return errorResponse("Failed to delete quiz", 500);
   }
 }

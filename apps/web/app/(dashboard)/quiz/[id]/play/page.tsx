@@ -6,6 +6,8 @@ import { getQuizById, getUserAttemptCount } from "@/lib/db/queries/quiz";
 import { QuizPlayer } from "@/components/quiz/quiz-player";
 import { submitQuizAttempt } from "@/app/actions/attempt";
 import { checkGuestRateLimit } from "@/lib/rate-limit";
+import { issueAttemptToken, issueProgressToken } from "@/lib/quiz/attempt-token";
+import { revealQuestion } from "@/app/actions/reveal";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -77,10 +79,11 @@ export default async function PlayQuizPage({ params }: PageProps) {
     id: q.id,
     text: q.text,
     imageUrl: q.imageUrl,
+    // The answer key deliberately does not travel to the client. Correctness
+    // is revealed one question at a time by the revealQuestion action.
     answers: q.answers.map((a) => ({
       id: a.id,
       text: a.text,
-      isCorrect: a.isCorrect,
     })),
     displayOrder: index,
   }));
@@ -101,6 +104,21 @@ export default async function PlayQuizPage({ params }: PageProps) {
     }));
   }
 
+  // Stamp the start on the server so the recorded duration -- the leaderboard's
+  // tiebreaker -- does not come from the client. Guests are not ranked and have
+  // no user id, so they need no token.
+  const startToken = isGuest ? undefined : issueAttemptToken(quiz.id, session.user.id);
+
+  // Commits to the shuffled order so the reveal action can tell which question
+  // index 0 refers to, and refuse a client that asks for a later one.
+  const progressSubject = isGuest ? "guest" : session.user.id;
+  const initialProgressToken = issueProgressToken(
+    quiz.id,
+    progressSubject,
+    0,
+    questions.map((q) => q.id),
+  );
+
   return (
     <QuizPlayer
       quizId={quiz.id}
@@ -109,6 +127,9 @@ export default async function PlayQuizPage({ params }: PageProps) {
       timeLimitSeconds={quiz.timeLimitSeconds}
       onSubmit={submitQuizAttempt}
       isGuest={isGuest}
+      startToken={startToken}
+      initialProgressToken={initialProgressToken}
+      onReveal={revealQuestion}
     />
   );
 }

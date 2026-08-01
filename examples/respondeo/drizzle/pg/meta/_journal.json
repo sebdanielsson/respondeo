@@ -15,6 +15,20 @@
       "when": 1767350591940,
       "tag": "0001_nappy_captain_midlands",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1772580346658,
+      "tag": "0002_glossy_hellcat",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1785581950886,
+      "tag": "0003_bright_venus",
+      "breakpoints": true
     }
   ]
 }
