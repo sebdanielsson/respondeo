@@ -24,10 +24,18 @@ By default, the app requires authentication for all features:
 
 ```bash
 # No RBAC_ variables needed - defaults to private, authenticated access
+OIDC_PROVIDER_ID=your-idp
+NEXT_PUBLIC_OIDC_PROVIDER_ID=your-idp
 OIDC_ISSUER=https://your-idp.example.com
 OIDC_CLIENT_ID=your-client-id
 OIDC_CLIENT_SECRET=your-secret
 ```
+
+<Callout type="warn">
+  `OIDC_PROVIDER_ID` and `NEXT_PUBLIC_OIDC_PROVIDER_ID` must be set to the same value. The first is
+  read server-side, the second by the client-side sign-in flow, and a mismatch breaks the redirect
+  back from the provider.
+</Callout>
 
 ### Public Quiz Platform
 
@@ -127,7 +135,7 @@ RATE_LIMIT_AI_GLOBAL=50
 RATE_LIMIT_AI_GLOBAL_WINDOW_MS=3600000
 ```
 
-For more details on AI configuration, see [AI Generation](./ai-generation.md).
+For more details on AI configuration, see [AI Generation](../features/ai-generation).
 
 ### Role Assignment
 

@@ -5,29 +5,55 @@ description: Testing strategy and load test results
 
 ## Test Strategy
 
-Respondeo uses a combination of unit tests, integration tests, and load tests to ensure reliability and performance.
+Respondeo uses unit tests, integration tests that run against real backing
+services, and k6 load tests.
 
 ### Unit Tests
 
-Unit tests cover individual functions and components:
+Unit tests are colocated with the code they cover, as `*.test.ts` next to the
+module. They need no database or cache and are the bulk of the suite:
 
-- **Validation schemas** — Zod schema edge cases
-- **Permission helpers** — RBAC functions
-- **Utility functions** — Data transformations
+| Area                                   | File                                                 |
+| -------------------------------------- | ---------------------------------------------------- |
+| Attempt grading and de-duplication     | `apps/web/lib/quiz/grading.test.ts`                  |
+| Signed attempt-start tokens and timing | `apps/web/lib/quiz/attempt-token.test.ts`            |
+| Pagination parameter parsing           | `apps/web/lib/pagination.test.ts`                    |
+| Attempt submission schemas             | `apps/web/lib/validations/attempt.test.ts`           |
+| Rate limiting                          | `apps/web/lib/rate-limit.test.ts`                    |
+| Redis target formatting                | `apps/web/lib/cache/client.test.ts`                  |
+| CLI project-name validation            | `packages/create-respondeo-app/src/validate.test.ts` |
 
-Run unit tests:
+Run them from the repository root:
 
 ```bash
 pnpm test
 ```
 
+This runs in CI on every push and pull request.
+
 ### Integration Tests
 
-Integration tests verify end-to-end functionality:
+Integration tests are named `*.integration.test.ts` and exercise behaviour that
+only a real service demonstrates — foreign-key cascades, transaction rollback,
+and Redis `SCAN`-based invalidation:
 
-- **Server actions** — Quiz creation, attempt submission
-- **API routes** — All endpoints with authentication
-- **Database operations** — CRUD operations
+| Area                                         | File                                                  |
+| -------------------------------------------- | ----------------------------------------------------- |
+| Quiz content persistence, cascades, rollback | `apps/web/lib/quiz/content.integration.test.ts`       |
+| Cache invalidation against Valkey            | `apps/web/lib/cache/invalidation.integration.test.ts` |
+
+They **skip themselves** unless `DATABASE_URL` / `REDIS_URL` are set, so
+`pnpm test` stays fast and dependency-free. To run everything against the local
+Docker Compose stack:
+
+```bash
+pnpm --filter web test:integration
+```
+
+That script starts Postgres and Valkey, applies migrations, and runs the full
+suite. Credentials come from `apps/web/.env.compose`, which is created from
+`.env.compose.example` on first run. The containers can be managed directly
+with `pnpm --filter web docker:up` and `pnpm --filter web docker:down`.
 
 ### Load Tests
 
@@ -105,15 +131,15 @@ choco install k6
 ### Run Load Test
 
 ```bash
-# Start the app
-docker compose up -d
+# Start the backing services and the app
+pnpm --filter web docker:up
 pnpm dev
 
-# In another terminal
-pnpm loadtest
+# In another terminal (requires k6 on your PATH)
+pnpm --filter web loadtest
 ```
 
-The load test script is located at `apps/web/tests/loadtest.js`.
+The load test script is located at `apps/web/docs/tests/loadtest.js`.
 
 ### Test Scenarios
 
@@ -125,7 +151,7 @@ The load test simulates three user types:
 
 ### Customizing Load Tests
 
-Edit `apps/web/tests/loadtest.js`:
+Edit `apps/web/docs/tests/loadtest.js`:
 
 ```javascript
 export const options = {

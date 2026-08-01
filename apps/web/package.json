@@ -19,6 +19,7 @@
     "db:studio": "drizzle-kit studio",
     "test": "vitest run --passWithNoTests",
     "test:integration": "bash ./scripts/test-integration.sh",
+    "loadtest": "k6 run ./docs/tests/loadtest.js",
     "docker:up": "docker compose up -d --wait",
     "docker:down": "docker compose down -v"
   },
