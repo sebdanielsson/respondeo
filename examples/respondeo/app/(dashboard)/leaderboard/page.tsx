@@ -9,6 +9,7 @@ import { siteConfig } from "@/lib/config";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { GlobalLeaderboard } from "@/components/quiz/global-leaderboard";
 import { PaginationControls } from "@/components/layout/pagination-controls";
+import { parsePageParam } from "@/lib/pagination";
 
 interface PageProps {
   searchParams: Promise<{ page?: string }>;
@@ -21,7 +22,7 @@ export const metadata: Metadata = {
 
 export default async function LeaderboardPage({ searchParams }: PageProps) {
   const params = await searchParams;
-  const page = parseInt(params.page ?? "1", 10);
+  const page = parsePageParam(params.page);
 
   const session = await auth.api.getSession({
     headers: await headers(),

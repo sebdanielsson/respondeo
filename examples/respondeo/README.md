@@ -94,7 +94,10 @@ pnpm lint         # Run ESLint
 pnpm tsc          # TypeScript type checking
 pnpm format       # Format code with oxfmt
 pnpm stylelint    # Lint CSS files
-pnpm test             # Run tests
+pnpm test         # Run unit tests (integration tests skip themselves)
+pnpm test:integration # Run the full suite against Docker Postgres + Valkey
+pnpm docker:up    # Start the local Postgres + Valkey stack
+pnpm docker:down  # Stop it and drop its volumes
 pnpm db:migrate   # Run database migrations
 pnpm db:push      # Push schema changes (dev only)
 pnpm db:generate  # Generate migration files
@@ -125,15 +128,15 @@ pnpm db:studio    # Open Drizzle Studio
 
 ## Documentation
 
-Detailed documentation is available in the `/docs` folder:
+Detailed documentation lives at [docs.respondeo.app](https://docs.respondeo.app/docs):
 
-- `authentication.md` - Authentication setup and configuration
-- `rbac.md` - Role-based access control system
-- `database.md` - Database schema and migrations
-- `caching.md` - Redis/Valkey caching layer
-- `ai-generation.md` - AI quiz generation setup
-- `image-search.md` - Unsplash integration
-- `deployment.md` - Production deployment guide
+- [Authentication](https://docs.respondeo.app/docs/guides/authentication) - Authentication setup and configuration
+- [RBAC](https://docs.respondeo.app/docs/guides/rbac) - Role-based access control system
+- [Database](https://docs.respondeo.app/docs/guides/database) - Database schema and migrations
+- [Caching](https://docs.respondeo.app/docs/features/caching) - Redis/Valkey caching layer
+- [AI generation](https://docs.respondeo.app/docs/features/ai-generation) - AI quiz generation setup
+- [Image search](https://docs.respondeo.app/docs/features/image-search) - Unsplash integration
+- [Deployment](https://docs.respondeo.app/docs/guides/deployment) - Production deployment guide
 
 ## Project Structure
 
@@ -153,8 +156,10 @@ Detailed documentation is available in the `/docs` folder:
 │   ├── rbac/             # Permission system
 │   ├── ai/               # AI provider setup
 │   ├── cache/            # Redis/Valkey client
+│   ├── quiz/             # Grading, attempt tokens, content persistence
 │   └── validations/      # Zod schemas
-├── docs/                  # Documentation
+├── drizzle/               # Generated SQL migrations
+├── scripts/               # Local integration-test runner
 └── public/               # Static assets
 ```
 
@@ -191,7 +196,7 @@ See `https://docs.respondeo.app/docs/guides/deployment` for detailed instruction
 ## Support
 
 - [Main Repository](https://github.com/sebdanielsson/respondeo)
-- [Documentation](https://github.com/sebdanielsson/respondeo/tree/main/apps/web/docs)
+- [Documentation](https://docs.respondeo.app/docs)
 - [Issues](https://github.com/sebdanielsson/respondeo/issues)
 
 ## License

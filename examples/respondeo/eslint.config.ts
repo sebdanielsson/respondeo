@@ -1,8 +1,11 @@
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
-import turbo from "eslint-config-turbo/flat";
 import oxlint from "eslint-plugin-oxlint";
+
+// Mirrors apps/web/eslint.config.ts minus eslint-config-turbo: its
+// no-undeclared-env-vars rule resolves env declarations out of a turbo.json,
+// which a standalone scaffolded app does not have.
 
 const eslintConfig = defineConfig([
   {
@@ -12,7 +15,6 @@ const eslintConfig = defineConfig([
   },
   ...nextVitals,
   ...nextTs,
-  ...turbo,
   ...oxlint.configs["flat/recommended"],
   // Override default ignores of eslint-config-next.
   globalIgnores([

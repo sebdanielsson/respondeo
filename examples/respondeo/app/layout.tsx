@@ -20,7 +20,13 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.VERCEL_PROJECT_PRODUCTION_URL
       ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-      : process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000",
+      : // NEXT_PUBLIC_APP_URL is the documented setting and is what the auth
+        // client and OpenAPI document already use. NEXT_PUBLIC_BASE_URL was
+        // only ever read here and was never in .env.example; it stays as a
+        // fallback so existing deployments that set it keep working.
+        process.env.NEXT_PUBLIC_APP_URL ||
+          process.env.NEXT_PUBLIC_BASE_URL ||
+          "http://localhost:3000",
   ),
   title: siteConfig.name,
   description: siteConfig.description,

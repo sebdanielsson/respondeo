@@ -1,27 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { quizAttempt, attemptAnswer } from "@/lib/db/schema";
-import type { Question, Answer } from "@/lib/db/schema";
 import { getApiContext, requirePermission, errorResponse, API_SCOPES } from "@/lib/auth/api";
+import { gradeAttempt } from "@/lib/quiz/grading";
+import { submitAttemptSchema } from "@/lib/validations/attempt";
+import { verifyAttemptToken, resolveAttemptTiming } from "@/lib/quiz/attempt-token";
 import { eq, and, count, desc } from "drizzle-orm";
-import { z } from "zod";
 import { getQuizById } from "@/lib/db/queries/quiz";
+import { parsePageParam, parseLimitParam } from "@/lib/pagination";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
 }
-
-const submitAttemptSchema = z.object({
-  answers: z.array(
-    z.object({
-      questionId: z.string(),
-      answerId: z.string(),
-      displayOrder: z.number(),
-    }),
-  ),
-  totalTimeMs: z.number().int().min(0),
-  timedOut: z.boolean().default(false),
-});
 
 /**
  * GET /api/quizzes/[id]/attempts
@@ -36,8 +26,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   const { id } = await params;
   const searchParams = request.nextUrl.searchParams;
   const userId = searchParams.get("userId");
-  const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
-  const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "30", 10)));
+  const page = parsePageParam(searchParams.get("page"));
+  const limit = parseLimitParam(searchParams.get("limit"));
   const offset = (page - 1) * limit;
 
   try {
@@ -120,36 +110,20 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     return errorResponse("Maximum attempts reached", 400);
   }
 
-  // Calculate correct count
-  let correctCount = 0;
-  const answerResults: {
-    questionId: string;
-    answerId: string | null;
-    isCorrect: boolean;
-    displayOrder: number;
-  }[] = [];
+  const {
+    correctCount,
+    totalQuestions,
+    answers: answerResults,
+  } = gradeAttempt(quizWithQuestions.questions, data.answers);
 
-  for (const submittedAnswer of data.answers) {
-    const questionItem = quizWithQuestions.questions.find(
-      (q: Question) => q.id === submittedAnswer.questionId,
-    );
-
-    if (!questionItem) continue;
-
-    const selectedAnswer = questionItem.answers.find(
-      (a: Answer) => a.id === submittedAnswer.answerId,
-    );
-
-    const isCorrect = selectedAnswer?.isCorrect ?? false;
-    if (isCorrect) correctCount++;
-
-    answerResults.push({
-      questionId: submittedAnswer.questionId,
-      answerId: submittedAnswer.answerId || null,
-      isCorrect,
-      displayOrder: submittedAnswer.displayOrder,
-    });
-  }
+  // Prefer a server-issued start stamp. API clients that never obtained one
+  // fall back to their own figure, clamped to the quiz's limit so it cannot
+  // claim an impossible duration.
+  const { totalTimeMs, timedOut } = resolveAttemptTiming(
+    verifyAttemptToken(data.startToken, quizId, ctx!.user.id),
+    data.totalTimeMs,
+    quizWithQuestions.timeLimitSeconds,
+  );
 
   try {
     // Create attempt
@@ -159,9 +133,9 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         quizId,
         userId: ctx!.user.id,
         correctCount,
-        totalQuestions: quizWithQuestions.questions.length,
-        totalTimeMs: data.totalTimeMs,
-        timedOut: data.timedOut,
+        totalQuestions,
+        totalTimeMs,
+        timedOut,
       })
       .returning();
 

@@ -11,6 +11,13 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
+/**
+ * AI quiz generation runs as a server action bundled into this route, and a
+ * multi-question generation with image inputs can take minutes. Without this,
+ * the platform default cuts the request off mid-generation.
+ */
+export const maxDuration = 300;
+
 export default async function EditQuizPage({ params }: PageProps) {
   const { id } = await params;
 

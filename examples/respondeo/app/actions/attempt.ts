@@ -7,16 +7,15 @@ import { quiz, quizAttempt, attemptAnswer, question, answer } from "@/lib/db/sch
 import type { Question, Answer } from "@/lib/db/schema";
 import { auth } from "@/lib/auth/server";
 import { hasPermission, PERMISSIONS } from "@/lib/rbac";
+import { gradeAttempt } from "@/lib/quiz/grading";
+import { verifyAttemptToken, resolveAttemptTiming } from "@/lib/quiz/attempt-token";
+import {
+  submitAttemptActionSchema,
+  type SubmitAttemptActionInput,
+} from "@/lib/validations/attempt";
 import { eq, and, count, sql, asc } from "drizzle-orm";
 
-interface SubmitAttemptData {
-  quizId: string;
-  answers: { questionId: string; answerId: string; displayOrder: number }[];
-  totalTimeMs: number;
-  timedOut: boolean;
-}
-
-export async function submitQuizAttempt(data: SubmitAttemptData) {
+export async function submitQuizAttempt(input: SubmitAttemptActionInput) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -24,6 +23,17 @@ export async function submitQuizAttempt(data: SubmitAttemptData) {
   if (!session?.user) {
     return { error: "Unauthorized" };
   }
+
+  // Server actions are a public HTTP surface and the parameter type is erased
+  // at runtime, so the payload is validated here exactly as the API route
+  // validates its body.
+  const parsed = submitAttemptActionSchema.safeParse(input);
+  if (!parsed.success) {
+    const firstIssue = parsed.error.issues[0];
+    return { error: firstIssue?.message ?? "Validation failed" };
+  }
+
+  const data = parsed.data;
 
   // Check if user has permission to play quizzes
   if (!hasPermission(session.user, PERMISSIONS.QUIZ_PLAY)) {
@@ -91,36 +101,19 @@ export async function submitQuizAttempt(data: SubmitAttemptData) {
     return { error: "Maximum attempts reached" };
   }
 
-  // Calculate correct count
-  let correctCount = 0;
-  const answerResults: {
-    questionId: string;
-    answerId: string | null;
-    isCorrect: boolean;
-    displayOrder: number;
-  }[] = [];
+  const {
+    correctCount,
+    totalQuestions,
+    answers: answerResults,
+  } = gradeAttempt(quizWithQuestions.questions, data.answers);
 
-  for (const submittedAnswer of data.answers) {
-    const questionItem = quizWithQuestions.questions.find(
-      (q: Question) => q.id === submittedAnswer.questionId,
-    );
-
-    if (!questionItem) continue;
-
-    const selectedAnswer = questionItem.answers.find(
-      (a: Answer) => a.id === submittedAnswer.answerId,
-    );
-
-    const isCorrect = selectedAnswer?.isCorrect ?? false;
-    if (isCorrect) correctCount++;
-
-    answerResults.push({
-      questionId: submittedAnswer.questionId,
-      answerId: submittedAnswer.answerId || null,
-      isCorrect,
-      displayOrder: submittedAnswer.displayOrder,
-    });
-  }
+  // The leaderboard ranks on total_time_ms, so the duration is derived from the
+  // server-issued start stamp rather than taken from the submission.
+  const { totalTimeMs, timedOut } = resolveAttemptTiming(
+    verifyAttemptToken(data.startToken, data.quizId, session.user.id),
+    data.totalTimeMs,
+    quizWithQuestions.timeLimitSeconds,
+  );
 
   try {
     // Create attempt
@@ -130,9 +123,9 @@ export async function submitQuizAttempt(data: SubmitAttemptData) {
         quizId: data.quizId,
         userId: session.user.id,
         correctCount,
-        totalQuestions: quizWithQuestions.questions.length,
-        totalTimeMs: data.totalTimeMs,
-        timedOut: data.timedOut,
+        totalQuestions,
+        totalTimeMs,
+        timedOut,
       })
       .returning();
 

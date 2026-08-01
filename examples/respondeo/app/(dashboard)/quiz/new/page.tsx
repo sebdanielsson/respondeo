@@ -6,6 +6,13 @@ import { canCreateQuiz, canGenerateAIQuiz } from "@/lib/rbac";
 import { QuizForm } from "@/components/quiz/quiz-form";
 import { createQuiz } from "@/app/actions/quiz";
 
+/**
+ * AI quiz generation runs as a server action bundled into this route, and a
+ * multi-question generation with image inputs can take minutes. Without this,
+ * the platform default cuts the request off mid-generation.
+ */
+export const maxDuration = 300;
+
 export default async function NewQuizPage() {
   const session = await auth.api.getSession({
     headers: await headers(),

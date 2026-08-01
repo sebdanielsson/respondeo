@@ -18,6 +18,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { QuizLeaderboard } from "@/components/quiz/quiz-leaderboard";
 import { PaginationControls } from "@/components/layout/pagination-controls";
 import { QuizActionsMenu } from "./delete-quiz-button";
+import { parsePageParam } from "@/lib/pagination";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -44,7 +45,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function QuizDetailPage({ params, searchParams }: PageProps) {
   const { id } = await params;
   const { page: pageParam, error, retry } = await searchParams;
-  const page = parseInt(pageParam ?? "1", 10);
+  const page = parsePageParam(pageParam);
 
   const session = await auth.api.getSession({
     headers: await headers(),
