@@ -104,6 +104,10 @@
       ]
     },
     "stylelint": {},
+    "loadtest": {
+      "cache": false,
+      "passThroughEnv": ["BASE_URL", "SESSION_TOKEN"]
+    },
     "db:migrate": {
       "cache": false,
       "passThroughEnv": ["DATABASE_URL", "RUN_MIGRATIONS", "VERCEL", "VERCEL_ENV"]

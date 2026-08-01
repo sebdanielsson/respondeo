@@ -13,6 +13,7 @@
     "format:check": "oxfmt --check",
     "stylelint": "turbo run stylelint",
     "test": "turbo run test",
+    "loadtest": "turbo run loadtest --filter=web",
     "db:generate": "turbo run db:generate --filter=web",
     "db:push": "turbo run db:push --filter=web",
     "db:migrate": "turbo run db:migrate --filter=web",
