@@ -339,10 +339,18 @@ export function QuizPlayer({
             </div>
           )}
 
+          {/*
+            Selection is locked while a reveal is in flight, not just after it
+            lands. handleConfirmAnswer closes over the selection it sent, so
+            changing it mid-request would leave the recorded answer and the
+            correct/incorrect verdict describing the *old* option while the
+            highlight below — driven by the live currentSelection — marked the
+            new one. The two would disagree about what the player answered.
+          */}
           <RadioGroup
             value={currentSelection ?? ""}
             onValueChange={(value) => setCurrentSelection(value as string)}
-            disabled={showFeedback || isSubmitting}
+            disabled={showFeedback || isSubmitting || isRevealing}
           >
             {currentQuestion.answers.map((answer) => {
               const isSelected = currentSelection === answer.id;
@@ -369,16 +377,20 @@ export function QuizPlayer({
                 <button
                   type="button"
                   key={answer.id}
-                  aria-disabled={showFeedback || isSubmitting}
+                  aria-disabled={showFeedback || isSubmitting || isRevealing}
                   className={className}
                   onClick={() => {
-                    if (!showFeedback && !isSubmitting) {
+                    if (!showFeedback && !isSubmitting && !isRevealing) {
                       setCurrentSelection(answer.id);
                     }
                   }}
-                  disabled={showFeedback || isSubmitting}
+                  disabled={showFeedback || isSubmitting || isRevealing}
                 >
-                  <RadioGroupItem value={answer.id} id={answer.id} />
+                  <RadioGroupItem
+                    value={answer.id}
+                    id={answer.id}
+                    disabled={showFeedback || isSubmitting || isRevealing}
+                  />
                   <span className="flex-1 text-left font-normal">{answer.text}</span>
                   {showCorrectness && answerIsCorrect && (
                     <CheckCircle className="h-5 w-5 text-green-600" />
@@ -409,12 +421,12 @@ export function QuizPlayer({
                 onClick={handleConfirmAnswer}
                 disabled={!currentSelection || isSubmitting || isRevealing}
               >
-                {isRevealing && <Loader2 className="h-4 w-4 animate-spin" />}
+                {isRevealing && <Loader2 aria-hidden="true" className="h-4 w-4 animate-spin" />}
                 Confirm Answer
               </Button>
             ) : (
               <Button onClick={handleNext} disabled={isSubmitting}>
-                {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+                {isSubmitting && <Loader2 aria-hidden="true" className="h-4 w-4 animate-spin" />}
                 {isLastQuestion ? "Finish Quiz" : "Next Question"}
               </Button>
             )}
