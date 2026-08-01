@@ -1,4 +1,4 @@
-import { and, eq, notInArray } from "drizzle-orm";
+import { and, eq, inArray, notInArray, sql } from "drizzle-orm";
 import { question, answer } from "@/lib/db/schema";
 import type { db as database } from "@/lib/db";
 
@@ -36,57 +36,6 @@ export interface IncomingQuestion {
   text: string;
   imageUrl?: string | null;
   answers: IncomingAnswer[];
-}
-
-/**
- * Reconcile one question's answers against what is stored.
- *
- * `attempt_answer.answer_id` is ON DELETE SET NULL, so dropping an answer
- * blanks the recorded choice rather than removing the row — still worth
- * avoiding for answers the author kept.
- *
- * @param tx Transaction handle
- * @param questionId The owning question
- * @param answers The submitted answers, in display order
- */
-async function syncAnswers(
-  tx: DbClient,
-  questionId: string,
-  answers: IncomingAnswer[],
-): Promise<void> {
-  const existing = await tx
-    .select({ id: answer.id })
-    .from(answer)
-    .where(eq(answer.questionId, questionId));
-  const existingIds = new Set(existing.map((row) => row.id));
-
-  const keptIds: string[] = [];
-
-  for (const incoming of answers) {
-    // Only honour an id that already belongs to this question: an id from
-    // another question (or another quiz) must not be adopted or overwritten.
-    if (incoming.id && existingIds.has(incoming.id)) {
-      await tx
-        .update(answer)
-        .set({ text: incoming.text, isCorrect: incoming.isCorrect })
-        .where(eq(answer.id, incoming.id));
-      keptIds.push(incoming.id);
-    } else {
-      const [row] = await tx
-        .insert(answer)
-        .values({ questionId, text: incoming.text, isCorrect: incoming.isCorrect })
-        .returning({ id: answer.id });
-      keptIds.push(row.id);
-    }
-  }
-
-  await tx
-    .delete(answer)
-    .where(
-      keptIds.length > 0
-        ? and(eq(answer.questionId, questionId), notInArray(answer.id, keptIds))
-        : eq(answer.questionId, questionId),
-    );
 }
 
 /**
@@ -140,6 +89,19 @@ export async function insertQuizContent(
  * Reconcile a quiz's questions and answers against what is stored, preserving
  * the primary keys of rows the author kept.
  *
+ * Work is batched so the statement count is constant rather than proportional
+ * to the quiz size. A per-row reconcile would issue an update, a select and a
+ * delete for every question and every answer — for a 20-question quiz with four
+ * answers each that is well over a hundred round trips, worse than the
+ * delete-and-recreate this replaced. Instead each kind of write is collapsed
+ * into one statement: bulk `UPDATE ... FROM (VALUES ...)` for rows that changed,
+ * one multi-row `INSERT` for new rows, and one `DELETE ... NOT IN` for removed
+ * ones. Nine statements, whatever the size of the quiz.
+ *
+ * Ordering matters within this function: rows are updated, then removed rows are
+ * deleted, and only then are new rows inserted. Deleting last would remove the
+ * rows just inserted, since they are not in the "keep" set.
+ *
  * @param tx Transaction handle — this performs many dependent writes
  * @param quizId The quiz being updated
  * @param questions The submitted questions, in display order
@@ -149,56 +111,147 @@ export async function syncQuizContent(
   quizId: string,
   questions: IncomingQuestion[],
 ): Promise<void> {
-  const existing = await tx
+  const existingQuestions = await tx
     .select({ id: question.id })
     .from(question)
     .where(eq(question.quizId, quizId));
-  const existingIds = new Set(existing.map((row) => row.id));
+  const existingQuestionIds = new Set(existingQuestions.map((row) => row.id));
 
-  const keptIds: string[] = [];
+  // Only honour an id that already belongs to this quiz, so a crafted payload
+  // cannot repoint or overwrite another quiz's rows.
+  const kept: { id: string; incoming: IncomingQuestion; index: number }[] = [];
+  const created: { incoming: IncomingQuestion; index: number }[] = [];
 
   for (const [index, incoming] of questions.entries()) {
-    // As above: only ids already belonging to this quiz are honoured, so a
-    // crafted payload cannot repoint another quiz's question rows.
-    if (incoming.id && existingIds.has(incoming.id)) {
-      await tx
-        .update(question)
-        .set({ text: incoming.text, imageUrl: incoming.imageUrl || null, order: index })
-        .where(eq(question.id, incoming.id));
-      keptIds.push(incoming.id);
-      await syncAnswers(tx, incoming.id, incoming.answers);
+    if (incoming.id && existingQuestionIds.has(incoming.id)) {
+      kept.push({ id: incoming.id, incoming, index });
     } else {
-      const [row] = await tx
-        .insert(question)
-        .values({
-          quizId,
-          text: incoming.text,
-          imageUrl: incoming.imageUrl || null,
-          order: index,
-        })
-        .returning({ id: question.id });
-      keptIds.push(row.id);
-
-      if (incoming.answers.length > 0) {
-        await tx.insert(answer).values(
-          incoming.answers.map((a) => ({
-            questionId: row.id,
-            text: a.text,
-            isCorrect: a.isCorrect,
-          })),
-        );
-      }
+      created.push({ incoming, index });
     }
   }
 
-  // Whatever the client no longer references is genuinely removed. This is the
-  // only path that cascades into attempt_answer, and now only for questions the
-  // author actually deleted.
+  const keptQuestionIds = kept.map((k) => k.id);
+
+  // 1. Update the questions the author kept, in one statement.
+  if (kept.length > 0) {
+    const rows = sql.join(
+      kept.map(
+        (k) =>
+          sql`(${k.id}::uuid, ${k.incoming.text}::text, ${k.incoming.imageUrl || null}::text, ${k.index}::integer)`,
+      ),
+      sql`, `,
+    );
+
+    await tx.execute(sql`
+      UPDATE ${question} AS q
+      SET text = v.text, image_url = v.image_url, "order" = v.ord
+      FROM (VALUES ${rows}) AS v(id, text, image_url, ord)
+      WHERE q.id = v.id
+    `);
+  }
+
+  // 2. Delete questions the author removed. This is the only path that cascades
+  //    into attempt_answer, and now only for questions genuinely deleted.
   await tx
     .delete(question)
     .where(
-      keptIds.length > 0
-        ? and(eq(question.quizId, quizId), notInArray(question.id, keptIds))
+      keptQuestionIds.length > 0
+        ? and(eq(question.quizId, quizId), notInArray(question.id, keptQuestionIds))
         : eq(question.quizId, quizId),
     );
+
+  // 3. Reconcile the answers of kept questions.
+  if (kept.length > 0) {
+    const existingAnswers = await tx
+      .select({ id: answer.id, questionId: answer.questionId })
+      .from(answer)
+      .where(inArray(answer.questionId, keptQuestionIds));
+
+    const existingByQuestion = new Map<string, Set<string>>();
+    for (const row of existingAnswers) {
+      const set = existingByQuestion.get(row.questionId) ?? new Set<string>();
+      set.add(row.id);
+      existingByQuestion.set(row.questionId, set);
+    }
+
+    const answerUpdates: { id: string; text: string; isCorrect: boolean }[] = [];
+    const answerInserts: { questionId: string; text: string; isCorrect: boolean }[] = [];
+
+    for (const k of kept) {
+      const owned = existingByQuestion.get(k.id) ?? new Set<string>();
+
+      for (const incoming of k.incoming.answers) {
+        if (incoming.id && owned.has(incoming.id)) {
+          answerUpdates.push({
+            id: incoming.id,
+            text: incoming.text,
+            isCorrect: incoming.isCorrect,
+          });
+        } else {
+          answerInserts.push({
+            questionId: k.id,
+            text: incoming.text,
+            isCorrect: incoming.isCorrect,
+          });
+        }
+      }
+    }
+
+    if (answerUpdates.length > 0) {
+      const rows = sql.join(
+        answerUpdates.map((a) => sql`(${a.id}::uuid, ${a.text}::text, ${a.isCorrect}::boolean)`),
+        sql`, `,
+      );
+
+      await tx.execute(sql`
+        UPDATE ${answer} AS a
+        SET text = v.text, is_correct = v.is_correct
+        FROM (VALUES ${rows}) AS v(id, text, is_correct)
+        WHERE a.id = v.id
+      `);
+    }
+
+    // Removed answers go before the inserts: attempt_answer.answer_id is
+    // ON DELETE SET NULL, so this blanks the recorded choice only for answers
+    // the author actually deleted.
+    const keptAnswerIds = answerUpdates.map((a) => a.id);
+    await tx
+      .delete(answer)
+      .where(
+        keptAnswerIds.length > 0
+          ? and(inArray(answer.questionId, keptQuestionIds), notInArray(answer.id, keptAnswerIds))
+          : inArray(answer.questionId, keptQuestionIds),
+      );
+
+    if (answerInserts.length > 0) {
+      await tx.insert(answer).values(answerInserts);
+    }
+  }
+
+  // 4. Insert brand-new questions and their answers.
+  if (created.length > 0) {
+    const insertedQuestions = await tx
+      .insert(question)
+      .values(
+        created.map((c) => ({
+          quizId,
+          text: c.incoming.text,
+          imageUrl: c.incoming.imageUrl || null,
+          order: c.index,
+        })),
+      )
+      .returning({ id: question.id });
+
+    const newAnswers = created.flatMap((c, i) =>
+      c.incoming.answers.map((a) => ({
+        questionId: insertedQuestions[i]!.id,
+        text: a.text,
+        isCorrect: a.isCorrect,
+      })),
+    );
+
+    if (newAnswers.length > 0) {
+      await tx.insert(answer).values(newAnswers);
+    }
+  }
 }
