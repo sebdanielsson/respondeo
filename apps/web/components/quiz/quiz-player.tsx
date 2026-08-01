@@ -72,8 +72,27 @@ export function QuizPlayer({
   // Use a ref to track if we've already triggered a timeout submit
   const hasTimedOutRef = useRef(false);
 
+  // Mirrors elapsedMs for reads inside callbacks. Depending on the state value
+  // directly would change handleSubmit's identity on every 100ms tick, which
+  // in turn tore down and recreated the timer interval ten times a second —
+  // each recreation restarting the 100ms window, so elapsed time drifted low.
+  // It is the leaderboard's tiebreaker, so that under-reporting was scored.
+  const elapsedMsRef = useRef(0);
+  useEffect(() => {
+    elapsedMsRef.current = elapsedMs;
+  }, [elapsedMs]);
+
+  // Guards every submission path. The timer can fire a timeout submit at the
+  // same moment the player clicks through the last question; without this the
+  // attempt is submitted twice and the second one burns another of their
+  // allowed attempts.
+  const hasSubmittedRef = useRef(false);
+
   const handleSubmit = useCallback(
     async (timedOut: boolean) => {
+      if (hasSubmittedRef.current) return;
+      hasSubmittedRef.current = true;
+
       setIsSubmitting(true);
       setError(null);
 
@@ -91,7 +110,7 @@ export function QuizPlayer({
           const correctAnswer = q.answers.find((a) => a.isCorrect);
           return acc + (selectedAnswerId === correctAnswer?.id ? 1 : 0);
         }, 0);
-        setGuestResult({ score, total: questions.length, timeMs: elapsedMs });
+        setGuestResult({ score, total: questions.length, timeMs: elapsedMsRef.current });
         setIsSubmitting(false);
         return;
       }
@@ -100,13 +119,14 @@ export function QuizPlayer({
         const result = await onSubmit({
           quizId,
           answers,
-          totalTimeMs: elapsedMs,
+          totalTimeMs: elapsedMsRef.current,
           timedOut,
         });
 
         if (result.error) {
           setError(result.error);
           setIsSubmitting(false);
+          hasSubmittedRef.current = false;
         } else if (result.attemptId) {
           router.push(`/quiz/${quizId}/results/${result.attemptId}`);
         }
@@ -114,9 +134,10 @@ export function QuizPlayer({
         console.error("Failed to submit quiz attempt:", err);
         setError("An unexpected error occurred");
         setIsSubmitting(false);
+        hasSubmittedRef.current = false;
       }
     },
-    [questions, selectedAnswers, onSubmit, quizId, elapsedMs, router, isGuest],
+    [questions, selectedAnswers, onSubmit, quizId, router, isGuest],
   );
 
   // Timer effect - pauses when showing feedback (between confirming answer and clicking next)

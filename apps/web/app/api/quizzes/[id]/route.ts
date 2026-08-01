@@ -38,6 +38,16 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       return errorResponse("Quiz not found", 404);
     }
 
+    // An unpublished quiz (no publish date, or one still in the future) is a
+    // draft: only its author or someone who could edit it may read it. Without
+    // this, anyone holding the id could read a draft — including its answer
+    // key — before release. 404 rather than 403 so the endpoint does not
+    // confirm that an unreleased quiz exists.
+    const isPublished = quizData.publishedAt !== null && quizData.publishedAt <= new Date();
+    if (!isPublished && !canEditQuizApi(ctx!, quizData.authorId)) {
+      return errorResponse("Quiz not found", 404);
+    }
+
     return NextResponse.json(quizData);
   } catch (error) {
     console.error("Failed to fetch quiz:", error);
