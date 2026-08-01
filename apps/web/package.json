@@ -17,7 +17,10 @@
     "db:push": "drizzle-kit push",
     "db:migrate": "tsx ./lib/db/migrate.ts",
     "db:studio": "drizzle-kit studio",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "test:integration": "bash ./scripts/test-integration.sh",
+    "docker:up": "docker compose up -d --wait",
+    "docker:down": "docker compose down -v"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^4.0.16",

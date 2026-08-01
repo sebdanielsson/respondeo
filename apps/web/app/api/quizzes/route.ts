@@ -6,6 +6,7 @@ import { quizSchema } from "@/lib/validations/quiz";
 import { getApiContext, requirePermission, errorResponse, API_SCOPES } from "@/lib/auth/api";
 import { canCreateQuiz } from "@/lib/rbac";
 import { parsePageParam, parseLimitParam } from "@/lib/pagination";
+import { invalidateQuizLists } from "@/lib/cache/invalidation";
 
 /**
  * GET /api/quizzes
@@ -102,6 +103,8 @@ export async function POST(request: NextRequest) {
         })),
       );
     }
+
+    await invalidateQuizLists();
 
     return NextResponse.json(newQuiz, { status: 201 });
   } catch (error) {

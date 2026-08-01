@@ -12,6 +12,7 @@ import {
   API_SCOPES,
 } from "@/lib/auth/api";
 import { eq } from "drizzle-orm";
+import { invalidateQuiz, invalidateDeletedQuiz } from "@/lib/cache/invalidation";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -131,6 +132,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       );
     }
 
+    await invalidateQuiz(id);
+
     return NextResponse.json(updatedQuiz);
   } catch (error) {
     console.error("Failed to update quiz:", error);
@@ -166,6 +169,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
   try {
     await db.delete(quiz).where(eq(quiz.id, id));
+    await invalidateDeletedQuiz(id);
     return new NextResponse(null, { status: 204 });
   } catch (error) {
     console.error("Failed to delete quiz:", error);

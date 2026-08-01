@@ -10,6 +10,11 @@ import { auth } from "@/lib/auth/server";
 import { canCreateQuiz, canEditQuiz, canDeleteQuiz } from "@/lib/rbac";
 import { quizSchema, type QuizFormData } from "@/lib/validations/quiz";
 import { eq } from "drizzle-orm";
+import {
+  invalidateQuiz,
+  invalidateQuizLists,
+  invalidateDeletedQuiz,
+} from "@/lib/cache/invalidation";
 
 async function getSession() {
   const session = await auth.api.getSession({
@@ -81,6 +86,7 @@ export async function createQuiz(data: QuizFormData) {
       );
     }
 
+    await invalidateQuizLists();
     revalidatePath("/");
     redirect(`/quiz/${newQuiz.id}`);
   } catch (error) {
@@ -168,6 +174,7 @@ export async function updateQuiz(quizId: string, data: QuizFormData) {
       );
     }
 
+    await invalidateQuiz(quizId);
     revalidatePath("/");
     revalidatePath(`/quiz/${quizId}`);
     redirect(`/quiz/${quizId}`);
@@ -203,6 +210,7 @@ export async function deleteQuiz(quizId: string) {
 
   try {
     await db.delete(quiz).where(eq(quiz.id, quizId));
+    await invalidateDeletedQuiz(quizId);
     revalidatePath("/");
     redirect("/");
   } catch (error) {
