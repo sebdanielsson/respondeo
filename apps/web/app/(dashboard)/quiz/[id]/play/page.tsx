@@ -6,6 +6,7 @@ import { getQuizById, getUserAttemptCount } from "@/lib/db/queries/quiz";
 import { QuizPlayer } from "@/components/quiz/quiz-player";
 import { submitQuizAttempt } from "@/app/actions/attempt";
 import { checkGuestRateLimit } from "@/lib/rate-limit";
+import { issueAttemptToken } from "@/lib/quiz/attempt-token";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -101,6 +102,11 @@ export default async function PlayQuizPage({ params }: PageProps) {
     }));
   }
 
+  // Stamp the start on the server so the recorded duration -- the leaderboard's
+  // tiebreaker -- does not come from the client. Guests are not ranked and have
+  // no user id, so they need no token.
+  const startToken = isGuest ? undefined : issueAttemptToken(quiz.id, session.user.id);
+
   return (
     <QuizPlayer
       quizId={quiz.id}
@@ -109,6 +115,7 @@ export default async function PlayQuizPage({ params }: PageProps) {
       timeLimitSeconds={quiz.timeLimitSeconds}
       onSubmit={submitQuizAttempt}
       isGuest={isGuest}
+      startToken={startToken}
     />
   );
 }

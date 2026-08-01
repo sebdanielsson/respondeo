@@ -35,8 +35,14 @@ interface QuizPlayerProps {
     answers: { questionId: string; answerId: string; displayOrder: number }[];
     totalTimeMs: number;
     timedOut: boolean;
+    startToken?: string;
   }) => Promise<{ attemptId?: string; error?: string }>;
   isGuest?: boolean;
+  /**
+   * Server-issued start stamp. Returned on submission so the server can derive
+   * the elapsed time itself instead of trusting the value below.
+   */
+  startToken?: string;
 }
 
 export function QuizPlayer({
@@ -46,6 +52,7 @@ export function QuizPlayer({
   timeLimitSeconds,
   onSubmit,
   isGuest = false,
+  startToken,
 }: QuizPlayerProps) {
   const router = useRouter();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -121,6 +128,7 @@ export function QuizPlayer({
           answers,
           totalTimeMs: elapsedMsRef.current,
           timedOut,
+          startToken,
         });
 
         if (result.error) {
@@ -137,7 +145,7 @@ export function QuizPlayer({
         hasSubmittedRef.current = false;
       }
     },
-    [questions, selectedAnswers, onSubmit, quizId, router, isGuest],
+    [questions, selectedAnswers, onSubmit, quizId, router, isGuest, startToken],
   );
 
   // Timer effect - pauses when showing feedback (between confirming answer and clicking next)

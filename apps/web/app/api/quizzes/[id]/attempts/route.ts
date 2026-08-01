@@ -3,26 +3,15 @@ import { db } from "@/lib/db";
 import { quizAttempt, attemptAnswer } from "@/lib/db/schema";
 import { getApiContext, requirePermission, errorResponse, API_SCOPES } from "@/lib/auth/api";
 import { gradeAttempt } from "@/lib/quiz/grading";
+import { submitAttemptSchema } from "@/lib/validations/attempt";
+import { verifyAttemptToken, resolveAttemptTiming } from "@/lib/quiz/attempt-token";
 import { eq, and, count, desc } from "drizzle-orm";
-import { z } from "zod";
 import { getQuizById } from "@/lib/db/queries/quiz";
 import { parsePageParam, parseLimitParam } from "@/lib/pagination";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
 }
-
-const submitAttemptSchema = z.object({
-  answers: z.array(
-    z.object({
-      questionId: z.string(),
-      answerId: z.string(),
-      displayOrder: z.number(),
-    }),
-  ),
-  totalTimeMs: z.number().int().min(0),
-  timedOut: z.boolean().default(false),
-});
 
 /**
  * GET /api/quizzes/[id]/attempts
@@ -127,6 +116,15 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     answers: answerResults,
   } = gradeAttempt(quizWithQuestions.questions, data.answers);
 
+  // Prefer a server-issued start stamp. API clients that never obtained one
+  // fall back to their own figure, clamped to the quiz's limit so it cannot
+  // claim an impossible duration.
+  const { totalTimeMs, timedOut } = resolveAttemptTiming(
+    verifyAttemptToken(data.startToken, quizId, ctx!.user.id),
+    data.totalTimeMs,
+    quizWithQuestions.timeLimitSeconds,
+  );
+
   try {
     // Create attempt
     const [newAttempt] = await db
@@ -136,8 +134,8 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         userId: ctx!.user.id,
         correctCount,
         totalQuestions,
-        totalTimeMs: data.totalTimeMs,
-        timedOut: data.timedOut,
+        totalTimeMs,
+        timedOut,
       })
       .returning();
 
