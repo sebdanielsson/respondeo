@@ -1,6 +1,6 @@
 /**
  * Cache module exports.
- * @see docs/caching.md for full documentation
+ * @see https://docs.respondeo.app/docs/features/caching for full documentation
  */
 
 export { cachedFetch, invalidateCache, deleteCache, getRedis, closeRedis } from "./client";

@@ -6,7 +6,7 @@
  * - Implements cache-aside pattern via cachedFetch()
  * - Supports selective cache invalidation via invalidateCache()
  *
- * @see docs/caching.md for full documentation
+ * @see https://docs.respondeo.app/docs/features/caching for full documentation
  */
 
 import { Redis } from "ioredis";
@@ -98,7 +98,7 @@ export async function getRedis(): Promise<Redis | null> {
       console.warn(
         "[cache] No REDIS_URL or VALKEY_URL set — caching is off (queries hit the database) " +
           "and rate limits are per-instance only, which does not hold across serverless " +
-          "instances. See docs/caching.md.",
+          "instances. See https://docs.respondeo.app/docs/features/caching.",
       );
     }
     return null;

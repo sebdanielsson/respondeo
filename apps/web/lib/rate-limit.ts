@@ -12,7 +12,7 @@
  * store is per-instance only and should be considered a development /
  * single-instance convenience, not an enforceable limit.
  *
- * @see docs/caching.md for Redis setup
+ * @see https://docs.respondeo.app/docs/features/caching for Redis setup
  */
 
 import { getRedis } from "@/lib/cache/client";

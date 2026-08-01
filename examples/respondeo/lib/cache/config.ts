@@ -4,7 +4,7 @@
  * This module defines TTL (Time To Live) values for different cache keys
  * and provides utilities to check if caching is enabled.
  *
- * @see docs/caching.md for full documentation
+ * @see https://docs.respondeo.app/docs/features/caching for full documentation
  */
 
 /**

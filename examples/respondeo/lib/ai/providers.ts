@@ -4,7 +4,7 @@
  * Returns the appropriate AI SDK model based on configuration.
  * Supports OpenAI, Anthropic, and Google providers with user tracking.
  *
- * See docs/ai-generation.md for full documentation.
+ * See https://docs.respondeo.app/docs/features/ai-generation for full documentation.
  */
 
 import { createOpenAI } from "@ai-sdk/openai";

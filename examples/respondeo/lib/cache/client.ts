@@ -6,7 +6,7 @@
  * - Implements cache-aside pattern via cachedFetch()
  * - Supports selective cache invalidation via invalidateCache()
  *
- * @see docs/caching.md for full documentation
+ * @see https://docs.respondeo.app/docs/features/caching for full documentation
  */
 
 import { Redis } from "ioredis";

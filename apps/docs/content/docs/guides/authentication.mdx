@@ -39,6 +39,36 @@ The `BETTER_AUTH_SECRET` must be at least 32 characters. Generate a secure value
 openssl rand -base64 32
 ```
 
+## GitHub Provider Setup
+
+### Creating a GitHub OAuth App
+
+1. Go to [GitHub Developer Settings](https://github.com/settings/developers) and click **New OAuth App**
+2. Fill in the application details:
+   - **Application name**: Your app name
+   - **Homepage URL**: `https://respondeo.example.com`
+   - **Authorization callback URL**: `https://respondeo.example.com/api/auth/callback/github`
+3. Click **Register application**
+4. Copy the **Client ID**
+5. Click **Generate a new client secret** and copy it
+
+<Callout type="info">
+  If you create a **GitHub App** instead of an OAuth App, go to _Permissions and Events_ → _Account
+  Permissions_ → _Email Addresses_ and set it to "Read-Only". This is required to read the user's
+  email address.
+</Callout>
+
+### GitHub Environment Variables
+
+```bash
+GITHUB_CLIENT_ID="your-github-client-id"
+GITHUB_CLIENT_SECRET="your-github-client-secret"
+```
+
+### GitHub and RBAC
+
+GitHub users do not have OIDC groups, so they are assigned `RBAC_DEFAULT_ROLE` (defaults to `user`). GitHub users can be promoted to admin or other roles by manually updating their groups in the database, or by also configuring an OIDC provider.
+
 ## OIDC Provider Setup
 
 ### Required OIDC Configuration

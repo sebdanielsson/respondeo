@@ -186,7 +186,7 @@ All relationships use cascade deletes for clean data management.
 docker compose up -d
 ```
 
-See `docs/deployment.md` for detailed instructions.
+See `https://docs.respondeo.app/docs/guides/deployment` for detailed instructions.
 
 ## Support
 
