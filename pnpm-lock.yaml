@@ -131,7 +131,7 @@ importers:
         version: 2.0.1(next@16.2.12(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
       ai:
         specifier: ^7.0.31
-        version: 7.0.45(zod@4.4.3)
+        version: 7.0.46(zod@4.4.3)
       better-auth:
         specifier: ~1.6.23
         version: 1.6.25(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@opentelemetry/api@1.9.1)(kysely@0.29.4)(postgres@3.4.9))(next@16.2.12(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(vitest@4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.1.2)(vite@8.1.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0)))
@@ -275,8 +275,8 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/gateway@4.0.34':
-    resolution: {integrity: sha512-r9h1pwSjAFI75c6PFNGVnhrZIQ3zfWnjwnrc+qGgbnqkWdiuq3ZpTCrAlsphy3h/b3T10OwjfsLd+3yKpyoa/g==}
+  '@ai-sdk/gateway@4.0.35':
+    resolution: {integrity: sha512-57/kQ+SmbQ6ZttSdy0pRZMbG2aaLOF3vtUeFBSAfq7ALCNzZP6PcPXFHiLrcgzIYmXzyO+c+YR2N3pDnHPfVGA==}
     engines: {node: '>=22'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -2981,8 +2981,8 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
-  ai@7.0.45:
-    resolution: {integrity: sha512-BLMm4DGw1o2KgDhwWixiRNFQu2zeiNi6XfQlT++japjTbLpIFKST6TRKfsn90Ski6eZ06M34lQlb4viOcFl48Q==}
+  ai@7.0.46:
+    resolution: {integrity: sha512-+flQSK9Bk+phvJeXEegWwbU9D5Q2ghoe5PziUBtxypAFwXdxv/TINt7gNo620MTcxfFx66UBQLi1jr4GC0kxwg==}
     engines: {node: '>=22'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -6482,7 +6482,7 @@ snapshots:
       '@ai-sdk/provider-utils': 5.0.17(zod@4.4.3)
       zod: 4.4.3
 
-  '@ai-sdk/gateway@4.0.34(zod@4.4.3)':
+  '@ai-sdk/gateway@4.0.35(zod@4.4.3)':
     dependencies:
       '@ai-sdk/provider': 4.0.4
       '@ai-sdk/provider-utils': 5.0.17(zod@4.4.3)
@@ -8468,9 +8468,9 @@ snapshots:
 
   acorn@8.17.0: {}
 
-  ai@7.0.45(zod@4.4.3):
+  ai@7.0.46(zod@4.4.3):
     dependencies:
-      '@ai-sdk/gateway': 4.0.34(zod@4.4.3)
+      '@ai-sdk/gateway': 4.0.35(zod@4.4.3)
       '@ai-sdk/provider': 4.0.4
       '@ai-sdk/provider-utils': 5.0.17(zod@4.4.3)
       zod: 4.4.3
