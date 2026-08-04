@@ -2,6 +2,16 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
   "minimumReleaseAge": "3 days",
+  "//": "config:recommended ignores **/examples/**, but examples/respondeo is the published create-respondeo-app template and must stay dependency-identical to apps/web (enforced by scripts/check-template-sync.sh). Default list minus the examples glob.",
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/bower_components/**",
+    "**/vendor/**",
+    "**/__tests__/**",
+    "**/test/**",
+    "**/tests/**",
+    "**/__fixtures__/**"
+  ],
   "packageRules": [
     {
       "groupName": "AI SDK",
