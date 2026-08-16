@@ -21,9 +21,14 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+    # The action only exposes the bare `release_created` / `tag_name` outputs for a ROOT component
+    # (path `.`). Our only package sits at packages/create-respondeo-app, so its outputs are
+    # namespaced as `<path>--release_created` / `<path>--tag_name` and the bare names are always
+    # empty. `releases_created` (plural) is the top-level "did anything release" flag and is
+    # equivalent here, since there is exactly one package.
     outputs:
-      release_created: ${{ steps.release.outputs.release_created }}
-      tag_name: ${{ steps.release.outputs.tag_name }}
+      release_created: ${{ steps.release.outputs.releases_created }}
+      tag_name: ${{ steps.release.outputs['packages/create-respondeo-app--tag_name'] }}
     steps:
       - name: Run Release Please
         id: release
