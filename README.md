@@ -4,7 +4,7 @@ A modern, full-stack quiz application built with Next.js 16, featuring OIDC auth
 
 ## 📚 Documentation
 
-**Complete documentation is available at:** [`/docs`](https://docs.respondeo.app/docs) or online at https://docs.respondeo.app
+**Complete documentation is available at:** [docs.respondeo.app](https://docs.respondeo.app)
 
 Quick links:
 
@@ -30,7 +30,7 @@ Quick links:
 
 ## Tech Stack
 
-- **Monorepo**: pnpm workspaces + Turborepo 2.4+
+- **Monorepo**: pnpm workspaces + Turborepo
 - **Framework**: Next.js 16 (App Router, Turbopack)
 - **Runtime**: Node.js (>= 20)
 - **Database**: PostgreSQL with Drizzle ORM (via postgres.js)
@@ -38,14 +38,13 @@ Quick links:
 - **Auth**: BetterAuth with OIDC + API Key plugins
 - **UI**: shadcn/ui (Base UI - Nova), Lucide Icons
 - **Validation**: Zod
+- **Tooling**: oxlint + ESLint, oxfmt, Stylelint, Vitest
 - **AI**: AI SDK with multi-provider support
 - **Images**: Unsplash API integration
 
 ## Quick Start
 
-### Create a New App (Recommended)
-
-The fastest way to get started is using `create-respondeo-app`:
+The fastest way to get started is `create-respondeo-app`:
 
 ```bash
 # Using pnpm (recommended)
@@ -55,14 +54,7 @@ pnpm create respondeo-app my-quiz-app
 npx create-respondeo-app my-quiz-app
 ```
 
-This will:
-
-- Download the latest template
-- Install dependencies
-- Set up environment files
-- Show you the next steps
-
-Then:
+This downloads the latest template, installs dependencies, sets up environment files, and prints the next steps. Then:
 
 ```bash
 cd my-quiz-app
@@ -71,42 +63,16 @@ pnpm db:migrate    # Run database migrations
 pnpm dev           # Start development server
 ```
 
-### Manual Setup
+Open [http://localhost:3000](http://localhost:3000).
 
-If you prefer to clone the repository directly:
+To work on Respondeo itself rather than scaffold an app from it, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-#### Prerequisites
+### Prerequisites
 
 - [Node.js](https://nodejs.org/) >= 20
-- [pnpm](https://pnpm.io/) >= 10
-- PostgreSQL database
-- An OIDC provider (e.g., Keycloak, Auth0, Okta, Pocket ID)
-
-### Installation
-
-```bash
-# Clone and install
-git clone https://github.com/sebdanielsson/respondeo.git
-cd respondeo
-pnpm install
-
-# Start database
-docker compose up -d
-
-# Configure environment
-cp apps/web/.env.example apps/web/.env.local
-# Edit apps/web/.env.local with your settings
-
-# Run migrations
-pnpm db:migrate
-
-# Start development server
-pnpm dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-See [Installation Guide](https://docs.respondeo.app/docs/installation) for detailed setup instructions.
+- [pnpm](https://pnpm.io/) >= 11
+- A PostgreSQL database
+- An OIDC provider (e.g. Keycloak, Auth0, Okta, Pocket ID)
 
 ## Configuration
 
@@ -129,83 +95,19 @@ OIDC_CLIENT_SECRET=your-client-secret
 DATABASE_URL=postgresql://user:password@localhost:5432/quiz_app
 ```
 
-See [Configuration Guide](https://docs.respondeo.app/docs/configuration) for all available options.
-
-## Development
-
-```bash
-pnpm dev          # Start development server
-pnpm build        # Build for production
-pnpm start        # Start production server
-pnpm tsc          # Type checking
-pnpm lint         # Run ESLint
-pnpm format       # Format code
-pnpm db:migrate   # Run database migrations
-pnpm db:studio    # Open Drizzle Studio
-pnpm test             # Run tests
-```
-
-See [Scripts Reference](https://docs.respondeo.app/docs/development/scripts) for all available commands.
-
-## Project Structure
-
-```plaintext
-respondeo/
-├── apps/
-│   ├── web/              # Main Next.js application
-│   └── docs/             # Fumadocs documentation site
-├── docs/                 # Documentation source (MDX files)
-├── package.json          # Workspace root
-└── turbo.json            # Turborepo configuration
-```
-
-See [Architecture Guide](https://docs.respondeo.app/docs/development/architecture) for detailed system architecture.
+See the [Configuration Guide](https://docs.respondeo.app/docs/configuration) for all available options.
 
 ## API
 
-Respondeo provides a comprehensive REST API. Get started:
+Respondeo provides a REST API authenticated with API keys:
 
 1. [Create an API key](https://docs.respondeo.app/docs/features/api-keys) at `/settings` (admin only)
-2. Include it in the `x-api-key` header
-3. Explore endpoints in the [API Reference](https://docs.respondeo.app/docs/api-reference/overview)
+2. Send it in the `x-api-key` header
+3. Explore the endpoints in the [API Reference](https://docs.respondeo.app/docs/api-reference/overview)
 
-Interactive API documentation available at `/docs` when running the app.
+Interactive API documentation is available at `/docs` when running the app, powered by [Scalar](https://scalar.com/) — full endpoint reference, "try it" requests, and code snippets.
 
-## Deployment
-
-The app can be deployed to:
-
-- **Vercel** — Easiest, with Vercel Postgres
-- **Docker** — Use included `compose.yaml`
-- **VPS** — Any server with Node.js and PostgreSQL
-- **Railway, Fly.io** — Docker-based platforms
-
-See [Deployment Guide](https://docs.respondeo.app/docs/guides/deployment) for detailed instructions.
-
-## Documentation
-
-This repository includes a Fumadocs-powered documentation site in `apps/docs/`.
-
-**To run the docs locally:**
-
-```bash
-pnpm --filter docs dev
-```
-
-Visit http://localhost:3001
-
-All documentation source files are in the `/docs` directory at the repository root.
-
-## License
-
-MIT
-
-## Support
-
-- **Documentation**: [Complete docs](https://docs.respondeo.app/docs)
-- **GitHub Issues**: [Report bugs](https://github.com/sebdanielsson/respondeo/issues)
-- **Discussions**: [Ask questions](https://github.com/sebdanielsson/respondeo/discussions)
-- **Troubleshooting**: [Common issues](https://docs.respondeo.app/docs/troubleshooting)
+### Scopes
 
 | Scope            | Description                                              |
 | ---------------- | -------------------------------------------------------- |
@@ -214,22 +116,11 @@ MIT
 | `attempts:read`  | View quiz attempts                                       |
 | `attempts:write` | Submit quiz attempts                                     |
 
-### Rate Limiting
+### Rate limiting
 
-API keys are rate-limited to **100 requests per minute** by default. When rate-limited, the API returns a `429 Too Many Requests` response.
+API keys are rate-limited to **100 requests per minute** by default. When rate-limited, the API returns `429 Too Many Requests`.
 
-### API Documentation
-
-Interactive API documentation is available at [`/docs`](/docs) powered by [Scalar](https://scalar.com/). The documentation includes:
-
-- 📋 **Full endpoint reference** with request/response schemas
-- 🧪 **"Try it" functionality** to test endpoints directly in the browser
-- 📦 **Code snippets** in multiple languages (JavaScript, Python, cURL, etc.)
-- 🔐 **Authentication setup** for API key configuration
-
----
-
-### Error Responses
+### Error responses
 
 All endpoints return consistent error responses:
 
@@ -248,26 +139,28 @@ All endpoints return consistent error responses:
 | `429`       | Too Many Requests — Rate limit exceeded      |
 | `500`       | Internal Server Error — Something went wrong |
 
----
+## Deployment
 
-## Scripts
+The app can be deployed to:
 
-| Command             | Description                         |
-| ------------------- | ----------------------------------- |
-| `pnpm dev`          | Start development server            |
-| `pnpm build`        | Build for production                |
-| `pnpm start`        | Start production server             |
-| `pnpm tsc`          | TypeScript type checking            |
-| `pnpm lint`         | Run ESLint                          |
-| `pnpm format`       | Format code with Prettier           |
-| `pnpm format:check` | Check code formatting with Prettier |
-| `pnpm stylelint`    | Run Stylelint for CSS files         |
-| `pnpm db:push`      | Push schema changes to database     |
-| `pnpm db:generate`  | Generate migration files            |
-| `pnpm db:migrate`   | Run migrations                      |
-| `pnpm db:studio`    | Open Drizzle Studio                 |
-| `pnpm test`         | Run tests                           |
+- **Vercel** — Easiest, with a managed Postgres provider
+- **Docker** — Use the `compose.yaml` in `apps/web/`
+- **VPS** — Any server with Node.js and PostgreSQL
+- **Railway, Fly.io** — Docker-based platforms
+
+See the [Deployment Guide](https://docs.respondeo.app/docs/guides/deployment) for detailed instructions.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the development setup, project structure, scripts, and release process.
 
 ## License
 
 MIT
+
+## Support
+
+- **Documentation**: [Complete docs](https://docs.respondeo.app/docs)
+- **GitHub Issues**: [Report bugs](https://github.com/sebdanielsson/respondeo/issues)
+- **Discussions**: [Ask questions](https://github.com/sebdanielsson/respondeo/discussions)
+- **Troubleshooting**: [Common issues](https://docs.respondeo.app/docs/troubleshooting)
