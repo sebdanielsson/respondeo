@@ -211,6 +211,14 @@ export const db = drizzle({ client, schema });
 - **Cascade Deletes**: Deleting a quiz deletes all questions, answers, attempts, and attempt answers.
 - **API Key Permissions**: API keys dynamically inherit permissions from user's current role. No need to regenerate keys when permissions change.
 
+## Releases
+
+`create-respondeo-app` is released with [Release Please](https://github.com/googleapis/release-please) (`release-please-config.json`). Every push to `main` updates a standing release PR; merging it bumps `packages/create-respondeo-app/package.json`, writes its `CHANGELOG.md`, tags `vX.Y.Z`, and publishes to npm.
+
+- **Commits must be [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).** PRs are squash-merged, so the **PR title** is what lands on `main` and what the version is derived from. `feat:` → minor, `fix:` → patch, `feat!:`/`BREAKING CHANGE:` → major, `chore:`/`docs:`/`ci:`/`test:`/`refactor:` → no release.
+- **Only commits touching `packages/create-respondeo-app` count.** Changes to `apps/web`, `apps/docs`, or `examples/respondeo` never trigger a release.
+- **The template is not part of the release.** `create-respondeo-app` fetches `examples/respondeo` from `#main` at runtime (`packages/create-respondeo-app/src/constants.ts`), so template changes reach users on merge, without a CLI release.
+
 ## Extra Notes
 
 - As a last step before completing a task, always run formatting, linting and type checking commands to ensure code quality.

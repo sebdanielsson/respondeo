@@ -1,0 +1,81 @@
+---
+name: Release Please
+
+on:
+  push:
+    branches:
+      - main
+
+# Release Please maintains a "release PR" that bumps packages/create-respondeo-app's version and
+# CHANGELOG.md from conventional commits. Merging it tags + creates the GitHub release. The npm
+# publish runs in the SAME workflow run, gated on `release_created`, because tags pushed with
+# GITHUB_TOKEN do not trigger workflows — a separate `on: push: tags` workflow would never fire.
+#
+# Only commits touching packages/create-respondeo-app count toward a release. The scaffolded
+# template lives in examples/respondeo and is fetched from `#main` at runtime (see
+# packages/create-respondeo-app/src/constants.ts), so template changes ship without a CLI release.
+jobs:
+  release-please:
+    name: Release Please
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - name: Run Release Please
+        id: release
+        uses: googleapis/release-please-action@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  publish:
+    name: Publish to npm
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.release-please.outputs.tag_name }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: pnpm
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run type check
+        run: pnpm exec turbo run tsc --filter=create-respondeo-app
+
+      - name: Run format check
+        run: pnpm run format:check
+
+      - name: Run lint
+        run: pnpm exec turbo run lint --filter=create-respondeo-app
+
+      - name: Build
+        run: pnpm exec turbo run build --filter=create-respondeo-app
+
+      - name: Package
+        working-directory: packages/create-respondeo-app
+        run: pnpm pack
+
+      - name: Publish to npm
+        working-directory: packages/create-respondeo-app
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
