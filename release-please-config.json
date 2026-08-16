@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "bootstrap-sha": "8376496f955e8d40b0b2fec9bdb779cd31069ee8",
+  "packages": {
+    "packages/create-respondeo-app": {
+      "release-type": "node",
+      "package-name": "create-respondeo-app",
+      "include-component-in-tag": false,
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": false
+    }
+  }
+}
