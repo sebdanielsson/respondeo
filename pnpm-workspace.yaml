@@ -15,7 +15,6 @@ allowBuilds:
   unrs-resolver: true
 
 overrides:
-  brace-expansion@<1.1.17: ^1.1.17
   brace-expansion@<1.1.18: ^1.1.18
   esbuild@<=0.24.2: ^0.25.0
   esbuild@>=0.27.3 <0.28.1: ^0.28.1
