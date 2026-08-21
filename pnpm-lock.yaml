@@ -119,7 +119,7 @@ importers:
         version: 4.0.39(zod@4.4.3)
       '@ai-sdk/google':
         specifier: ^4.0.18
-        version: 4.0.44(zod@4.4.3)
+        version: 4.0.45(zod@4.4.3)
       '@ai-sdk/openai':
         specifier: ^4.0.16
         version: 4.0.42(zod@4.4.3)
@@ -140,7 +140,7 @@ importers:
         version: 2.0.1(next@16.3.1(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
       ai:
         specifier: ^7.0.31
-        version: 7.0.66(zod@4.4.3)
+        version: 7.0.67(zod@4.4.3)
       better-auth:
         specifier: ~1.6.23
         version: 1.6.30(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@opentelemetry/api@1.9.1)(kysely@0.29.5)(postgres@3.4.9))(next@16.3.1(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(vitest@4.1.11(@opentelemetry/api@1.9.1)(@types/node@26.2.0)(vite@8.1.0(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0)))
@@ -284,14 +284,14 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/gateway@4.0.52':
-    resolution: {integrity: sha512-SXUM8jzzuTUJRq+EOgPd5to6DSx0EKslVn+IVZHbUEX6k/3vCPNrvjckbK26HnNxHU/STxm+zTSJteqrO+7Z0w==}
+  '@ai-sdk/gateway@4.0.53':
+    resolution: {integrity: sha512-4ZgwJjv/lGA7ywlD/3oYg6XMkIy1VvVKiSRYB83PyLDApwMGXSF+oT7D5lPYJFhNE5Vr3W2H+SwCFuTsbfgn9w==}
     engines: {node: '>=22'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/google@4.0.44':
-    resolution: {integrity: sha512-bmRTDg06jQD+eX8nf214pET9+Oe8O1+lUIRGbWsGXj9IN2UJkpl1O1x7cvtiboyTtKSLvSRdVtItUfSl8sQ2GA==}
+  '@ai-sdk/google@4.0.45':
+    resolution: {integrity: sha512-1oLHhc2twSQzm7O8j/HaRWLfBh+tPjQP55d8yXmrZvvopoH6/P7WaDznVJqjouGSof429lR+tYdINkjvUl+8Qg==}
     engines: {node: '>=22'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -2719,8 +2719,8 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
-  ai@7.0.66:
-    resolution: {integrity: sha512-wBUyoCYF3GVr+62nelBgR8YbpTSsMZrzFyOOjiwijylNSM2TFCW35C+Pml2vc59/WLMpyhS/LWZ55M+B9DAcSg==}
+  ai@7.0.67:
+    resolution: {integrity: sha512-83Y/OFx7rylrrgzCsaDPlGeL3QC8qrFQ51LBs6MXm2JVxQLLkrvKmPa1/hOzgyCHM8dsB/2rE1a6OGPNRpmTLQ==}
     engines: {node: '>=22'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -6200,14 +6200,14 @@ snapshots:
       '@ai-sdk/provider-utils': 5.0.27(zod@4.4.3)
       zod: 4.4.3
 
-  '@ai-sdk/gateway@4.0.52(zod@4.4.3)':
+  '@ai-sdk/gateway@4.0.53(zod@4.4.3)':
     dependencies:
       '@ai-sdk/provider': 4.0.7
       '@ai-sdk/provider-utils': 5.0.27(zod@4.4.3)
       '@vercel/oidc': 3.2.0
       zod: 4.4.3
 
-  '@ai-sdk/google@4.0.44(zod@4.4.3)':
+  '@ai-sdk/google@4.0.45(zod@4.4.3)':
     dependencies:
       '@ai-sdk/provider': 4.0.7
       '@ai-sdk/provider-utils': 5.0.27(zod@4.4.3)
@@ -8051,9 +8051,9 @@ snapshots:
 
   acorn@8.18.0: {}
 
-  ai@7.0.66(zod@4.4.3):
+  ai@7.0.67(zod@4.4.3):
     dependencies:
-      '@ai-sdk/gateway': 4.0.52(zod@4.4.3)
+      '@ai-sdk/gateway': 4.0.53(zod@4.4.3)
       '@ai-sdk/provider': 4.0.7
       '@ai-sdk/provider-utils': 5.0.27(zod@4.4.3)
       zod: 4.4.3
