@@ -1,4 +1,13 @@
-import { pgTable, text, boolean, timestamp, integer, uuid, index } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  boolean,
+  timestamp,
+  integer,
+  uuid,
+  index,
+  uniqueIndex,
+} from "drizzle-orm/pg-core";
 import { relations, asc, desc } from "drizzle-orm";
 
 // ============================================================================
@@ -57,6 +66,10 @@ export const account = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
+    // better-auth >= 1.7 keys an external identity on (issuer, accountId)
+    // rather than (providerId, accountId), so a provider that changes its ID
+    // keeps its users and two providers cannot claim the same subject.
+    issuer: text("issuer").notNull(),
     accountId: text("account_id").notNull(),
     providerId: text("provider_id").notNull(),
     accessToken: text("access_token"),
@@ -73,7 +86,10 @@ export const account = pgTable(
       .notNull()
       .$defaultFn(() => new Date()),
   },
-  (table) => [index("account_user_id_idx").on(table.userId)],
+  (table) => [
+    index("account_user_id_idx").on(table.userId),
+    uniqueIndex("account_issuer_account_id_idx").on(table.issuer, table.accountId),
+  ],
 );
 
 // ============================================================================

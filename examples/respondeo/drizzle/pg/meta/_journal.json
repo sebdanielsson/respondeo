@@ -29,6 +29,13 @@
       "when": 1785581950886,
       "tag": "0003_bright_venus",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1787391140370,
+      "tag": "0004_better_auth_account_issuer",
+      "breakpoints": true
     }
   ]
 }
