@@ -12,6 +12,33 @@ function stringClaim(value: unknown): string | undefined {
   return typeof value === "string" ? value : undefined;
 }
 
+// `groups` is documented as an array of group names, but it is an untyped claim
+// like the rest. Anything else used to be stringified verbatim into the column
+// that lib/rbac/resolver.ts reads, where it matches no role mapping and leaves
+// the user on the default role with nothing said about why. Keep the string
+// members and report the shapes that are being dropped.
+function groupsClaim(value: unknown): string[] {
+  if (value === undefined || value === null) return [];
+
+  if (!Array.isArray(value)) {
+    console.warn(
+      `[auth] OIDC \`groups\` claim is ${typeof value}, expected an array; no groups mapped`,
+    );
+    return [];
+  }
+
+  const groups = value.filter((entry): entry is string => typeof entry === "string");
+  const dropped = value.length - groups.length;
+  if (dropped > 0) {
+    console.warn(
+      `[auth] OIDC \`groups\` claim: ignoring ${dropped} non-string ${
+        dropped === 1 ? "entry" : "entries"
+      }`,
+    );
+  }
+  return groups;
+}
+
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
@@ -67,7 +94,7 @@ export const auth = betterAuth({
             givenName: stringClaim(profile.given_name),
             familyName: stringClaim(profile.family_name),
             preferredUsername: stringClaim(profile.preferred_username),
-            groups: JSON.stringify(profile.groups ?? []),
+            groups: JSON.stringify(groupsClaim(profile.groups)),
           }),
         },
       ],
