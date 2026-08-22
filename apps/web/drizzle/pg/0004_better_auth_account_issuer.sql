@@ -39,4 +39,28 @@ END
 WHERE "issuer" IS NULL;--> statement-breakpoint
 
 ALTER TABLE "account" ALTER COLUMN "issuer" SET NOT NULL;--> statement-breakpoint
+
+-- 1.6 never enforced (provider_id, account_id) at the database level, so rows
+-- that collide under the new key can already exist. Postgres would report them
+-- one pair at a time as the index build hits each; report all of them at once
+-- so a single pass is enough to clean the table up.
+DO $$
+DECLARE
+  collisions text;
+BEGIN
+  SELECT string_agg(format('(%s, %s) x%s', "issuer", "account_id", n), ', ' ORDER BY n DESC)
+  INTO collisions
+  FROM (
+    SELECT "issuer", "account_id", count(*) AS n
+    FROM "account"
+    GROUP BY "issuer", "account_id"
+    HAVING count(*) > 1
+  ) duplicates;
+
+  IF collisions IS NOT NULL THEN
+    RAISE EXCEPTION 'account rows collide on (issuer, account_id): %', collisions
+      USING HINT = 'better-auth 1.7 requires this pair to be unique; keep one account row per pair (the most recently updated is usually the live one) and re-run the migration';
+  END IF;
+END $$;--> statement-breakpoint
+
 CREATE UNIQUE INDEX "account_issuer_account_id_idx" ON "account" USING btree ("issuer","account_id");
