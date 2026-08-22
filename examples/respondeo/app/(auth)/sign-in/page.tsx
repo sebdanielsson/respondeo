@@ -33,8 +33,8 @@ function SignInContent() {
 
   const handleOidcSignIn = async () => {
     try {
-      await authClient.signIn.oauth2({
-        providerId: oidcProviderId!,
+      await authClient.signIn.social({
+        provider: oidcProviderId!,
         callbackURL: callbackUrl,
       });
     } catch (e: unknown) {

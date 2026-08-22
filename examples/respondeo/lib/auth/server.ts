@@ -5,6 +5,13 @@ import { apiKey } from "@better-auth/api-key";
 import { db } from "@/lib/db";
 import * as schema from "@/lib/db/schema";
 
+// Claims outside the OIDC core profile are untyped (`unknown`), and every field
+// they feed is a text column, so anything non-string is dropped rather than
+// stringified into the user row.
+function stringClaim(value: unknown): string | undefined {
+  return typeof value === "string" ? value : undefined;
+}
+
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
@@ -44,12 +51,22 @@ export const auth = betterAuth({
           clientSecret: process.env.OIDC_CLIENT_SECRET!,
           scopes: ["openid", "profile", "email", "groups"],
           pkce: true,
+          // better-auth 1.7 keys accounts on (issuer, accountId). Left to
+          // itself the plugin would use the issuer from the discovery
+          // document, which no static migration can backfill into rows written
+          // before the upgrade — every existing OIDC user would look like a new
+          // identity. Pinning the synthetic issuer better-auth generates for
+          // providers without one keeps identity exactly where 1.6 had it,
+          // providerId + subject, and matches the 0004 backfill. It also keeps
+          // startup independent of the discovery endpoint being reachable,
+          // which the plugin otherwise treats as a fatal init error.
+          accountIssuer: `local:oauth:${encodeURIComponent(process.env.OIDC_PROVIDER_ID!)}`,
           mapProfileToUser: (profile) => ({
-            name: profile.display_name || profile.name,
-            displayName: profile.display_name,
-            givenName: profile.given_name,
-            familyName: profile.family_name,
-            preferredUsername: profile.preferred_username,
+            name: stringClaim(profile.display_name) || profile.name,
+            displayName: stringClaim(profile.display_name),
+            givenName: stringClaim(profile.given_name),
+            familyName: stringClaim(profile.family_name),
+            preferredUsername: stringClaim(profile.preferred_username),
             groups: JSON.stringify(profile.groups ?? []),
           }),
         },
