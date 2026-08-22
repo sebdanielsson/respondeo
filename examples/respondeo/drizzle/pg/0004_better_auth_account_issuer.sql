@@ -48,7 +48,9 @@ DO $$
 DECLARE
   collisions text;
 BEGIN
-  SELECT string_agg(format('(%s, %s) x%s', "issuer", "account_id", n), ', ' ORDER BY n DESC)
+  -- %L quotes each value, so an account_id containing a comma or a paren (a
+  -- `sub` is an arbitrary string) cannot be misread as a pair boundary.
+  SELECT string_agg(format('(%L, %L) x%s', "issuer", "account_id", n), ', ' ORDER BY n DESC)
   INTO collisions
   FROM (
     SELECT "issuer", "account_id", count(*) AS n

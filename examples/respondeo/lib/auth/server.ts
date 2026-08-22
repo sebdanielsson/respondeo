@@ -28,11 +28,12 @@ function groupsClaim(value: unknown): string[] {
   }
 
   const groups = value.filter((entry): entry is string => typeof entry === "string");
-  if (groups.length !== value.length) {
+  const dropped = value.length - groups.length;
+  if (dropped > 0) {
     console.warn(
-      `[auth] OIDC \`groups\` claim has ${value.length - groups.length} non-string entr${
-        value.length - groups.length === 1 ? "y" : "ies"
-      }; dropping them`,
+      `[auth] OIDC \`groups\` claim: ignoring ${dropped} non-string ${
+        dropped === 1 ? "entry" : "entries"
+      }`,
     );
   }
   return groups;
