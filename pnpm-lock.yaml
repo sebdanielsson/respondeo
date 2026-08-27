@@ -92,7 +92,7 @@ importers:
         version: 2.10.11(eslint@10.9.0(jiti@2.7.0)(supports-color@10.2.2))(turbo@2.10.11)
       eslint-plugin-oxlint:
         specifier: ^1.73.0
-        version: 1.79.0(oxlint@1.80.0)
+        version: 1.80.0(oxlint@1.80.0)
       oxlint:
         specifier: ^1.74.0
         version: 1.80.0
@@ -219,7 +219,7 @@ importers:
         version: 2.10.11(eslint@10.9.0(jiti@2.7.0)(supports-color@10.2.2))(turbo@2.10.11)
       eslint-plugin-oxlint:
         specifier: ^1.73.0
-        version: 1.79.0(oxlint@1.80.0)
+        version: 1.80.0(oxlint@1.80.0)
       oxlint:
         specifier: ^1.74.0
         version: 1.80.0
@@ -3567,10 +3567,10 @@ packages:
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9
 
-  eslint-plugin-oxlint@1.79.0:
-    resolution: {integrity: sha512-KpxU5mvO6gOMYKeJAaebF8lShP763U2lGUjGYmXf6YRvjlw4vME4ID9Ne8fLv8wU6LSImxYFINbzoyELt4Dsvg==}
+  eslint-plugin-oxlint@1.80.0:
+    resolution: {integrity: sha512-cj+y8+cqPu8NIeds58CdwWUzz7KiHSJcELkQNBn0tVtPa6feUDt3ibPcPEPzfkrsu3Omf/5dD0bb203DcSiT4g==}
     peerDependencies:
-      oxlint: ~1.79.0
+      oxlint: ~1.80.0
 
   eslint-plugin-react-hooks@7.1.1:
     resolution: {integrity: sha512-f2I7Gw6JbvCexzIInuSbZpfdQ44D7iqdWX01FKLvrPgqxoE7oMj8clOfto8U6vYiz4yd5oKu39rRSVOe1zRu0g==}
@@ -8908,7 +8908,7 @@ snapshots:
       safe-regex-test: 1.1.0
       string.prototype.includes: 2.0.1
 
-  eslint-plugin-oxlint@1.79.0(oxlint@1.80.0):
+  eslint-plugin-oxlint@1.80.0(oxlint@1.80.0):
     dependencies:
       jsonc-parser: 3.3.1
       oxlint: 1.80.0
