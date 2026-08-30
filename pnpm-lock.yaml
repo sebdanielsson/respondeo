@@ -36,14 +36,14 @@ importers:
         specifier: ^2.0.1
         version: 2.0.1(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
       fumadocs-core:
-        specifier: 16.15.3
-        version: 16.15.3(@mdx-js/mdx@3.1.1(supports-color@10.2.2))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.8))(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(zod@4.4.3)
+        specifier: 16.15.4
+        version: 16.15.4(@mdx-js/mdx@3.1.1(supports-color@10.2.2))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.8))(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(zod@4.4.3)
       fumadocs-mdx:
         specifier: 15.4.0
-        version: 15.4.0(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.2.18)(fumadocs-core@16.15.3(@mdx-js/mdx@3.1.1(supports-color@10.2.2))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.8))(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(zod@4.4.3))(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(rolldown@1.1.5)(supports-color@10.2.2)(vite@8.1.0(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0))
+        version: 15.4.0(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.2.18)(fumadocs-core@16.15.4(@mdx-js/mdx@3.1.1(supports-color@10.2.2))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.8))(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(zod@4.4.3))(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(rolldown@1.1.5)(supports-color@10.2.2)(vite@8.1.0(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0))
       fumadocs-ui:
-        specifier: npm:@fumadocs/base-ui@16.15.3
-        version: '@fumadocs/base-ui@16.15.3(@date-fns/tz@1.5.0)(@types/mdx@2.0.14)(@types/react@19.2.18)(date-fns@4.4.0)(fumadocs-core@16.15.3(@mdx-js/mdx@3.1.1(supports-color@10.2.2))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.8))(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(zod@4.4.3))(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.3.3)'
+        specifier: npm:@fumadocs/base-ui@16.15.4
+        version: '@fumadocs/base-ui@16.15.4(@date-fns/tz@1.5.0)(@types/mdx@2.0.14)(@types/react@19.2.18)(date-fns@4.4.0)(fumadocs-core@16.15.4(@mdx-js/mdx@3.1.1(supports-color@10.2.2))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.8))(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(zod@4.4.3))(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.3.3)'
       lucide-react:
         specifier: ^1.25.0
         version: 1.34.0(react@19.2.8)
@@ -1047,12 +1047,12 @@ packages:
       '@types/react':
         optional: true
 
-  '@fumadocs/base-ui@16.15.3':
-    resolution: {integrity: sha512-fTGh+H8ZvMD0B64T3UGroY/FOG8aRwEDCaJOpqfvezlyDRwLVYU1+PwpMjNxhvngPsCwZ7lgrzipAtI1hEcoqw==}
+  '@fumadocs/base-ui@16.15.4':
+    resolution: {integrity: sha512-BcoUPoSbfX/uaUl2NgPn0IKOjqJCkwsWPP6z5uRlKSEdh4zbImwXf3k6+qJ3ULlVaFEY8hqfR2wn+Ya5vPKKEQ==}
     peerDependencies:
       '@types/mdx': '*'
       '@types/react': '*'
-      fumadocs-core: 16.15.3
+      fumadocs-core: 16.15.4
       next: 16.x.x
       react: ^19.2.0
       react-dom: ^19.2.0
@@ -3821,8 +3821,8 @@ packages:
   fuma-cli@0.1.1:
     resolution: {integrity: sha512-2qVmiAShDBGd8zIct/EHp/g6aXeaCab20i9X6qLO/YtQ1wpB7H2tEm3+XsCDAjp2k7sVSpprfzNgANzEeCsQjA==}
 
-  fumadocs-core@16.15.3:
-    resolution: {integrity: sha512-iN2w/O1V+qZxItUDvwPxvjihw13YB3501sHLJMvyKmbsweWqAX3yMRhJ6bUFE8nMBledglmDjyn8Yt9o2hg/DQ==}
+  fumadocs-core@16.15.4:
+    resolution: {integrity: sha512-kdOuM0tvHkLWajnDu73BmtryPuUq4xsu610ssl1YMAm9fYF7BRmvYxx2apHbyf2Lt+7w8OEiWDTmB8Ja3zqp4Q==}
     peerDependencies:
       '@mdx-js/mdx': '*'
       '@mixedbread/sdk': 0.x.x
@@ -6867,14 +6867,14 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.18
 
-  '@fumadocs/base-ui@16.15.3(@date-fns/tz@1.5.0)(@types/mdx@2.0.14)(@types/react@19.2.18)(date-fns@4.4.0)(fumadocs-core@16.15.3(@mdx-js/mdx@3.1.1(supports-color@10.2.2))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.8))(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(zod@4.4.3))(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.3.3)':
+  '@fumadocs/base-ui@16.15.4(@date-fns/tz@1.5.0)(@types/mdx@2.0.14)(@types/react@19.2.18)(date-fns@4.4.0)(fumadocs-core@16.15.4(@mdx-js/mdx@3.1.1(supports-color@10.2.2))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.8))(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(zod@4.4.3))(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.3.3)':
     dependencies:
       '@base-ui/react': 1.7.0(@date-fns/tz@1.5.0)(@types/react@19.2.18)(date-fns@4.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@fuma-translate/react': 1.0.2(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@fumadocs/tailwind': 0.1.1(tailwindcss@4.3.3)
       class-variance-authority: 0.7.1
       cnfast: 0.1.0
-      fumadocs-core: 16.15.3(@mdx-js/mdx@3.1.1(supports-color@10.2.2))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.8))(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(zod@4.4.3)
+      fumadocs-core: 16.15.4(@mdx-js/mdx@3.1.1(supports-color@10.2.2))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.8))(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(zod@4.4.3)
       lucide-react: 1.34.0(react@19.2.8)
       motion: 13.1.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       next-themes: 0.4.6(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -9270,7 +9270,7 @@ snapshots:
       tinyexec: 1.2.4
       zod: 4.4.3
 
-  fumadocs-core@16.15.3(@mdx-js/mdx@3.1.1(supports-color@10.2.2))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.8))(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(zod@4.4.3):
+  fumadocs-core@16.15.4(@mdx-js/mdx@3.1.1(supports-color@10.2.2))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.8))(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(zod@4.4.3):
     dependencies:
       '@fumari/image-size': 0.1.0
       estree-util-value-to-estree: 3.5.0
@@ -9305,14 +9305,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  fumadocs-mdx@15.4.0(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.2.18)(fumadocs-core@16.15.3(@mdx-js/mdx@3.1.1(supports-color@10.2.2))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.8))(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(zod@4.4.3))(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(rolldown@1.1.5)(supports-color@10.2.2)(vite@8.1.0(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0)):
+  fumadocs-mdx@15.4.0(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.2.18)(fumadocs-core@16.15.4(@mdx-js/mdx@3.1.1(supports-color@10.2.2))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.8))(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(zod@4.4.3))(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(rolldown@1.1.5)(supports-color@10.2.2)(vite@8.1.0(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0)):
     dependencies:
       '@mdx-js/mdx': 3.1.1(supports-color@10.2.2)
       '@standard-schema/spec': 1.1.0
       chokidar: 5.0.0
       esbuild: 0.28.2
       estree-util-value-to-estree: 3.5.0
-      fumadocs-core: 16.15.3(@mdx-js/mdx@3.1.1(supports-color@10.2.2))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.8))(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(zod@4.4.3)
+      fumadocs-core: 16.15.4(@mdx-js/mdx@3.1.1(supports-color@10.2.2))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.8))(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(zod@4.4.3)
       github-slugger: 2.0.0
       magic-string: 1.2.2
       mdast-util-mdx: 3.0.0(supports-color@10.2.2)
