@@ -78,16 +78,6 @@ export const auth = betterAuth({
           clientSecret: process.env.OIDC_CLIENT_SECRET!,
           scopes: ["openid", "profile", "email", "groups"],
           pkce: true,
-          // better-auth 1.7 keys accounts on (issuer, accountId). Left to
-          // itself the plugin would use the issuer from the discovery
-          // document, which no static migration can backfill into rows written
-          // before the upgrade — every existing OIDC user would look like a new
-          // identity. Pinning the synthetic issuer better-auth generates for
-          // providers without one keeps identity exactly where 1.6 had it,
-          // providerId + subject, and matches the 0004 backfill. It also keeps
-          // startup independent of the discovery endpoint being reachable,
-          // which the plugin otherwise treats as a fatal init error.
-          accountIssuer: `local:oauth:${encodeURIComponent(process.env.OIDC_PROVIDER_ID!)}`,
           mapProfileToUser: (profile) => ({
             name: stringClaim(profile.display_name) || profile.name,
             displayName: stringClaim(profile.display_name),
