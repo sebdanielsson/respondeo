@@ -66,10 +66,6 @@ export const account = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
-    // better-auth >= 1.7 keys an external identity on (issuer, accountId)
-    // rather than (providerId, accountId), so a provider that changes its ID
-    // keeps its users and two providers cannot claim the same subject.
-    issuer: text("issuer").notNull(),
     accountId: text("account_id").notNull(),
     providerId: text("provider_id").notNull(),
     accessToken: text("access_token"),
@@ -88,7 +84,10 @@ export const account = pgTable(
   },
   (table) => [
     index("account_user_id_idx").on(table.userId),
-    uniqueIndex("account_issuer_account_id_idx").on(table.issuer, table.accountId),
+    // better-auth 1.7.3 went back to identifying an external identity by
+    // (providerId, accountId) and rejects the pair when it is ambiguous, so
+    // enforce it here rather than leaving duplicates to fail at sign-in.
+    uniqueIndex("account_provider_id_account_id_idx").on(table.providerId, table.accountId),
   ],
 );
 
