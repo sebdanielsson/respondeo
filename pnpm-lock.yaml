@@ -283,7 +283,7 @@ importers:
         version: 4.0.65(zod@4.5.4)
       '@ai-sdk/openai':
         specifier: ^4.0.16
-        version: 4.0.62(zod@4.5.4)
+        version: 4.0.63(zod@4.5.4)
       '@base-ui/react':
         specifier: ^1.6.0
         version: 1.8.0(@date-fns/tz@1.5.0)(@types/react@19.2.18)(date-fns@4.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -301,7 +301,7 @@ importers:
         version: 2.0.1(next@16.3.4(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.5.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
       ai:
         specifier: ^7.0.31
-        version: 7.0.94(zod@4.5.4)
+        version: 7.0.95(zod@4.5.4)
       better-auth:
         specifier: ~1.7.0
         version: 1.7.3(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@opentelemetry/api@1.9.1)(kysely@0.29.5)(postgres@3.4.9))(next@16.3.4(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.5.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(vitest@5.0.0(@opentelemetry/api@1.9.1)(@types/node@26.5.0)(vite@8.1.0(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.0)))
@@ -457,8 +457,8 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/openai@4.0.62':
-    resolution: {integrity: sha512-KOemym7oinL4bSaPI/e1SYXp770jEkIAWz2VYgof4Xglua1q46ViLtrALTOndW9Vz8dYWar/CIYOMii5AnyMhw==}
+  '@ai-sdk/openai@4.0.63':
+    resolution: {integrity: sha512-SV7vmHwWSVWrGXVzK+S1yzlgfPx9Cbizo1FgViw5KFfreTBo9c+WRXl/SerW389rWJMb5+lym31MeKHvwCEQ2A==}
     engines: {node: '>=22'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -2868,8 +2868,8 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
-  ai@7.0.94:
-    resolution: {integrity: sha512-N70qu4y53SjhA+kHYQCGLNTXLsztV+Rh28l2JDuEzALY5EgNWloYvUDjssL2Pi1Ie2nILcgWShLRgTpU1HxGHg==}
+  ai@7.0.95:
+    resolution: {integrity: sha512-prgjHfcKBMINf5263rl8DIiGfck+DcTLXkfEn4D0zCLEpFxk9VywnoZ+k7O3TxygLHFcpPtFpkIm43O5Yr0n9w==}
     engines: {node: '>=22'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -6470,7 +6470,7 @@ snapshots:
       '@ai-sdk/provider-utils': 5.0.37(zod@4.5.4)
       zod: 4.5.4
 
-  '@ai-sdk/openai@4.0.62(zod@4.5.4)':
+  '@ai-sdk/openai@4.0.63(zod@4.5.4)':
     dependencies:
       '@ai-sdk/provider': 4.0.11
       '@ai-sdk/provider-utils': 5.0.37(zod@4.5.4)
@@ -8283,7 +8283,7 @@ snapshots:
 
   acorn@8.18.0: {}
 
-  ai@7.0.94(zod@4.5.4):
+  ai@7.0.95(zod@4.5.4):
     dependencies:
       '@ai-sdk/gateway': 4.0.76(zod@4.5.4)
       '@ai-sdk/provider': 4.0.11
