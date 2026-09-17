@@ -17,7 +17,7 @@ on:
 jobs:
   release-please:
     name: Release Please
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-26.04-arm
     permissions:
       contents: write
       pull-requests: write
@@ -40,7 +40,7 @@ jobs:
     name: Publish to npm
     needs: release-please
     if: ${{ needs.release-please.outputs.release_created == 'true' }}
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-26.04-arm
     permissions:
       contents: read
       id-token: write
