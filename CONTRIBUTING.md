@@ -10,8 +10,8 @@ Thanks for your interest in improving Respondeo! This guide covers the local dev
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/) >= 20
-- [pnpm](https://pnpm.io/) — the version in `packageManager` is authoritative; `corepack enable` picks it up automatically
+- [Node.js](https://nodejs.org/) 24 — the version in `devEngines.runtime` in `package.json`
+- [pnpm](https://pnpm.io/) — the version in `devEngines.packageManager` is authoritative; pnpm switches to it automatically (`onFail: "download"`), so Corepack is not needed
 - Docker, for the local PostgreSQL container
 - An OIDC provider (e.g. Keycloak, Auth0, Okta, Pocket ID)
 
