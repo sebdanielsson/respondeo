@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import type { NextConfig } from "next";
 import { getImageRemotePatterns } from "./lib/images/remote-hosts";
 
@@ -43,6 +45,21 @@ const securityHeaders = [
   },
 ];
 
+/**
+ * Where sharp sits relative to this app, as outputFileTracingExcludes globs.
+ *
+ * The globs are relative to the app directory and don't match leading ../
+ * segments, so the location has to be spelled out. In this monorepo pnpm
+ * hoists node_modules to the workspace root two levels up (apps/web). In the
+ * standalone create-respondeo-app template it sits beside the app, and there a
+ * ../../ glob is a build error ("navigates out of the project root"), so it is
+ * only added when that workspace root exists.
+ */
+const sharpTracePaths = ["node_modules/sharp/**", "node_modules/@img/**"];
+if (existsSync(join(process.cwd(), "../../pnpm-workspace.yaml"))) {
+  sharpTracePaths.push("../../node_modules/sharp/**", "../../node_modules/@img/**");
+}
+
 const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
@@ -52,6 +69,13 @@ const nextConfig: NextConfig = {
     // with the IMAGE_ALLOWED_HOSTS env var at build time.
     remotePatterns: getImageRemotePatterns(),
   },
+  // Keep sharp out of the server functions. Next's image optimizer pulls it
+  // (and libvips, ~19 MB) into every function's file trace, but on Vercel
+  // /_next/image is served by the platform, and next/og renders OG images
+  // without sharp. It was well over half of each function and was stored again
+  // for every retained deployment. Traces only shape Vercel/standalone output;
+  // `next start` still loads sharp from node_modules when self-hosting.
+  outputFileTracingExcludes: { "**": sharpTracePaths },
   turbopack: {
     rules: {
       "*.css": {
