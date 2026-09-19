@@ -197,7 +197,9 @@ jobs:
             echo "::error::Build produced no .vercel/output/config.json — refusing to deploy"
             exit 1
           }
-          find .vercel/output/functions -name '*.func' -type d | grep -q . || {
+          # -print -quit stops find at the first match. Without it, grep -q exits early, find
+          # gets SIGPIPE, and pipefail fails a build that has many functions.
+          find .vercel/output/functions -name '*.func' -type d -print -quit | grep -q . || {
             echo "::error::Build produced no functions — refusing to deploy"
             exit 1
           }
