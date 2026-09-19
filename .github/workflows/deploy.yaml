@@ -56,6 +56,10 @@ jobs:
             project_id_secret: VERCEL_PROJECT_ID_WEB
           - project: respondeo-docs
             project_id_secret: VERCEL_PROJECT_ID_DOCS
+    # The steps below pick the project ID with explicit `secrets.<NAME>` references rather than
+    # `secrets[matrix.project_id_secret]`: a computed lookup makes GitHub pass every repository
+    # secret to the runner. The trailing `|| ''` means a missing secret comes through empty and
+    # fails the credentials check, instead of falling through to the other project's ID.
     # Records a GitHub Deployment per run, which is what puts the Environments sidebar, the
     # "deployed to Preview – respondeo" PR timeline entry and its "View deployment" button back —
     # the parts of the Vercel Git integration lost when building moved here. The names match the
@@ -76,7 +80,10 @@ jobs:
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets[matrix.project_id_secret] }}
+          VERCEL_PROJECT_ID: >-
+            ${{ matrix.project_id_secret == 'VERCEL_PROJECT_ID_WEB' && secrets.VERCEL_PROJECT_ID_WEB
+            || matrix.project_id_secret == 'VERCEL_PROJECT_ID_DOCS' && secrets.VERCEL_PROJECT_ID_DOCS
+            || '' }}
           PROJECT_ID_SECRET: ${{ matrix.project_id_secret }}
         run: |
           set -euo pipefail
@@ -148,7 +155,10 @@ jobs:
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets[matrix.project_id_secret] }}
+          VERCEL_PROJECT_ID: >-
+            ${{ matrix.project_id_secret == 'VERCEL_PROJECT_ID_WEB' && secrets.VERCEL_PROJECT_ID_WEB
+            || matrix.project_id_secret == 'VERCEL_PROJECT_ID_DOCS' && secrets.VERCEL_PROJECT_ID_DOCS
+            || '' }}
         run: |
           set -euo pipefail
           # The link is written out rather than left to the CLI to infer from environment
@@ -172,7 +182,10 @@ jobs:
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets[matrix.project_id_secret] }}
+          VERCEL_PROJECT_ID: >-
+            ${{ matrix.project_id_secret == 'VERCEL_PROJECT_ID_WEB' && secrets.VERCEL_PROJECT_ID_WEB
+            || matrix.project_id_secret == 'VERCEL_PROJECT_ID_DOCS' && secrets.VERCEL_PROJECT_ID_DOCS
+            || '' }}
         run: |
           set -euo pipefail
           vercel build ${{ steps.target.outputs.prod_flag }} --token="$VERCEL_TOKEN"
@@ -193,7 +206,10 @@ jobs:
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets[matrix.project_id_secret] }}
+          VERCEL_PROJECT_ID: >-
+            ${{ matrix.project_id_secret == 'VERCEL_PROJECT_ID_WEB' && secrets.VERCEL_PROJECT_ID_WEB
+            || matrix.project_id_secret == 'VERCEL_PROJECT_ID_DOCS' && secrets.VERCEL_PROJECT_ID_DOCS
+            || '' }}
         run: |
           set -euo pipefail
           url=$(vercel deploy --prebuilt ${{ steps.target.outputs.prod_flag }} --token="$VERCEL_TOKEN")
