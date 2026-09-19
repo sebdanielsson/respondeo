@@ -38,7 +38,6 @@ SHARED_PATHS=(
   "next.config.ts"
   "scripts/test-integration.sh"
   "stylelint.config.ts"
-  "vercel.json"
   "vitest.config.ts"
 )
 
@@ -50,6 +49,9 @@ SHARED_PATHS=(
 #   .oxlintrc.json    inlines the root oxlint config instead of extending it.
 #   eslint.config.ts  drops eslint-config-turbo, which needs a turbo.json.
 #   README.md         template-only, documents scaffolding rather than the app.
+#   vercel.json       apps/web sets git.deploymentEnabled: false because it is
+#                     deployed from GitHub Actions; a scaffolded app should keep
+#                     Vercel's Git deploys. Everything else is checked below.
 #
 # apps/web additionally keeps turbo.json, docs/ and tests/, which are monorepo
 # infrastructure and are intentionally absent from the template.
@@ -75,6 +77,23 @@ for path in "${SHARED_PATHS[@]}"; do
     status=1
   fi
 done
+
+# vercel.json must match apart from the `git` key, which only apps/web sets.
+if ! node --input-type=module -e '
+import { readFileSync } from "node:fs";
+import { isDeepStrictEqual } from "node:util";
+
+const read = (p) => {
+  const { git, ...rest } = JSON.parse(readFileSync(p, "utf8"));
+  return rest;
+};
+if (!isDeepStrictEqual(read("apps/web/vercel.json"), read("examples/respondeo/vercel.json"))) {
+  console.error("error: vercel.json differs between apps/web and examples/respondeo (beyond the git key)");
+  process.exit(1);
+}
+'; then
+  status=1
+fi
 
 # Dependency ranges must match so the template never ships a different major of
 # a runtime dependency than the app it is a copy of. The two documented
