@@ -225,7 +225,7 @@ importers:
         specifier: ^1.2.2
         version: 1.2.2(stylelint@17.15.0(supports-color@10.2.2)(typescript@6.0.3))
       '@fumadocs/cli':
-        specifier: ^1.4.1
+        specifier: ^1.7.0
         version: 1.7.0
       '@tailwindcss/webpack':
         specifier: ^4.3.3
