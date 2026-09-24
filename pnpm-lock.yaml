@@ -176,7 +176,7 @@ importers:
   .:
     devDependencies:
       '@types/node':
-        specifier: ^26.1.1
+        specifier: ^26.6.2
         version: 26.6.2
       node:
         specifier: runtime:^24.19.0
@@ -234,7 +234,7 @@ importers:
         specifier: ^2.0.14
         version: 2.0.14
       '@types/node':
-        specifier: ^26.1.1
+        specifier: ^26.6.2
         version: 26.6.2
       '@types/react':
         specifier: ^19.2.17
@@ -358,7 +358,7 @@ importers:
         specifier: ^4.3.3
         version: 4.3.3
       '@types/node':
-        specifier: ^26.1.1
+        specifier: ^26.6.2
         version: 26.6.2
       '@types/react':
         specifier: ^19.2.17
@@ -419,7 +419,7 @@ importers:
         version: 3.3.1
     devDependencies:
       '@types/node':
-        specifier: ^26.1.1
+        specifier: ^26.6.2
         version: 26.6.2
       oxlint:
         specifier: ^1.74.0
