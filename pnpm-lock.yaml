@@ -185,7 +185,7 @@ importers:
         specifier: ^0.68.0
         version: 0.68.0
       turbo:
-        specifier: ^2.10.5
+        specifier: ^2.11.2
         version: 2.11.2
       typescript:
         specifier: ~6.0.3
@@ -249,7 +249,7 @@ importers:
         specifier: 16.3.5
         version: 16.3.5(@typescript-eslint/parser@8.64.0(eslint@10.11.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@10.11.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       eslint-config-turbo:
-        specifier: ^2.10.5
+        specifier: ^2.11.2
         version: 2.11.2(eslint@10.11.0(jiti@2.7.0)(supports-color@10.2.2))(turbo@2.11.2)
       eslint-plugin-oxlint:
         specifier: ^1.73.0
@@ -376,7 +376,7 @@ importers:
         specifier: 16.3.5
         version: 16.3.5(@typescript-eslint/parser@8.64.0(eslint@10.11.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(eslint@10.11.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       eslint-config-turbo:
-        specifier: ^2.10.5
+        specifier: ^2.11.2
         version: 2.11.2(eslint@10.11.0(jiti@2.7.0)(supports-color@10.2.2))(turbo@2.11.2)
       eslint-plugin-oxlint:
         specifier: ^1.73.0
