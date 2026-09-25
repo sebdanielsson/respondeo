@@ -400,7 +400,7 @@ importers:
         specifier: ^4.3.3
         version: 4.3.3
       tsx:
-        specifier: ^4.23.1
+        specifier: ^4.23.15
         version: 4.23.15
       typescript:
         specifier: ~6.0.3
@@ -428,7 +428,7 @@ importers:
         specifier: ^8.5.1
         version: 8.5.1(jiti@2.7.0)(postcss@8.5.28)(supports-color@10.2.2)(tsx@4.23.15)(typescript@6.0.3)(yaml@2.9.0)
       tsx:
-        specifier: ^4.23.1
+        specifier: ^4.23.15
         version: 4.23.15
       typescript:
         specifier: ~6.0.2
