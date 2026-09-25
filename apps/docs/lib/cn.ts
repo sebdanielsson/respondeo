@@ -1,1 +1,1 @@
-export { twMerge as cn } from "cn";
+export { cn } from "cn";
