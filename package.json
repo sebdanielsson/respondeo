@@ -23,7 +23,7 @@
     "@types/node": "^26.6.2",
     "oxfmt": "^0.68.0",
     "turbo": "^2.10.5",
-    "typescript": "~6.0.2"
+    "typescript": "~6.0.3"
   },
   "devEngines": {
     "packageManager": {

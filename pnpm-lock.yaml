@@ -188,7 +188,7 @@ importers:
         specifier: ^2.10.5
         version: 2.11.2
       typescript:
-        specifier: ~6.0.2
+        specifier: ~6.0.3
         version: 6.0.3
 
   apps/docs:
@@ -270,7 +270,7 @@ importers:
         specifier: ^4.3.3
         version: 4.3.3
       typescript:
-        specifier: ~6.0.2
+        specifier: ~6.0.3
         version: 6.0.3
 
   apps/web:
@@ -431,7 +431,7 @@ importers:
         specifier: ^4.23.15
         version: 4.23.15
       typescript:
-        specifier: ~6.0.2
+        specifier: ~6.0.3
         version: 6.0.3
       vitest:
         specifier: ^5.0.0
