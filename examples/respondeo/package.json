@@ -55,7 +55,7 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "drizzle-kit": "^0.31.11",
-    "eslint": "^10.7.0",
+    "eslint": "^10.11.0",
     "eslint-config-next": "16.3.6",
     "eslint-plugin-oxlint": "^1.85.0",
     "oxfmt": "^0.70.0",
