@@ -34,7 +34,7 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
-    "@clack/prompts": "^1.7.0",
+    "@clack/prompts": "^1.8.1",
     "giget": "^3.3.0"
   },
   "devDependencies": {

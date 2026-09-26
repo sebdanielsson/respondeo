@@ -409,7 +409,7 @@ importers:
   packages/create-respondeo-app:
     dependencies:
       '@clack/prompts':
-        specifier: ^1.7.0
+        specifier: ^1.8.1
         version: 1.8.1
       giget:
         specifier: ^3.3.0
