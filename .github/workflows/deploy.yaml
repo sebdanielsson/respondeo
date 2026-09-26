@@ -122,6 +122,12 @@ jobs:
       - uses: pnpm/setup@v3
         with:
           cache: true
+          # `vercel build` runs its own `pnpm install --frozen-lockfile`, so installing here is
+          # duplicate work — and harmful since v3: the action installs with `--no-runtime`, which
+          # leaves node_modules without the `node@runtime` entry from `devEngines.runtime`, and
+          # the build's install then aborts with "Broken lockfile: missing snapshot for
+          # node@runtime". The store cache is still restored, so the build's install stays fast.
+          install: false
 
       - name: Install Vercel CLI
         # Into a scratch directory outside the repository, not globally: `pnpm add --global`
