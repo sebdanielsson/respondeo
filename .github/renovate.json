@@ -16,10 +16,23 @@
   ],
   "packageRules": [
     {
+      "groupName": "all patch dependencies (manual)",
+      "groupSlug": "all-patch-manual",
+      "matchUpdateTypes": ["patch"],
+      "matchPackageNames": ["*"]
+    },
+    {
       "groupName": "all patch dependencies",
       "groupSlug": "all-patch",
       "matchUpdateTypes": ["patch"],
-      "matchPackageNames": ["*"]
+      "matchCurrentVersion": "!/^0/"
+    },
+    {
+      "description": "create-respondeo-app is never automerged (see the last rule), so keep its patches out of the automerged group.",
+      "groupName": "all patch dependencies (manual)",
+      "groupSlug": "all-patch-manual",
+      "matchUpdateTypes": ["patch"],
+      "matchFileNames": ["packages/create-respondeo-app/**"]
     },
     {
       "groupName": "oxc",
@@ -41,6 +54,16 @@
     {
       "groupName": "Fumadocs",
       "matchPackageNames": ["fumadocs-**", "@fumadocs/**"]
+    },
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchCurrentVersion": "!/^0/",
+      "automerge": true
+    },
+    {
+      "description": "A fix(deps) commit touching create-respondeo-app triggers a Release Please release, so never automerge it. Positive glob on purpose: matchFileNames also tests the shared root pnpm-lock.yaml, so a negated glob would still match.",
+      "matchFileNames": ["packages/create-respondeo-app/**"],
+      "automerge": false
     }
   ]
 }
