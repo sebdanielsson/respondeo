@@ -30,7 +30,7 @@
     "@base-ui/react": "^1.8.0",
     "@better-auth/api-key": "~1.7.5",
     "@better-auth/drizzle-adapter": "~1.7.5",
-    "@scalar/nextjs-api-reference": "^0.12.2",
+    "@scalar/nextjs-api-reference": "^0.12.3",
     "@vercel/analytics": "^2.0.1",
     "ai": "^7.0.113",
     "better-auth": "~1.7.5",
