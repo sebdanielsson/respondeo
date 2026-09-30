@@ -31,7 +31,7 @@
     "@better-auth/drizzle-adapter": "~1.7.6",
     "@scalar/nextjs-api-reference": "^0.12.4",
     "@vercel/analytics": "^2.0.1",
-    "ai": "^7.0.116",
+    "ai": "^7.0.118",
     "better-auth": "~1.7.6",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.4.0",
