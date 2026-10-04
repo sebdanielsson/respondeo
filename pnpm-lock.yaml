@@ -276,8 +276,8 @@ importers:
   apps/web:
     dependencies:
       '@ai-sdk/anthropic':
-        specifier: ^4.0.70
-        version: 4.0.70(zod@4.6.5)
+        specifier: ^4.0.71
+        version: 4.0.71(zod@4.6.5)
       '@ai-sdk/google':
         specifier: ^4.0.87
         version: 4.0.87(zod@4.6.5)
@@ -300,8 +300,8 @@ importers:
         specifier: ^2.0.1
         version: 2.0.1(next@16.3.8(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
       ai:
-        specifier: ^7.0.124
-        version: 7.0.124(zod@4.6.5)
+        specifier: ^7.0.126
+        version: 7.0.127(zod@4.6.5)
       better-auth:
         specifier: ~1.7.7
         version: 1.7.7(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.11)(drizzle-orm@0.45.3(@opentelemetry/api@1.9.1)(kysely@0.29.5)(postgres@3.4.9))(next@16.3.8(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@5.0.3(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(vite@8.1.0(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.0)))
@@ -436,14 +436,14 @@ importers:
 
 packages:
 
-  '@ai-sdk/anthropic@4.0.70':
-    resolution: {integrity: sha512-uCuMH4CCL3DXOL0mXyyzfV7KSIPc+ka6X7qiq5HT9hkBdMMJF9SLzfSKOshoLHiSc/xSnFYWLHwlBxMMlaITrg==}
+  '@ai-sdk/anthropic@4.0.71':
+    resolution: {integrity: sha512-wiv3jhUH0RrvGzSolJMZfZ2cI9As45LhwYmcAoWvNivXjC7wzJ4W/Udq9/u7EGnGsT8lpmFKEKBrMXVeUO97Dg==}
     engines: {node: '>=22'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/gateway@4.0.102':
-    resolution: {integrity: sha512-kAVldt8D2AVSs7BjBZTRWHcFF71lPH8ouS6/QVlFCnKcUsShjXMdRwW6es5BfxyGewHbXfSirSc8j6efKSkIdA==}
+  '@ai-sdk/gateway@4.0.103':
+    resolution: {integrity: sha512-nnGTUHzPRQ14jhv9CL4OQrzcRBIFTBMIPKGIi9Z9u/4GtwSRxa/nxUX6np2Iwp5phOzO0a0njj/j9Jolf5AEaA==}
     engines: {node: '>=22'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -2861,8 +2861,8 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
-  ai@7.0.124:
-    resolution: {integrity: sha512-FdzSxCXE+tlkD9texj2EO8QvJvCHoqWjdOTM3EWL6CBDtJXMe0/aYul9e31Q+P7zABmRAXrc3+XFSrmawqQOcA==}
+  ai@7.0.127:
+    resolution: {integrity: sha512-JNsNPk4ZvRGEJuqdVo2lYFkm7uAuf3p/RwKFWn1Wh/+IK3U1RyFWw2GXoFnhzqNfxEuj7XJB4WpIUhl1sHToWg==}
     engines: {node: '>=22'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -6470,13 +6470,13 @@ packages:
 
 snapshots:
 
-  '@ai-sdk/anthropic@4.0.70(zod@4.6.5)':
+  '@ai-sdk/anthropic@4.0.71(zod@4.6.5)':
     dependencies:
       '@ai-sdk/provider': 4.0.21
       '@ai-sdk/provider-utils': 5.0.53(zod@4.6.5)
       zod: 4.6.5
 
-  '@ai-sdk/gateway@4.0.102(zod@4.6.5)':
+  '@ai-sdk/gateway@4.0.103(zod@4.6.5)':
     dependencies:
       '@ai-sdk/provider': 4.0.21
       '@ai-sdk/provider-utils': 5.0.53(zod@4.6.5)
@@ -8305,9 +8305,9 @@ snapshots:
 
   acorn@8.18.0: {}
 
-  ai@7.0.124(zod@4.6.5):
+  ai@7.0.127(zod@4.6.5):
     dependencies:
-      '@ai-sdk/gateway': 4.0.102(zod@4.6.5)
+      '@ai-sdk/gateway': 4.0.103(zod@4.6.5)
       '@ai-sdk/provider': 4.0.21
       '@ai-sdk/provider-utils': 5.0.53(zod@4.6.5)
       zod: 4.6.5
