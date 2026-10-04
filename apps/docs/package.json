@@ -37,7 +37,7 @@
     "eslint-config-turbo": "^2.11.6",
     "eslint-plugin-oxlint": "^1.86.0",
     "oxlint": "^1.86.0",
-    "stylelint": "^17.15.0",
+    "stylelint": "^17.16.0",
     "stylelint-config-html": "^2.0.0",
     "stylelint-config-standard": "^40.0.0",
     "tailwindcss": "^4.3.3",
