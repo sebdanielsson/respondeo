@@ -22,7 +22,7 @@
   "devDependencies": {
     "@types/node": "^26.6.4",
     "oxfmt": "^0.71.0",
-    "turbo": "^2.11.6",
+    "turbo": "^2.11.7",
     "typescript": "~6.0.3"
   },
   "devEngines": {
