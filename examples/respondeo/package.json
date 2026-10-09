@@ -57,7 +57,7 @@
     "drizzle-kit": "^0.31.11",
     "eslint": "^10.12.0",
     "eslint-config-next": "16.3.8",
-    "eslint-plugin-oxlint": "^1.86.0",
+    "eslint-plugin-oxlint": "^1.87.0",
     "oxfmt": "^0.72.0",
     "oxlint": "^1.87.0",
     "shadcn": "^4.21.2",
