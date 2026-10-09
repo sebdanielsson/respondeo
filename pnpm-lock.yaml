@@ -382,7 +382,7 @@ importers:
         specifier: ^1.87.0
         version: 1.87.0
       shadcn:
-        specifier: ^4.21.2
+        specifier: ^4.21.3
         version: 4.21.4(supports-color@10.2.2)
       stylelint:
         specifier: ^17.16.0
