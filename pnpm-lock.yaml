@@ -276,13 +276,13 @@ importers:
   apps/web:
     dependencies:
       '@ai-sdk/anthropic':
-        specifier: ^4.0.72
+        specifier: ^4.0.73
         version: 4.0.75(zod@4.6.5)
       '@ai-sdk/google':
-        specifier: ^4.0.88
+        specifier: ^4.0.89
         version: 4.0.90(zod@4.6.5)
       '@ai-sdk/openai':
-        specifier: ^4.0.84
+        specifier: ^4.0.85
         version: 4.0.87(zod@4.6.5)
       '@base-ui/react':
         specifier: ^1.8.0
@@ -300,7 +300,7 @@ importers:
         specifier: ^2.0.1
         version: 2.0.1(next@16.3.8(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.6.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
       ai:
-        specifier: ^7.0.128
+        specifier: ^7.0.129
         version: 7.0.131(zod@4.6.5)
       better-auth:
         specifier: ~1.7.7
