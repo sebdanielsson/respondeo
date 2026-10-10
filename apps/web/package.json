@@ -61,7 +61,7 @@
     "eslint-config-turbo": "^2.11.7",
     "eslint-plugin-oxlint": "^1.87.0",
     "oxlint": "^1.87.0",
-    "shadcn": "^4.21.3",
+    "shadcn": "^4.21.4",
     "stylelint": "^17.16.0",
     "stylelint-config-html": "^2.0.0",
     "stylelint-config-standard": "^40.0.0",
