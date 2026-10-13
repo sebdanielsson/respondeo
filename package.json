@@ -20,7 +20,7 @@
     "db:studio": "turbo run db:studio --filter=web"
   },
   "devDependencies": {
-    "@types/node": "^26.6.4",
+    "@types/node": "^26.6.5",
     "oxfmt": "^0.72.0",
     "turbo": "^2.11.7",
     "typescript": "~6.0.3"
@@ -28,7 +28,7 @@
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
-      "version": "12.11.1",
+      "version": "12.11.2",
       "onFail": "download"
     },
     "runtime": {
