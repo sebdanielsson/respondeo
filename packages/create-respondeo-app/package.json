@@ -38,7 +38,7 @@
     "giget": "^3.3.1"
   },
   "devDependencies": {
-    "@types/node": "^26.6.4",
+    "@types/node": "^26.6.5",
     "oxlint": "^1.87.0",
     "tsup": "^8.5.1",
     "tsx": "^4.23.15",
