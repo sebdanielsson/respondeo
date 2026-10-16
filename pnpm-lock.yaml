@@ -279,10 +279,10 @@ importers:
         specifier: ^4.0.79
         version: 4.0.79(zod@4.6.7)
       '@ai-sdk/google':
-        specifier: ^4.0.94
+        specifier: ^4.0.95
         version: 4.0.95(zod@4.6.7)
       '@ai-sdk/openai':
-        specifier: ^4.0.92
+        specifier: ^4.0.93
         version: 4.0.93(zod@4.6.7)
       '@base-ui/react':
         specifier: ^1.9.0
@@ -300,7 +300,7 @@ importers:
         specifier: ^2.0.1
         version: 2.0.1(next@16.4.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
       ai:
-        specifier: ^7.0.138
+        specifier: ^7.0.139
         version: 7.0.140(zod@4.6.7)
       better-auth:
         specifier: ~1.7.7
