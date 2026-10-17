@@ -16,16 +16,23 @@
   ],
   "packageRules": [
     {
+      "description": "The matchJsonata on both patch groups requires the range's major.minor to be unchanged. When pnpm-lock.yaml already resolves the new version (e.g. pulled in transitively), a ^1.51.0 -> ^1.52.0 bump is typed 'patch' in apps/*, but 'minor' in the lockfile-less examples/respondeo, which split them into two PRs that each failed check-template-sync.sh.",
       "groupName": "all patch dependencies (manual)",
       "groupSlug": "all-patch-manual",
       "matchUpdateTypes": ["patch"],
-      "matchPackageNames": ["*"]
+      "matchPackageNames": ["*"],
+      "matchJsonata": [
+        "$match(currentValue, /\\d+\\.\\d+/).match = $match(newValue, /\\d+\\.\\d+/).match"
+      ]
     },
     {
       "groupName": "all patch dependencies",
       "groupSlug": "all-patch",
       "matchUpdateTypes": ["patch"],
-      "matchCurrentVersion": "!/^0/"
+      "matchCurrentVersion": "!/^0/",
+      "matchJsonata": [
+        "$match(currentValue, /\\d+\\.\\d+/).match = $match(newValue, /\\d+\\.\\d+/).match"
+      ]
     },
     {
       "description": "create-respondeo-app is never automerged (see the last rule), so keep its patches out of the automerged group.",
