@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^4.0.81",
-    "@ai-sdk/google": "^4.0.97",
+    "@ai-sdk/google": "^4.0.98",
     "@ai-sdk/openai": "^4.0.95",
     "@base-ui/react": "^1.9.0",
     "@better-auth/api-key": "~1.7.7",
