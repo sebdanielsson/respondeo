@@ -6,6 +6,14 @@ packages:
 # resolve hoisted tooling. Keeps the Bun -> pnpm migration low-friction.
 nodeLinker: hoisted
 
+# Match Renovate's minimumReleaseAge (3 days, .github/renovate.json). With
+# pnpm's 1-day default, a range bump could resolve to a version Renovate wasn't
+# offering yet, locking apps/web ahead of its range floor. Renovate then
+# classified the next update differently for apps/web (lockfile) than for the
+# lockfile-less template, split it across two PRs, and both failed
+# check-template-sync.sh.
+minimumReleaseAge: 4320
+
 # Native packages allowed to run install/build lifecycle scripts.
 # pnpm v11 replaced onlyBuiltDependencies with the allowBuilds map.
 allowBuilds:
