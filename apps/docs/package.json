@@ -36,7 +36,7 @@
     "eslint-config-next": "16.4.3",
     "eslint-config-turbo": "^2.11.10",
     "eslint-plugin-oxlint": "^1.89.0",
-    "oxlint": "^1.89.0",
+    "oxlint": "^1.90.0",
     "stylelint": "^17.16.0",
     "stylelint-config-html": "^2.0.0",
     "stylelint-config-standard": "^40.0.0",
