@@ -20,7 +20,7 @@
     "db:studio": "turbo run db:studio --filter=web"
   },
   "devDependencies": {
-    "@types/node": "^26.6.5",
+    "@types/node": "^26.6.6",
     "oxfmt": "^0.75.0",
     "turbo": "^2.11.10",
     "typescript": "~6.0.3"
