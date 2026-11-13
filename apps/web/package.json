@@ -28,12 +28,12 @@
     "@ai-sdk/google": "^4.0.114",
     "@ai-sdk/openai": "^4.0.111",
     "@base-ui/react": "^1.9.0",
-    "@better-auth/api-key": "~1.7.18",
-    "@better-auth/drizzle-adapter": "~1.7.18",
+    "@better-auth/api-key": "~1.7.19",
+    "@better-auth/drizzle-adapter": "~1.7.19",
     "@scalar/nextjs-api-reference": "^0.12.16",
     "@vercel/analytics": "^2.0.1",
     "ai": "^7.0.166",
-    "better-auth": "~1.7.18",
+    "better-auth": "~1.7.19",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.5.2",
     "drizzle-orm": "^0.45.4",
@@ -71,6 +71,6 @@
     "vitest": "^5.1.0"
   },
   "engines": {
-    "node": ">=26.13.0"
+    "node": ">=26.13.1"
   }
 }
