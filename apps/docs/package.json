@@ -16,9 +16,9 @@
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
     "cn": "^0.5.2",
-    "fumadocs-core": "16.18.4",
-    "fumadocs-mdx": "15.5.3",
-    "fumadocs-ui": "npm:@fumadocs/base-ui@16.18.4",
+    "fumadocs-core": "16.19.0",
+    "fumadocs-mdx": "15.6.0",
+    "fumadocs-ui": "npm:@fumadocs/base-ui@16.19.0",
     "lucide-react": "^1.72.0",
     "next": "16.4.6",
     "react": "^19.3.1",
