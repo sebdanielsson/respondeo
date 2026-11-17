@@ -32,7 +32,7 @@
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "eslint": "^10.14.0",
+    "eslint": "^10.15.0",
     "eslint-config-next": "16.4.6",
     "eslint-config-turbo": "^2.11.11",
     "eslint-plugin-oxlint": "^1.93.0",
