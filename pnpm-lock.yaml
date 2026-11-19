@@ -212,8 +212,8 @@ importers:
         specifier: 16.19.3
         version: 16.19.3(@mdx-js/mdx@3.1.1)(@modelcontextprotocol/server@2.4.0)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(lucide-react@1.73.0(@types/react@19.3.0)(react@19.3.1))(next@16.4.6(@babel/core@7.29.13)(@types/node@26.6.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(zod@4.6.7)
       fumadocs-mdx:
-        specifier: 15.6.2
-        version: 15.6.2(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.19.3(@mdx-js/mdx@3.1.1)(@modelcontextprotocol/server@2.4.0)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(lucide-react@1.73.0(@types/react@19.3.0)(react@19.3.1))(next@16.4.6(@babel/core@7.29.13)(@types/node@26.6.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(zod@4.6.7))(next@16.4.6(@babel/core@7.29.13)(@types/node@26.6.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react@19.3.1)(rolldown@1.2.19)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
+        specifier: 15.6.3
+        version: 15.6.3(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.19.3(@mdx-js/mdx@3.1.1)(@modelcontextprotocol/server@2.4.0)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(lucide-react@1.73.0(@types/react@19.3.0)(react@19.3.1))(next@16.4.6(@babel/core@7.29.13)(@types/node@26.6.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(zod@4.6.7))(next@16.4.6(@babel/core@7.29.13)(@types/node@26.6.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react@19.3.1)(rolldown@1.2.19)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
       fumadocs-ui:
         specifier: npm:@fumadocs/base-ui@16.19.3
         version: '@fumadocs/base-ui@16.19.3(@date-fns/tz@1.5.0)(@types/mdx@2.0.14)(@types/react@19.3.0)(date-fns@4.4.0)(fumadocs-core@16.19.3(@mdx-js/mdx@3.1.1)(@modelcontextprotocol/server@2.4.0)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(lucide-react@1.73.0(@types/react@19.3.0)(react@19.3.1))(next@16.4.6(@babel/core@7.29.13)(@types/node@26.6.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(zod@4.6.7))(next@16.4.6(@babel/core@7.29.13)(@types/node@26.6.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.5)'
@@ -3643,8 +3643,8 @@ packages:
       zod:
         optional: true
 
-  fumadocs-mdx@15.6.2:
-    resolution: {integrity: sha512-URujFT1kgKJQuGuI/FTuy0kSpCYZJtwaC/z5IipJYCciDbxmxoaB1VX13wj/lr8cATU//76yi+Ze0LwWQi1WeQ==}
+  fumadocs-mdx@15.6.3:
+    resolution: {integrity: sha512-MPuuZNfczeuYON3g+gWQB+jtD4gGIx0hEikYVDAb/GL/JO6SFyCBH6xASg0OuWrcLyLrhqaei65HXBZQMQCTRw==}
     hasBin: true
     peerDependencies:
       '@fumadocs/satteri': 0.x.x
@@ -8586,7 +8586,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  fumadocs-mdx@15.6.2(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.19.3(@mdx-js/mdx@3.1.1)(@modelcontextprotocol/server@2.4.0)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(lucide-react@1.73.0(@types/react@19.3.0)(react@19.3.1))(next@16.4.6(@babel/core@7.29.13)(@types/node@26.6.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(zod@4.6.7))(next@16.4.6(@babel/core@7.29.13)(@types/node@26.6.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react@19.3.1)(rolldown@1.2.19)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)):
+  fumadocs-mdx@15.6.3(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.19.3(@mdx-js/mdx@3.1.1)(@modelcontextprotocol/server@2.4.0)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(lucide-react@1.73.0(@types/react@19.3.0)(react@19.3.1))(next@16.4.6(@babel/core@7.29.13)(@types/node@26.6.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(zod@4.6.7))(next@16.4.6(@babel/core@7.29.13)(@types/node@26.6.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react@19.3.1)(rolldown@1.2.19)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)):
     dependencies:
       '@mdx-js/mdx': 3.1.1
       '@standard-schema/spec': 1.1.0
