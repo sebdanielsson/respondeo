@@ -232,7 +232,7 @@ importers:
     devDependencies:
       '@dreamsicle.io/stylelint-config-tailwindcss':
         specifier: ^1.3.2
-        version: 1.3.2(stylelint@18.0.0)
+        version: 1.3.2(stylelint@18.1.0)
       '@fumadocs/cli':
         specifier: ^1.9.2
         version: 1.9.2
@@ -267,14 +267,14 @@ importers:
         specifier: ^1.94.0
         version: 1.94.0
       stylelint:
-        specifier: ^18.0.0
-        version: 18.0.0
+        specifier: ^18.1.0
+        version: 18.1.0
       stylelint-config-html:
         specifier: ^2.0.0
-        version: 2.0.0(postcss-html@2.0.0(postcss@8.5.32))(stylelint@18.0.0)
+        version: 2.0.0(postcss-html@2.0.0(postcss@8.5.33))(stylelint@18.1.0)
       stylelint-config-standard:
-        specifier: ^41.0.0
-        version: 41.0.0(stylelint@18.0.0)
+        specifier: ^41.1.0
+        version: 41.1.0(stylelint@18.1.0)
       tailwindcss:
         specifier: ^4.3.5
         version: 4.3.5
@@ -359,7 +359,7 @@ importers:
     devDependencies:
       '@dreamsicle.io/stylelint-config-tailwindcss':
         specifier: ^1.3.2
-        version: 1.3.2(stylelint@18.0.0)
+        version: 1.3.2(stylelint@18.1.0)
       '@tailwindcss/webpack':
         specifier: ^4.3.5
         version: 4.3.5
@@ -394,14 +394,14 @@ importers:
         specifier: ^4.23.0
         version: 4.23.0
       stylelint:
-        specifier: ^18.0.0
-        version: 18.0.0
+        specifier: ^18.1.0
+        version: 18.1.0
       stylelint-config-html:
         specifier: ^2.0.0
-        version: 2.0.0(postcss-html@2.0.0(postcss@8.5.33))(stylelint@18.0.0)
+        version: 2.0.0(postcss-html@2.0.0(postcss@8.5.33))(stylelint@18.1.0)
       stylelint-config-standard:
-        specifier: ^41.0.0
-        version: 41.0.0(stylelint@18.0.0)
+        specifier: ^41.1.0
+        version: 41.1.0(stylelint@18.1.0)
       tailwindcss:
         specifier: ^4.3.5
         version: 4.3.5
@@ -2918,8 +2918,8 @@ packages:
   collapse-white-space@2.1.0:
     resolution: {integrity: sha512-loKTxY1zCOuG4j9f6EPnuyyYkf58RnhhWTvRoZEokgB+WbdXehfjFviyOVYkqzEWz1Q5kRiZdBYS5SwxbQYwzw==}
 
-  colord@2.12.0:
-    resolution: {integrity: sha512-SpiONmQPZDqe50ivOTgkVikYsnp6l1HTFYqPRLNBCJJdA2Qympw2yYUzX99XlSbbKZswjiG6r+xsUpPPOHqY+Q==}
+  colord@2.14.0:
+    resolution: {integrity: sha512-eSdMel9EBvdFxnchObp7gljRoqYQLr+zXhaxjkym7syVphw1FIhfQwgsA5Bv3jArflZPJEa1rmQtGpa7NRc7Rw==}
 
   comma-separated-tokens@2.0.3:
     resolution: {integrity: sha512-Fu4hJdvzeylCfQPp9SGWidpzrMs7tTrlu6Vb8XGaRGck8QSNZJJp538Wrb60Lax4fPwR64ViY468OIUTbRlGZg==}
@@ -5392,14 +5392,14 @@ packages:
     peerDependencies:
       stylelint: ^18.0.0
 
-  stylelint-config-standard@41.0.0:
-    resolution: {integrity: sha512-EJIvMOMARieBOLhw2yzN7BaVFiIY2Ex8CkbXahxP6tQZK41+N8OVUo57Uvx9iTr862h+thqDoDH7vQbeth1ryg==}
+  stylelint-config-standard@41.1.0:
+    resolution: {integrity: sha512-Z7PiQpBffnqu7U5h/FeBWCYZsRsZXa1J8MjkpgcciphLJULysDcu2jKXuSrPgnQGow9x0T+pOfblqRA5cSE6aw==}
     engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
     peerDependencies:
       stylelint: ^18.0.0
 
-  stylelint@18.0.0:
-    resolution: {integrity: sha512-kI10GsHXQvsH/AcklVZdQgwDuxtHi+A+h1Ujzd7h9LDf3e5jQiLQkWFlPtpynX3E6oVWHG1wo9v6dL0Mr+nnSA==}
+  stylelint@18.1.0:
+    resolution: {integrity: sha512-QbF/IY7KY6lZRhYU/vmPU1KYxc71wgkXdgeptqzTh3lbnZps6WHaskfPjpL6Fh4JaCzwkKKitVcMrpfQTSwwPA==}
     engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
     hasBin: true
 
@@ -6230,9 +6230,9 @@ snapshots:
 
   '@dotenvx/primitives@0.8.0': {}
 
-  '@dreamsicle.io/stylelint-config-tailwindcss@1.3.2(stylelint@18.0.0)':
+  '@dreamsicle.io/stylelint-config-tailwindcss@1.3.2(stylelint@18.1.0)':
     dependencies:
-      stylelint: 18.0.0
+      stylelint: 18.1.0
 
   '@drizzle-team/brocli@0.10.2': {}
 
@@ -7771,7 +7771,7 @@ snapshots:
 
   collapse-white-space@2.1.0: {}
 
-  colord@2.12.0: {}
+  colord@2.14.0: {}
 
   comma-separated-tokens@2.0.3: {}
 
@@ -9988,13 +9988,6 @@ snapshots:
 
   possible-typed-array-names@1.1.0: {}
 
-  postcss-html@2.0.0(postcss@8.5.32):
-    dependencies:
-      htmlparser2: 9.1.0
-      js-tokens: 9.0.1
-      postcss: 8.5.32
-      postcss-safe-parser: 7.1.0(postcss@8.5.32)
-
   postcss-html@2.0.0(postcss@8.5.33):
     dependencies:
       htmlparser2: 9.1.0
@@ -10010,10 +10003,6 @@ snapshots:
       postcss: 8.5.33
       tsx: 4.23.15
       yaml: 2.9.1
-
-  postcss-safe-parser@7.1.0(postcss@8.5.32):
-    dependencies:
-      postcss: 8.5.32
 
   postcss-safe-parser@7.1.0(postcss@8.5.33):
     dependencies:
@@ -10652,26 +10641,21 @@ snapshots:
     optionalDependencies:
       '@babel/core': 7.29.13
 
-  stylelint-config-html@2.0.0(postcss-html@2.0.0(postcss@8.5.32))(stylelint@18.0.0):
-    dependencies:
-      postcss-html: 2.0.0(postcss@8.5.32)
-      stylelint: 18.0.0
-
-  stylelint-config-html@2.0.0(postcss-html@2.0.0(postcss@8.5.33))(stylelint@18.0.0):
+  stylelint-config-html@2.0.0(postcss-html@2.0.0(postcss@8.5.33))(stylelint@18.1.0):
     dependencies:
       postcss-html: 2.0.0(postcss@8.5.33)
-      stylelint: 18.0.0
+      stylelint: 18.1.0
 
-  stylelint-config-recommended@19.0.0(stylelint@18.0.0):
+  stylelint-config-recommended@19.0.0(stylelint@18.1.0):
     dependencies:
-      stylelint: 18.0.0
+      stylelint: 18.1.0
 
-  stylelint-config-standard@41.0.0(stylelint@18.0.0):
+  stylelint-config-standard@41.1.0(stylelint@18.1.0):
     dependencies:
-      stylelint: 18.0.0
-      stylelint-config-recommended: 19.0.0(stylelint@18.0.0)
+      stylelint: 18.1.0
+      stylelint-config-recommended: 19.0.0(stylelint@18.1.0)
 
-  stylelint@18.0.0:
+  stylelint@18.1.0:
     dependencies:
       '@csstools/css-calc': 3.4.3(@csstools/css-parser-algorithms@4.0.2(@csstools/css-tokenizer@4.0.2))(@csstools/css-tokenizer@4.0.2)
       '@csstools/css-parser-algorithms': 4.0.2(@csstools/css-tokenizer@4.0.2)
@@ -10680,14 +10664,14 @@ snapshots:
       '@csstools/media-query-list-parser': 5.0.2(@csstools/css-parser-algorithms@4.0.2(@csstools/css-tokenizer@4.0.2))(@csstools/css-tokenizer@4.0.2)
       '@csstools/selector-resolve-nested': 4.0.2(postcss-selector-parser@7.2.1)
       '@csstools/selector-specificity': 6.0.1(postcss-selector-parser@7.2.1)
-      colord: 2.12.0
+      colord: 2.14.0
       cosmiconfig: 10.0.1
       css-tree: 3.2.1
       ignore: 7.0.14
       import-meta-resolve: 4.2.0
       picomatch: 4.0.7
-      postcss: 8.5.32
-      postcss-safe-parser: 7.1.0(postcss@8.5.32)
+      postcss: 8.5.33
+      postcss-safe-parser: 7.1.0(postcss@8.5.33)
       postcss-selector-parser: 7.2.1
       postcss-value-parser: 4.2.0
       tinyglobby: 0.2.17
