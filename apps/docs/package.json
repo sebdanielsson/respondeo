@@ -29,7 +29,7 @@
     "@fumadocs/cli": "^1.9.3",
     "@tailwindcss/webpack": "^4.3.5",
     "@types/mdx": "^2.0.14",
-    "@types/node": "^26.6.7",
+    "@types/node": "^26.6.8",
     "@types/react": "^19.3.1",
     "@types/react-dom": "^19.3.0",
     "eslint": "^10.15.0",
